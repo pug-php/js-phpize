@@ -1,33 +1,48 @@
-# Pug-Assets
+# JsPhpize
+[![Latest Stable Version](https://poser.pugx.org/pug-php/pug/v/stable.png)](https://packagist.org/packages/pug-php/pug)
+[![Total Downloads](https://poser.pugx.org/kylekatarnls/jade-php/downloads.png)](https://packagist.org/packages/pug-php/pug)
+[![Build Status](https://travis-ci.org/pug-php/pug.svg?branch=master)](https://travis-ci.org/pug-php/pug)
+[![StyleCI](https://styleci.io/repos/59010999/shield?style=flat)](https://styleci.io/repos/59010999)
+[![Test Coverage](https://codeclimate.com/github/pug-php/pug/badges/coverage.svg)](https://codecov.io/github/pug-php/pug?branch=master)
+[![Code Climate](https://codeclimate.com/github/pug-php/pug/badges/gpa.svg)](https://codeclimate.com/github/pug-php/pug)
+[![Reference Status](https://www.versioneye.com/php/kylekatarnls:jade-php/reference_badge.svg?style=flat)](https://www.versioneye.com/php/kylekatarnls:jade-php/references)
 
-Manage your assets and third-party transpiler (less, stylus, coffee, babel, etc.) and allow you to concat and/or minify them in production environment.
+Convert js-like syntax to standalone PHP code.
 
 ## Install
-In the root directory of your Symfony project, open a terminal and enter:
+In the root directory of your project, open a terminal and enter:
 ```shell
-composer require pug-php/pug-assets
+composer require js-phpize/js-phpize
 ```
 
-Enable the plugin:
+Use compile to get PHP equivalent code to JavaScript input:
 ```php
-use Pug\Pug;
+use JsPhpize\JsPhpize;
 
-$pug = new Pug();
+$jsPhpize = new JsPhpize();
 
-// The facade syntax:
-Assets::enable($pug);
-$pug->render('... minify ...'); // here you can use minfiy, assets or concat keywords to wrap your assets
-
-Assets::disable($pug);
-$pug->render('... minify ...'); // here minfiy, assets or concat are simple tags again
-
-// Of the instanciation syntax:
-$assets = new Assets($pug);
-$pug->render('... minify ...'); // here you can use minfiy, assets or concat keywords to wrap your assets
-
-unset($assets);
-$pug->render('... minify ...'); // here minfiy, assets or concat are simple tags again
+echo $jsPhpize->compile('foo = { bar: { "baz": "hello" } }');
 ```
-For more information about the concat/minify usage, see https://github.com/pug-php/pug-minify#readme
 
-**Pug-Assets** also instal the coffee, stylus and markdown pug filters to use them as inline contents.
+Or use render to execute it directly:
+```php
+use JsPhpize\JsPhpize;
+
+$jsPhpize = new JsPhpize();
+
+$code = '
+    // Create an object
+    foo = { bar: { "baz": "hello" } };
+    key = 'bar'; // instanciate a string
+
+    return foo[key].baz;
+';
+
+$value = $jsPhpize->render($code);
+
+echo $value;
+```
+
+This will display ```hello```.
+
+This library intend to is intended to allow js-like in PHP contexts (such as in template engines).
