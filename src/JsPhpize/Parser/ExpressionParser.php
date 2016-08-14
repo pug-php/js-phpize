@@ -117,13 +117,8 @@ class ExpressionParser
                 $before = implode(' ', array_reverse($before));
                 $after = array(',', $token, ',');
                 while ($this->next() && ($next = $this->current())) {
-                    switch ($next->type) {
-                        case '(':
-                        case '{':
-                        case '[':
-                        case 'variable':
-                            $next = $this->getExpression(false);
-                            break;
+                    if (in_array($next->type, array('(', '{', '[', 'variable')))) {
+                        $next = $this->getExpression(false);
                     }
                     if ($next instanceof Token && !in_array($next->type, $priorToPlusOperators)) {
                         break;
