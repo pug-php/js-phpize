@@ -19,7 +19,9 @@ class Visitor extends ExpressionParser
     protected function visitVariable($token)
     {
         $variable = (substr($token->value, 0, 1) === '$' ? '' : '$') . $token->value;
-        $next = $this->current();
+        if (!($next = $this->current())) {
+            return $variable;
+        }
         if ($next->type === '(') {
             $this->skip();
 

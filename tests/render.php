@@ -2,7 +2,7 @@
 
 use JsPhpize\JsPhpize;
 
-class ExamplesTest extends \PHPUnit_Framework_TestCase
+class RenderTest extends \PHPUnit_Framework_TestCase
 {
     public function caseProvider()
     {
@@ -10,8 +10,8 @@ class ExamplesTest extends \PHPUnit_Framework_TestCase
 
         $examples = __DIR__ . '/../examples';
         foreach (scandir($examples) as $file) {
-            if (substr($file, -3) === '.js') {
-                $cases[] = array($examples . '/' . substr($file, 0, -3) . '.return', $examples . '/' . $file);
+            if (substr($file, -7) === '.return') {
+                $cases[] = array($examples . '/' . $file, $examples . '/' . substr($file, 0, -7) . '.js');
             }
         }
 
@@ -30,6 +30,6 @@ class ExamplesTest extends \PHPUnit_Framework_TestCase
         $expected = trim($expected);
         $actual = trim($result);
 
-        $this->assertSame($expected, $actual, $jsFile . ' should return ' . $expected);
+        $this->assertSame($expected, $actual, $jsFile . ' should render ' . $expected);
     }
 }
