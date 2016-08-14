@@ -22,6 +22,11 @@ $jsPhpize = new JsPhpize();
 echo $jsPhpize->compile('foo = { bar: { "baz": "hello" } }');
 ```
 
+This code will output the following PHP code:
+```php
+$foo = array( "bar" => array( "baz" => "hello" ) );
+```
+
 Or use render to execute it directly:
 ```php
 use JsPhpize\JsPhpize;
