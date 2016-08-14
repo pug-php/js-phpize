@@ -2,7 +2,6 @@
 
 namespace JsPhpize\Parser;
 
-use JsPhpize\Nodes\Block;
 use JsPhpize\Nodes\Comment;
 
 class Visitor extends ExpressionParser

@@ -2,10 +2,10 @@
 
 use JsPhpize\JsPhpize;
 
-class ExamplesTest extends \PHPUnit_Framework_TestCase {
-
-    public function caseProvider() {
-
+class ExamplesTest extends \PHPUnit_Framework_TestCase
+{
+    public function caseProvider()
+    {
         $cases = array();
 
         $examples = __DIR__ . '/../examples';
@@ -21,8 +21,8 @@ class ExamplesTest extends \PHPUnit_Framework_TestCase {
     /**
      * @dataProvider caseProvider
      */
-    public function testJsPhpizeGeneration($returnFile, $jsFile) {
-
+    public function testJsPhpizeGeneration($returnFile, $jsFile)
+    {
         $jsPhpize = new JsPhpize();
         $expected = file_get_contents($returnFile);
         $result = $jsPhpize->render($jsFile);
