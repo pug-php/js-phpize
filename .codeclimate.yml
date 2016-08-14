@@ -11,6 +11,10 @@ engines:
     enabled: true
   phpmd:
     enabled: true
+    checks:
+      Controversial/CamelCaseMethodName:
+        exclude_paths:
+        - "src/JsPhpize/Stream/ExpressionStream.php"
 ratings:
   paths:
   - "**.php"

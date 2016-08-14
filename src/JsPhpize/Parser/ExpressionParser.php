@@ -3,7 +3,6 @@
 namespace JsPhpize\Parser;
 
 use JsPhpize\Lexer\Token;
-use JsPhpize\Nodes\Block;
 use JsPhpize\Nodes\BracketsArray;
 use JsPhpize\Nodes\HooksArray;
 use JsPhpize\Nodes\Parenthesis;

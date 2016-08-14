@@ -39,7 +39,7 @@ class JsPhpize
     }
 
     /**
-     * @param  string $input file or content
+     * @param string $input file or content
      *
      * @return mixed
      */
@@ -52,7 +52,7 @@ class JsPhpize
     }
 
     /**
-     * @param  string $input file or content
+     * @param string $input file or content
      *
      * @return mixed
      */
@@ -80,7 +80,7 @@ class JsPhpize
     }
 
     /**
-     * @param  string $input file or content
+     * @param string $input file or content
      *
      * @return mixed
      */
