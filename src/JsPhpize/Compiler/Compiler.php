@@ -21,7 +21,7 @@ class Compiler
     protected function outputNode($node, $indent)
     {
         if ($node instanceof Block) {
-            return $indent . $block->getHead() . '{' . "\n" .
+            return $indent . $node->getHead() . '{' . "\n" .
                 $this->compile($node, '  ' . $indent) .
                 '}';
         }
