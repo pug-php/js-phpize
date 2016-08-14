@@ -1,5 +1,5 @@
 # JsPhpize
-[![Latest Stable Version](https://poser.pugx.org/pug-php/js-phpize/v/stable.png)](https://packagist.org/packages/pug-php/js-phpize)
+[![Latest Stable Version](https://poser.pugx.org/js-phpize/js-phpize/v/stable.png)](https://packagist.org/packages/js-phpize/js-phpize)
 [![Build Status](https://travis-ci.org/pug-php/js-phpize.svg?branch=master)](https://travis-ci.org/pug-php/js-phpize)
 [![StyleCI](https://styleci.io/repos/65670436/shield?style=flat)](https://styleci.io/repos/65670436)
 [![Test Coverage](https://codeclimate.com/github/pug-php/js-phpize/badges/coverage.svg)](https://codecov.io/github/pug-php/js-phpize?branch=master)
