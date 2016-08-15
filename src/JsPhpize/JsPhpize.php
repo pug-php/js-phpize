@@ -41,8 +41,9 @@ class JsPhpize
     /**
      * Compile file or code (detect if $input is an exisisting file, else use it as content).
      *
-     * @param string $input    file or content
-     * @param string $filename if specified, input is used as content and filename as its name
+     * @param string $input             file or content
+     * @param string $filename          if specified, input is used as content and filename as its name
+     * @param bool   $catchDependencies if true, dependencies are not compiled and can be grouped and get separatly
      *
      * @return string
      */
@@ -65,7 +66,8 @@ class JsPhpize
     /**
      * Compile a file.
      *
-     * @param string $file input file
+     * @param string $file              input file
+     * @param bool   $catchDependencies if true, dependencies are not compiled and can be grouped and get separatly
      *
      * @return string
      */
@@ -77,7 +79,8 @@ class JsPhpize
     /**
      * Compile raw code.
      *
-     * @param string $code input code
+     * @param string $code              input code
+     * @param bool   $catchDependencies if true, dependencies are not compiled and can be grouped and get separatly
      *
      * @return string
      */
@@ -87,7 +90,10 @@ class JsPhpize
     }
 
     /**
-     * @param string $input file or content
+     * Compile without the dependencies.
+     *
+     * @param string $input             file or content
+     * @param string $filename          if specified, input is used as content and filename as its name
      *
      * @return string
      */
@@ -97,7 +103,9 @@ class JsPhpize
     }
 
     /**
-     * @return mixed
+     * Return compiled dependencies caught during previous compilations.
+     *
+     * @return string
      */
     public function compileDependencies()
     {
@@ -110,11 +118,14 @@ class JsPhpize
     }
 
     /**
-     * @param string $input file or content
+     * Compile and return the code execution result.
+     *
+     * @param string $input             file or content
+     * @param string $filename          if specified, input is used as content and filename as its name
      *
      * @return mixed
      */
-    public function render($input)
+    public function render($input, $filename = null)
     {
         if (!in_array($this->stream, $this->streamsRegistered)) {
             $this->streamsRegistered[] = $this->stream;
@@ -126,7 +137,7 @@ class JsPhpize
         }
 
         try {
-            return include $this->stream . '://data;<?php ' . $this->compile($input);
+            return include $this->stream . '://data;<?php ' . $this->compile($input, $filename);
         } catch (\JsPhpize\Compiler\Exception $e) {
             throw $e;
         } catch (\JsPhpize\Lexer\Exception $e) {
@@ -140,5 +151,29 @@ class JsPhpize
             }
             throw new Exception("An error occur in [$summary]:\n" . $e->getMessage(), 2, E_ERROR, __FILE__, __LINE__, $e);
         }
+    }
+
+    /**
+     * Render a file.
+     *
+     * @param string $file input file
+     *
+     * @return string
+     */
+    public function renderFile($file)
+    {
+        return $this->render(file_get_contents($file), $file);
+    }
+
+    /**
+     * Render raw code.
+     *
+     * @param string $code input code
+     *
+     * @return string
+     */
+    public function renderCode($code)
+    {
+        return $this->compile($code, 'source.js');
     }
 }
