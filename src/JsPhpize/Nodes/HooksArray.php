@@ -6,7 +6,9 @@ class HooksArray extends ArrayBase
 {
     public function addItem($value)
     {
-        $this->data[] = $value;
+        if (!empty($value)) {
+            $this->data[] = $value;
+        }
     }
 
     public function __toString()

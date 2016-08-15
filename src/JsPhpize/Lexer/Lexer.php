@@ -99,7 +99,7 @@ class Lexer extends Scanner
         $patterns = array(
             '\/\/.*?\n|\/\*[\\s\\S]*?\*\/' => 'comment',
             '"(?:\\\\.|[^"\\\\])*"|\'(?:\\\\.|[^\'\\\\])*\'' => 'string',
-            '0[bB][01]+|0[oO][0-7]+|0[xX][0-9a-fA-F]|(\d+(\.\d*)?|\.\d+)([eE]-?\d+)?' => 'number',
+            '0[bB][01]+|0[oO][0-7]+|0[xX][0-9a-fA-F]+|(\d+(\.\d*)?|\.\d+)([eE]-?\d+)?' => 'number',
             '=>' => 'lambda',
             'delete|typeof|void' => 'operator',
             '>>>=|<<=|>>=|\*\*=' => 'operator',

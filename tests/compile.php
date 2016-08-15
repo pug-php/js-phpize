@@ -27,8 +27,8 @@ class CompileTest extends \PHPUnit_Framework_TestCase
         $expected = file_get_contents($phpFile);
         $result = $jsPhpize->compile($jsFile);
 
-        $expected = trim($expected);
-        $actual = trim($result);
+        $expected = str_replace("\r", '', trim($expected));
+        $actual = str_replace("\r", '', trim($result));
 
         $this->assertSame($expected, $actual, $jsFile . ' should compile into ' . $expected);
     }

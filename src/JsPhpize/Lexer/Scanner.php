@@ -11,7 +11,8 @@ class Scanner
 
     public function scanConstant($matches)
     {
-        if (substr($matches[0], 0, 5) === '__JP_') {
+        $constant = trim($matches[0]);
+        if (substr($constant, 0, 5) === '__JP_') {
             throw new Exception('Constants cannot start with __JP_, this prefix is reserved for JsPhpize' . $this->exceptionInfos(), 1);
         }
         $translate = array(
@@ -19,13 +20,14 @@ class Scanner
             'NaN' => 'NAN',
             'undefined' => 'null',
         );
-        if (isset($translate[$matches[0]])) {
-            $matches[0] = $translate[$matches[0]];
+        if (isset($translate[$constant])) {
+            $constant = $translate[$constant];
         } elseif (substr($matches[0], 0, 5) === 'Math.') {
-            $matches[0] = 'M_' . substr($matches[0], 5);
+            $constant = 'M_' . substr($constant, 5);
         }
+        $this->consume($matches[0]);
 
-        return $this->valueToken('constant', $matches);
+        return $this->token('constant', $constant);
     }
 
     public function scanFunction($matches)

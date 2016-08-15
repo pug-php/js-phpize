@@ -11,9 +11,11 @@ class Visitor extends ExpressionParser
         return new Comment($token);
     }
 
-    protected function visitNumber($token)
+    protected function visitNode($token)
     {
-        return $token->value;
+        $this->prepend($token);
+
+        return $this->getExpression();
     }
 
     protected function visitVariable($token)

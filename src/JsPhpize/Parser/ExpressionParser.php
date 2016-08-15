@@ -72,12 +72,20 @@ class ExpressionParser
     {
         $array = new HooksArray();
 
+        $item = '';
         while ($token = $this->next()) {
             if ($token->type === ']') {
+                $array->addItem($item);
+
                 return $array;
             }
+            if ($token->type === ',') {
+                $array->addItem($item);
+                $item = '';
+                continue;
+            }
 
-            $array->addItem($this->expressionFromToken($token));
+            $item .= $this->expressionFromToken($token);
         }
 
         throw new Exception('Missing ] after array items list' . $this->exceptionInfos(), 6);

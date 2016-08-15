@@ -132,10 +132,17 @@ class Parser extends Visitor
                 continue;
             }
             $method = 'visit' . ucfirst($token->type);
-            if (!method_exists($this, $method)) {
-                $this->unexpected($token);
+            $token = method_exists($this, $method)
+                ? $this->$method($token)
+                : $this->visitNode($token);
+            if (!is_array($token)) {
+                $token = array($token);
             }
-            $block->addNodes((array) $this->$method($token));
+            $block->addNodes($token);
+            // if (!method_exists($this, $method)) {
+            //     $this->unexpected($token);
+            // }
+            // $block->addNodes((array) $this->$method($token));
         }
         $block->addDependencies($this->dependencies);
 
