@@ -39,31 +39,61 @@ class JsPhpize
     }
 
     /**
-     * @param string $input file or content
+     * Compile file or code (detect if $input is an exisisting file, else use it as content).
      *
-     * @return mixed
+     * @param string $input    file or content
+     * @param string $filename if specified, input is used as content and filename as its name
+     *
+     * @return string
      */
-    public function compile($input)
+    public function compile($input, $filename = null, $catchDependencies = false)
     {
-        $parser = new Parser($this, $input);
+        if ($filename === null) {
+            $filename = file_exists($input) ? $input : null;
+            $input = $filename === null ? $input : file_get_contents($filename);
+        }
+        $parser = new Parser($this, $input, $filename);
         $compiler = new Compiler($this);
+        $block = $parser->parse();
+        if ($catchDependencies) {
+            $this->dependencies = array_merge($this->dependencies, $block->popDependencies());
+        }
 
-        return $compiler->compile($parser->parse());
+        return $compiler->compile($block);
+    }
+
+    /**
+     * Compile a file.
+     *
+     * @param string $file input file
+     *
+     * @return string
+     */
+    public function compileFile($file, $catchDependencies = false)
+    {
+        return $this->compile(file_get_contents($file), $file, $catchDependencies);
+    }
+
+    /**
+     * Compile raw code.
+     *
+     * @param string $code input code
+     *
+     * @return string
+     */
+    public function compileCode($code, $catchDependencies = false)
+    {
+        return $this->compile($code, 'source.js', $catchDependencies);
     }
 
     /**
      * @param string $input file or content
      *
-     * @return mixed
+     * @return string
      */
-    public function compileWithoutDependencies($input)
+    public function compileWithoutDependencies($input, $filename = null)
     {
-        $parser = new Parser($this, $input);
-        $compiler = new Compiler($this);
-        $block = $parser->parse();
-        $this->dependencies = array_merge($this->dependencies, $block->popDependencies());
-
-        return $compiler->compile($block);
+        return $this->compile($input, $filename, true);
     }
 
     /**

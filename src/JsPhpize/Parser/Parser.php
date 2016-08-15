@@ -28,12 +28,9 @@ class Parser extends Visitor
      */
     protected $dependencies;
 
-    public function __construct(JsPhpize $engine, $input)
+    public function __construct(JsPhpize $engine, $input, $filename)
     {
-        $filename = file_exists($input) ? $input : null;
-        $input = $filename === null ? $input : file_get_contents($filename);
         $input = str_replace(array("\r\n", "\r"), array("\n", ''), $input);
-
         $this->tokens = array();
         $this->dependencies = array();
         $this->engine = $engine;
