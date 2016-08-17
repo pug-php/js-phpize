@@ -28,6 +28,11 @@ class Parser extends Visitor
      */
     protected $dependencies;
 
+    /**
+     * @var array
+     */
+    protected $stack;
+
     public function __construct(JsPhpize $engine, $input, $filename)
     {
         $input = str_replace(array("\r\n", "\r"), array("\n", ''), $input);
@@ -60,7 +65,7 @@ class Parser extends Visitor
             ));
         }
 
-        return '$GLOBALS["__jp_' . $helper . '"]';
+        return '$GLOBALS["' . $this->engine->getOption('varPrefix', JsPhpize::VAR_PREFIX) . 'h_' . $helper . '"]';
     }
 
     protected function exceptionInfos()
@@ -124,12 +129,25 @@ class Parser extends Visitor
         return $token;
     }
 
-    public function parse()
+    protected function getCurrentBlock()
     {
-        $block = new Main();
+        return end($this->stack);
+    }
+
+    public function parseBlock($block)
+    {
+        $this->stack[] = $block;
+        $prev = null;
         while ($token = $this->next()) {
+            if ($token === $prev) {
+                $this->unexpected($token);
+            }
+            $prev = $token;
             if ($token->type === ';') {
                 continue;
+            }
+            if ($token->type === '}') {
+                return;
             }
             $method = 'visit' . ucfirst($token->type);
             $token = method_exists($this, $method)
@@ -139,10 +157,17 @@ class Parser extends Visitor
                 $token = array($token);
             }
             $block->addNodes($token);
-            // if (!method_exists($this, $method)) {
-            //     $this->unexpected($token);
-            // }
-            // $block->addNodes((array) $this->$method($token));
+        }
+        array_pop($this->stack);
+    }
+
+    public function parse()
+    {
+        $block = new Main($this->engine->getOption('varPrefix', JsPhpize::VAR_PREFIX) . 'h_');
+        $this->stack = array();
+        $this->parseBlock($block);
+        if ($this->next()) {
+            $this->unexpected('}');
         }
         $block->addDependencies($this->dependencies);
 

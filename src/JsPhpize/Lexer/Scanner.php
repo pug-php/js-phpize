@@ -2,6 +2,8 @@
 
 namespace JsPhpize\Lexer;
 
+use JsPhpize\JsPhpize;
+
 class Scanner
 {
     public function scanComment($matches)
@@ -12,8 +14,9 @@ class Scanner
     public function scanConstant($matches)
     {
         $constant = trim($matches[0]);
-        if (substr($constant, 0, 5) === '__JP_') {
-            throw new Exception('Constants cannot start with __JP_, this prefix is reserved for JsPhpize' . $this->exceptionInfos(), 1);
+        $constPrefix = $this->engine->getOption('constPrefix', JsPhpize::CONST_PREFIX);
+        if (substr($constant, 0, 5) === $constPrefix) {
+            throw new Exception('Constants cannot start with ' . $constPrefix . ', this prefix is reserved for JsPhpize' . $this->exceptionInfos(), 1);
         }
         $translate = array(
             'Infinity' => 'INF',
@@ -37,7 +40,7 @@ class Scanner
 
     public function scanKeyword($matches)
     {
-        return $this->typeToken($matches);
+        return $this->valueToken('keyword', $matches);
     }
 
     public function scanLambda($matches)
@@ -62,8 +65,9 @@ class Scanner
 
     public function scanVariable($matches)
     {
-        if (substr($matches[0], 0, 5) === '__jp_') {
-            throw new Exception('Variables cannot start with __jp_, this prefix is reserved for JsPhpize' . $this->exceptionInfos(), 1);
+        $varPrefix = $this->engine->getOption('varPrefix', JsPhpize::VAR_PREFIX);
+        if (substr($matches[0], 0, 5) === $varPrefix) {
+            throw new Exception('Variables cannot start with ' . $varPrefix . ', this prefix is reserved for JsPhpize' . $this->exceptionInfos(), 1);
         }
 
         return $this->valueToken('variable', $matches);

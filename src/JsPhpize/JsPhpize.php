@@ -8,6 +8,9 @@ use JsPhpize\Parser\Parser;
 
 class JsPhpize
 {
+    const CONST_PREFIX = '__JP_';
+    const VAR_PREFIX = '__jp_';
+
     /**
      * @var string
      */

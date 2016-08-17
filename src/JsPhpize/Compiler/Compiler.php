@@ -23,7 +23,7 @@ class Compiler
         if ($node instanceof Block) {
             return $indent . $node->getHead() . '{' . "\n" .
                 $this->compile($node, '  ' . $indent) .
-                '}';
+                $indent . '}';
         }
         if ($node instanceof Comment) {
             return $indent . $node;

@@ -19,11 +19,34 @@ class Block
      */
     protected $nodes;
 
+    /**
+     * @var array
+     */
+    protected $localVariables;
+
     public function __construct($type, $parentheses = null)
     {
         $this->type = $type;
         $this->nodes = array();
         $this->parentheses = $parentheses;
+    }
+
+    public function let($variable, $prefix)
+    {
+        $this->addNodes(
+            '$name = ' . var_export(ltrim($variable, '$'), true),
+            '$names = array()'
+        );
+        $while = new static('while', '($prev = $name) && ($name = "' . $prefix . 'l_" . $name) && isset($$prev)');
+        $while->addNode('$names[] = array($name, $prev)');
+        $this->addNode($while);
+        $while = new static('while', '$data = array_pop($names)');
+        $while->addNodes(
+            'list($name, $prev) = $data',
+            '$$name = $$prev'
+        );
+        $this->addNode($while);
+        $this->localVariables[] = func_get_args();
     }
 
     public function addNodes($nodes)
@@ -44,6 +67,23 @@ class Block
 
     public function getNodes()
     {
+        if (count($this->localVariables)) {
+            $localVariables = 'array(' . implode(', ', array_map(function ($data) {
+                return 'array(' . var_export($data[0], true) . ',' . var_export($data[1], true) . ')';
+            }, $this->localVariables)) . ')';
+            $foreach = new static('foreach', $localVariables . ' as $data');
+            $while = new static('while', '($prev = $name) && ($name = $prefix . "l_" . $name) && isset($$prev)');
+            $while->addNodes(
+                '$$prev = $$name',
+                'unset($$name)'
+            );
+            $foreach->addNodes(
+                'list($name, $prefix) = $data',
+                $while
+            );
+            $this->addNode($foreach);
+        }
+
         return $this->nodes;
     }
 

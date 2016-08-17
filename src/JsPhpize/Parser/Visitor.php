@@ -2,6 +2,8 @@
 
 namespace JsPhpize\Parser;
 
+use JsPhpize\JsPhpize;
+use JsPhpize\Nodes\Block;
 use JsPhpize\Nodes\Comment;
 
 class Visitor extends ExpressionParser
@@ -9,6 +11,43 @@ class Visitor extends ExpressionParser
     protected function visitComment($token)
     {
         return new Comment($token);
+    }
+
+    public function visitLet($token)
+    {
+        $variable = $this->current();
+        if (!$variable || $variable->type !== 'variable') {
+            $this->unexpected($variable);
+        }
+        $varPrefix = $this->engine->getOption('varPrefix', JsPhpize::VAR_PREFIX);
+
+        $this->getCurrentBlock()->let($variable->value, $varPrefix);
+
+        return $this->getExpression();
+    }
+
+    public function visitKeyword($token)
+    {
+        if (method_exists($this, $method = 'visit' . ucfirst($token->value))) {
+            return $this->$method($token);
+        }
+
+        if (($next = $this->current()) && in_array($next->type, array('(', '{'))) {
+            $block = new Block($token->value);
+            if ($next->type === '(') {
+                $this->skip();
+                $block->setParentheses($this->getExpression());
+                $this->skip();
+            }
+            if (($next = $this->current()) && $next->type === '{') {
+                $this->skip();
+                $this->parseBlock($block);
+            }
+
+            return $block;
+        }
+
+        return $token->value . ' ' . $this->getExpression();
     }
 
     protected function visitNode($token)
@@ -64,10 +103,5 @@ class Visitor extends ExpressionParser
         }
 
         return 'call_user_func(' . $this->getHelper('dot') . ', ' . implode(', ', $variableParts) . ')';
-    }
-
-    public function visitReturn($token)
-    {
-        return 'return ' . $this->getExpression();
     }
 }
