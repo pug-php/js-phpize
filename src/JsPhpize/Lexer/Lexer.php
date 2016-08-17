@@ -107,9 +107,9 @@ class Lexer extends Scanner
             '===|!==|>=|<=|<>|!=|==|>|<' => 'operator',
             '[\\|\\^&%\\/\\*\\+\\-]=' => 'operator',
             '[\\[\\]\\{\\}\\(\\)\\:\\.\\/\\*~\\!\\^\\|&%\\?,;\\+\\-]' => 'operator',
-            'as|async|await|break|case|catch|class|const|continue|debugger|default|do|else|enum|export|extends|finally|for|from|function|get|if|implements|import|in|instanceof|interface|let|new|of|package|private|protected|public|return|set|static|super|switch|throw|try|var|while|with|yield\*?' => 'keyword',
-            'null|undefined|Infinity|NaN|true|false|Math\.[A-Z][A-Z0-9_]*|[A-Z][A-Z0-9\\\\_\\x7f-\\xff]*|[\\\\\\x7f-\\xff_][A-Z0-9\\\\_\\x7f-\\xff]*[A-Z][A-Z0-9\\\\_\\x7f-\\xff]*' => 'constant',
-            '[a-zA-Z\\\\\\x7f-\\xff_][a-zA-Z0-9\\\\_\\x7f-\\xff]*' => 'variable',
+            '(?<![a-zA-Z0-9\\\\_\\x7f-\\xff])(as|async|await|break|case|catch|class|const|continue|debugger|default|do|else|enum|export|extends|finally|for|from|function|get|if|implements|import|in|instanceof|interface|let|new|of|package|private|protected|public|return|set|static|super|switch|throw|try|var|while|with|yield\*?)(?![a-zA-Z0-9\\\\_\\x7f-\\xff])' => 'keyword',
+            '(?<![a-zA-Z0-9\\\\_\\x7f-\\xff])(null|undefined|Infinity|NaN|true|false|Math\.[A-Z][A-Z0-9_]*|[A-Z][A-Z0-9\\\\_\\x7f-\\xff]*|[\\\\\\x7f-\\xff_][A-Z0-9\\\\_\\x7f-\\xff]*[A-Z][A-Z0-9\\\\_\\x7f-\\xff]*)(?![a-zA-Z0-9\\\\_\\x7f-\\xff])' => 'constant',
+            '(?<![a-zA-Z0-9\\\\_\\x7f-\\xff])[a-zA-Z\\\\\\x7f-\\xff_][a-zA-Z0-9\\\\_\\x7f-\\xff]*(?![a-zA-Z0-9\\\\_\\x7f-\\xff])' => 'variable',
             '[\\s\\S]' => 'operator',
         );
 
