@@ -37,10 +37,10 @@ class Block
             '$name = ' . var_export(ltrim($variable, '$'), true),
             '$names = array()'
         );
-        $while = new static('while', '($prev = $name) && ($name = "' . $prefix . 'l_" . $name) && isset($$prev)');
+        $while = new self('while', '($prev = $name) && ($name = "' . $prefix . 'l_" . $name) && isset($$prev)');
         $while->addNode('$names[] = array($name, $prev)');
         $this->addNode($while);
-        $while = new static('while', '$data = array_pop($names)');
+        $while = new self('while', '$data = array_pop($names)');
         $while->addNodes(
             'list($name, $prev) = $data',
             '$$name = $$prev'
@@ -71,8 +71,8 @@ class Block
             $localVariables = 'array(' . implode(', ', array_map(function ($data) {
                 return 'array(' . var_export($data[0], true) . ',' . var_export($data[1], true) . ')';
             }, $this->localVariables)) . ')';
-            $foreach = new static('foreach', $localVariables . ' as $data');
-            $while = new static('while', '($prev = $name) && ($name = $prefix . "l_" . $name) && isset($$prev)');
+            $foreach = new self('foreach', $localVariables . ' as $data');
+            $while = new self('while', '($prev = $name) && ($name = $prefix . "l_" . $name) && isset($$prev)');
             $while->addNodes(
                 '$$prev = $$name',
                 'unset($$name)'
