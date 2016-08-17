@@ -13,7 +13,7 @@ class BracketsArray extends ArrayBase
     {
         $items = array();
         foreach ($this->data as $key => $value) {
-            $items[] = var_export($key, true) . ' => ' . $value;
+            $items[] = $key . ' => ' . $value;
         }
 
         return $this->export($items);

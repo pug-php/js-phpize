@@ -30,7 +30,7 @@ class ExpressionParser
         while ($token = $this->next()) {
             if ($token->type === '}') {
                 if (!empty($value)) {
-                    $array->addItem($key, $value);
+                    $array->addItem(strval($key), $value);
                 }
 
                 return $array;
@@ -39,11 +39,11 @@ class ExpressionParser
             if (!$isValue) {
                 switch ($token->type) {
                     case 'string':
-                        $key = json_decode($token->value);
+                        $key = $token->value;
                         break;
                     case 'variable':
                     case 'constant':
-                        $key = $token->value;
+                        $key = var_export($token->value, true);
                         break;
                 }
                 if ($key === null) {
@@ -54,7 +54,7 @@ class ExpressionParser
                 continue;
             }
             if ($token->type === ',') {
-                $array->addItem(in_array($key->type, array('constant', 'variable')) ? var_export($key->value, true) : strval($key), $value);
+                $array->addItem(strval($key), $value);
                 $isValue = false;
                 $key = null;
                 $value = null;
