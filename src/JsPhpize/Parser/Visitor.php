@@ -65,8 +65,10 @@ class Visitor extends ExpressionParser
         }
         if ($next->type === '(') {
             $this->skip();
+            $call = $token->value . '(' . $this->getExpression() . ')';
+            $this->skip();
 
-            return $token->value . '(' . $this->getExpression() . ')';
+            return $call;
         }
         if ($next->isAssignation()) {
             $this->skip();
