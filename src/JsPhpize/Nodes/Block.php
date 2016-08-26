@@ -51,6 +51,10 @@ class Block
 
     public function addNodes($nodes)
     {
+        if ($nodes === array('$b')) {
+            throw new \Exception("Error Processing Request", 1);
+
+        }
         $nodes = array_filter(is_array($nodes) ? $nodes : func_get_args());
         $this->nodes = array_merge($this->nodes, $nodes);
     }

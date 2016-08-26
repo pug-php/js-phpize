@@ -100,10 +100,15 @@ class Visitor extends ExpressionParser
             $next = $this->get(0);
             $afterNext = $this->get(1);
         }
-        if (count($variableParts) === 1) {
-            return $variableParts[0];
+        $variable = count($variableParts) === 1
+            ? $variableParts[0]
+            : 'call_user_func(' . $this->getHelper('dot') . ', ' . implode(', ', $variableParts) . ')';
+        while ($next && $next->expectRightMember() && $next->type !== '+') {
+            $this->skip();
+            $variable .= ' ' . $next . ' ' . implode(' ', $this->visitToken($this->next()));
+            $next = $this->current();
         }
 
-        return 'call_user_func(' . $this->getHelper('dot') . ', ' . implode(', ', $variableParts) . ')';
+        return $variable;
     }
 }

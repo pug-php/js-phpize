@@ -134,6 +134,20 @@ class Parser extends Visitor
         return end($this->stack);
     }
 
+    protected function visitToken($token)
+    {
+        $block = $this->getCurrentBlock();
+        $method = 'visit' . ucfirst($token->type);
+        $token = method_exists($this, $method)
+            ? $this->$method($token)
+            : $this->visitNode($token);
+        if (!is_array($token)) {
+            $token = array($token);
+        }
+
+        return $token;
+    }
+
     public function parseBlock($block)
     {
         $this->stack[] = $block;
@@ -149,14 +163,7 @@ class Parser extends Visitor
             if ($token->type === '}') {
                 return;
             }
-            $method = 'visit' . ucfirst($token->type);
-            $token = method_exists($this, $method)
-                ? $this->$method($token)
-                : $this->visitNode($token);
-            if (!is_array($token)) {
-                $token = array($token);
-            }
-            $block->addNodes($token);
+            $block->addNodes($this->visitToken($token));
         }
         array_pop($this->stack);
     }
