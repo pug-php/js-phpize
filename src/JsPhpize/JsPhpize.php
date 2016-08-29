@@ -117,7 +117,7 @@ class JsPhpize
      */
     public function compileDependencies()
     {
-        $parser = new Parser($this, '');
+        $parser = new Parser($this, '', '__dependencies');
         $compiler = new Compiler($this);
         $block = $parser->parse();
         $block->addDependencies($this->dependencies);

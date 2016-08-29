@@ -13,6 +13,9 @@
         <testsuite name="compile">
             <file>tests/compile.php</file>
         </testsuite>
+        <testsuite name="JsPhpize">
+            <file>tests/JsPhpize/JsPhpize.php</file>
+        </testsuite>
     </testsuites>
     <filter>
         <whitelist processUncoveredFilesFromWhitelist="true">

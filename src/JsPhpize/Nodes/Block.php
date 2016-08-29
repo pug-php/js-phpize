@@ -24,11 +24,30 @@ class Block
      */
     protected $localVariables;
 
+    /**
+     * @var array
+     */
+    protected $dependencies;
+
     public function __construct($type, $parentheses = null)
     {
         $this->type = $type;
         $this->nodes = array();
+        $this->dependencies = array();
         $this->parentheses = $parentheses;
+    }
+
+    public function addDependencies($dependencies)
+    {
+        $this->dependencies = array_merge($this->dependencies, $dependencies);
+    }
+
+    public function popDependencies()
+    {
+        $dependencies = $this->dependencies;
+        $this->dependencies = array();
+
+        return $dependencies;
     }
 
     public function let($variable, $prefix)
@@ -87,6 +106,9 @@ class Block
 
     public function getNodes()
     {
+        foreach ($this->dependencies as $varname => $dependency) {
+            array_unshift($this->nodes, '$GLOBALS["' . $this->helperPrefix . $varname . '"] = ' . $dependency, new NodeEnd());
+        }
         if (count($this->localVariables)) {
             $localVariables = 'array(' . implode(', ', array_map(function ($data) {
                 return 'array(' . var_export($data[0], true) . ',' . var_export($data[1], true) . ')';
