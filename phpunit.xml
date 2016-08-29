@@ -13,8 +13,8 @@
         <testsuite name="compile">
             <file>tests/compile.php</file>
         </testsuite>
-        <testsuite name="JsPhpize">
-            <file>tests/JsPhpize/JsPhpize.php</file>
+        <testsuite name="mainMethods">
+            <file>tests/mainMethods.php</file>
         </testsuite>
     </testsuites>
     <filter>

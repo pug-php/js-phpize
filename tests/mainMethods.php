@@ -1,15 +1,13 @@
 <?php
 
-namespace JsPhpizeTest;
-
 use JsPhpize\JsPhpize;
 
-class JsPhpizeTest extends \PHPUnit_Framework_TestCase
+class MainMethodsTest extends \PHPUnit_Framework_TestCase
 {
     public function testCompileFile()
     {
         $jsPhpize = new JsPhpize();
-        $actual = $jsPhpize->compileFile(__DIR__ . '/../../examples/basic.js');
+        $actual = $jsPhpize->compileFile(__DIR__ . '/../examples/basic.js');
         $expected = <<<'EOD'
 $GLOBALS["__jp_h_plus"] = function ($base) {
     foreach (array_slice(func_get_args(), 1) as $value) {
@@ -50,7 +48,7 @@ EOD;
         $this->assertSame($expected, $actual);
         $this->assertSame('', $jsPhpize->compileDependencies());
 
-        $actual = $jsPhpize->compileFile(__DIR__ . '/../../examples/basic.js', true);
+        $actual = $jsPhpize->compileFile(__DIR__ . '/../examples/basic.js', true);
         $expected = <<<'EOD'
 $foo = array( 'bar' => array( "baz" => "hello" ) );
 // Comment
@@ -97,7 +95,7 @@ EOD;
         $expected = preg_replace('/\s/', '', $expected);
         $this->assertSame($expected, $actual);
 
-        $jsPhpize->compileFile(__DIR__ . '/../../examples/calcul.js', true);
+        $jsPhpize->compileFile(__DIR__ . '/../examples/calcul.js', true);
         $actual = $jsPhpize->compileDependencies();
         $actual = preg_replace('/\s/', '', $actual);
         $this->assertSame($expected, $actual);
@@ -127,7 +125,7 @@ EOD;
         $this->assertSame($expected, $actual);
 
         $dir = getcwd();
-        chdir(__DIR__ . '/../../examples');
+        chdir(__DIR__ . '/../examples');
         $actual = $jsPhpize->compileCode('calcul.js');
         chdir($dir);
         $expected = <<<'EOD'
@@ -157,5 +155,31 @@ EOD;
         $actual = preg_replace('/\s/', '', $actual);
         $expected = preg_replace('/\s/', '', $expected);
         $this->assertSame($expected, $actual);
+    }
+
+    public function testRender()
+    {
+        $jsPhpize = new JsPhpize();
+        $actual = $jsPhpize->render('return b;', array(
+            'b' => 42,
+        ));
+        $expected = 42;
+        $this->assertSame($expected, $actual);
+
+        error_reporting(E_ALL ^ E_NOTICE);
+        $actual = $jsPhpize->render('return b;');
+        $expected = null;
+        $this->assertSame($expected, $actual);
+
+        $jsPhpize->share('b', array(31));
+        $actual = $jsPhpize->render('return b;');
+        $expected = array(31);
+        $this->assertSame($expected, $actual);
+
+        $jsPhpize->resetSharedVariables();
+        $actual = $jsPhpize->render('return b;');
+        $expected = null;
+        $this->assertSame($expected, $actual);
+        error_reporting(-1);
     }
 }
