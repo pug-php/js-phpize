@@ -33,15 +33,15 @@ class Block
 
     public function let($variable, $prefix)
     {
-        $this->addNodes(
+        $this->addInstructions(
             '$name = ' . var_export(ltrim($variable, '$'), true),
             '$names = array()'
         );
         $while = new self('while', '($prev = $name) && ($name = "' . $prefix . 'l_" . $name) && isset($$prev)');
-        $while->addNode('$names[] = array($name, $prev)');
+        $while->addInstruction('$names[] = array($name, $prev)');
         $this->addNode($while);
         $while = new self('while', '$data = array_pop($names)');
-        $while->addNodes(
+        $while->addInstructions(
             'list($name, $prev) = $data',
             '$$name = $$prev'
         );
@@ -51,13 +51,33 @@ class Block
 
     public function addNodes($nodes)
     {
-        $nodes = array_filter(is_array($nodes) ? $nodes : func_get_args());
-        $this->nodes = array_merge($this->nodes, $nodes);
+        foreach (array_filter(is_array($nodes) ? $nodes : func_get_args()) as $node) {
+            if (is_string($node) && is_string(end($this->nodes))) {
+                $this->nodes[count($this->nodes) - 1] .= ' ' . $node;
+            } else {
+                $this->nodes[] = $node;
+            }
+        }
     }
 
     public function addNode()
     {
         $this->addNodes(func_get_args());
+    }
+
+    public function addInstructions($instructions)
+    {
+        foreach (is_array($instructions) ? $instructions : func_get_args() as $instruction) {
+            $this->addNode(
+                $instruction,
+                new NodeEnd()
+            );
+        }
+    }
+
+    public function addInstruction()
+    {
+        $this->addInstructions(func_get_args());
     }
 
     public function setParentheses($parentheses)
@@ -73,7 +93,7 @@ class Block
             }, $this->localVariables)) . ')';
             $foreach = new self('foreach', $localVariables . ' as $data');
             $while = new self('while', '($prev = $name) && ($name = $prefix . "l_" . $name) && isset($$prev)');
-            $while->addNodes(
+            $while->addInstructions(
                 '$$prev = $$name',
                 'unset($$name)'
             );

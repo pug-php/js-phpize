@@ -5,6 +5,7 @@ namespace JsPhpize\Parser;
 use JsPhpize\JsPhpize;
 use JsPhpize\Lexer\Lexer;
 use JsPhpize\Nodes\Main;
+use JsPhpize\Nodes\NodeEnd;
 
 class Parser extends Visitor
 {
@@ -32,6 +33,11 @@ class Parser extends Visitor
      * @var array
      */
     protected $stack;
+
+    /**
+     * @var Token
+     */
+    protected $previousToken;
 
     public function __construct(JsPhpize $engine, $input, $filename)
     {
@@ -68,6 +74,15 @@ class Parser extends Visitor
         return '$GLOBALS["' . $this->engine->getOption('varPrefix', JsPhpize::VAR_PREFIX) . 'h_' . $helper . '"]';
     }
 
+    protected function helperWrap($helper, $argumments)
+    {
+        if (!is_array($argumments)) {
+            $argumments = array_slice(func_get_args(), 1);
+        }
+
+        return 'call_user_func(' . $this->getHelper($helper) . ', ' . implode(', ', $argumments) . ')';
+    }
+
     protected function exceptionInfos()
     {
         return $this->lexer->exceptionInfos();
@@ -78,9 +93,14 @@ class Parser extends Visitor
         return array_unshift($this->tokens, $token);
     }
 
+    protected function getNextUnread()
+    {
+        return $this->lexer->next();
+    }
+
     protected function next()
     {
-        return array_shift($this->tokens) ?: $this->lexer->next();
+        return array_shift($this->tokens) ?: $this->getNextUnread();
     }
 
     protected function skip($index = 1)
@@ -95,7 +115,7 @@ class Parser extends Visitor
         $token = null;
 
         while ($index--) {
-            $token = $this->lexer->next();
+            $token = $this->getNextUnread();
             $this->tokens[] = $token;
         }
 
@@ -104,6 +124,10 @@ class Parser extends Visitor
 
     protected function get($index)
     {
+        if ($index === -1) {
+            return $this->previous();
+        }
+
         return isset($this->tokens[$index])
             ? $this->tokens[$index]
             : $this->advance($index + 1 - count($this->tokens));
@@ -112,6 +136,11 @@ class Parser extends Visitor
     protected function current()
     {
         return $this->get(0);
+    }
+
+    protected function previous()
+    {
+        return $this->previousToken;
     }
 
     protected function unexpected($token)
@@ -136,7 +165,6 @@ class Parser extends Visitor
 
     protected function visitToken($token)
     {
-        $block = $this->getCurrentBlock();
         $method = 'visit' . ucfirst($token->type);
         $token = method_exists($this, $method)
             ? $this->$method($token)
@@ -151,15 +179,16 @@ class Parser extends Visitor
     public function parseBlock($block)
     {
         $this->stack[] = $block;
-        $prev = null;
+        $this->previousToken = null;
         while ($token = $this->next()) {
-            if ($token === $prev) {
+            if ($token === $this->previousToken) {
                 $this->unexpected($token);
             }
-            $prev = $token;
             if ($token->type === ';') {
+                $block->addNode(new NodeEnd($token));
                 continue;
             }
+            $this->previousToken = $token;
             if ($token->type === '}') {
                 return;
             }

@@ -21,23 +21,28 @@ class Compiler
     protected function outputNode($node, $indent)
     {
         if ($node instanceof Block) {
-            return $indent . $node->getHead() . '{' . "\n" .
+            return $indent . $node->getHead() . "{\n" .
                 $this->compile($node, '  ' . $indent) .
-                $indent . '}';
+                $indent . "}\n";
         }
         if ($node instanceof Comment) {
-            return $indent . $node;
+            return $indent . $node . "\n";
+        }
+        $node = rtrim($node, ';');
+        if (empty($node)) {
+            return '';
         }
 
-        return $indent . rtrim($node, ';') . ';';
+        return $indent . $node . ";\n";
     }
 
     public function compile(Block $block, $indent = '')
     {
         $output = '';
+        $line = array();
 
         foreach ($block->getNodes() as $node) {
-            $output .= $this->outputNode($node, $indent) . "\n";
+            $output .= $this->outputNode($node, $indent);
         }
 
         return $output;

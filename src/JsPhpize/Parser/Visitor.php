@@ -5,6 +5,7 @@ namespace JsPhpize\Parser;
 use JsPhpize\JsPhpize;
 use JsPhpize\Nodes\Block;
 use JsPhpize\Nodes\Comment;
+use JsPhpize\Nodes\NodeEnd;
 
 class Visitor extends ExpressionParser
 {
@@ -52,6 +53,12 @@ class Visitor extends ExpressionParser
 
     protected function visitNode($token)
     {
+        if ($token->type === 'newline') {
+            return ($previous = $this->previous()) && $previous->canBeFollowedBy($this->current())
+                ? array()
+                : new NodeEnd($token);
+        }
+
         $this->prepend($token);
 
         return $this->getExpression();
@@ -91,23 +98,15 @@ class Visitor extends ExpressionParser
             )
         ) {
             $this->skip();
-            if ($parenthesis) {
-                $variableParts = array('call_user_func(call_user_func(' . $this->getHelper('dot') . ', ' . implode(', ', $variableParts) . '), ' . $this->getExpression() . ')');
-            } else {
-                $variableParts[] = $bracket ? $this->getExpression() : var_export($afterNext->value, true);
-            }
+            $this->appendToVariableParts($variableParts, $afterNext, $bracket, $parenthesis);
             $this->skip();
             $next = $this->get(0);
             $afterNext = $this->get(1);
         }
         $variable = count($variableParts) === 1
             ? $variableParts[0]
-            : 'call_user_func(' . $this->getHelper('dot') . ', ' . implode(', ', $variableParts) . ')';
-        while ($next && $next->expectRightMember() && $next->type !== '+') {
-            $this->skip();
-            $variable .= ' ' . $next . ' ' . implode(' ', $this->visitToken($this->next()));
-            $next = $this->current();
-        }
+            : $this->helperWrap('dot', $variableParts);
+        $this->dyiade($variable, $next);
 
         return $variable;
     }

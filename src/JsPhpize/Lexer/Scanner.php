@@ -11,6 +11,11 @@ class Scanner
         return $this->valueToken('comment', $matches);
     }
 
+    public function scanNewline($matches)
+    {
+        return $this->valueToken('newline', $matches);
+    }
+
     public function scanConstant($matches)
     {
         $constant = trim($matches[0]);

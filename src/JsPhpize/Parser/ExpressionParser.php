@@ -138,7 +138,7 @@ class ExpressionParser
                         $element = ',';
                     }
                 }
-                $token = 'call_user_func(' . $this->getHelper('plus') . ', ' . $before . ' ' . implode(' ', $after) . ')';
+                $token = $this->helperWrap('plus', $before . ' ' . implode(' ', $after));
             }
         }
 
@@ -174,5 +174,28 @@ class ExpressionParser
         }
 
         return implode(' ', $expression);
+    }
+
+    protected function dyiade(&$variable, $next)
+    {
+        while ($next && $next->expectRightMember()) {
+            $this->skip();
+            $variable = $next->type === '+'
+                ? $this->helperWrap('plus', $variable, $this->getExpression(false))
+                : $variable . ' ' . $next . ' ' . implode(' ', $this->visitToken($this->next()));
+            $next = $this->current();
+        }
+    }
+
+    protected function appendToVariableParts(&$variableParts, $afterNext, $bracket, $parenthesis)
+    {
+        if ($parenthesis) {
+            $variableParts = array('call_user_func(' . $this->helperWrap('dot', $variableParts) . ', ' . $this->getExpression() . ')');
+
+            return;
+        }
+        $variableParts[] = $bracket
+            ? $this->getExpression()
+            : var_export($afterNext->value, true);
     }
 }
