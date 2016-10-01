@@ -38,6 +38,8 @@ class ExpressionParser
 
             if (!$isValue) {
                 switch ($token->type) {
+                    case 'newline':
+                        continue 2;
                     case 'string':
                         $key = $token->value;
                         break;
@@ -139,6 +141,12 @@ class ExpressionParser
                     }
                 }
                 $token = $this->helperWrap('plus', $before . ' ' . implode(' ', $after));
+            }
+        } else {
+            while (strval(end($expression)) === '+') {
+                array_pop($expression);
+                $before = array_pop($expression);
+                $token = $this->helperWrap('plus', $before, $token);
             }
         }
 

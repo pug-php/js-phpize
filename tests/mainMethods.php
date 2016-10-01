@@ -115,6 +115,22 @@ EOD;
         }
     }
 
+    /**
+     * @group group
+     */
+    public function testCompileConcat()
+    {
+        $jsPhpize = new JsPhpize();
+        $actual = $jsPhpize->render('return "group[" + group.id + "]"', array(
+            'group' => (object) array(
+                'id' => 4,
+            ),
+        ));
+        $expected = 'group[4]';
+
+        $this->assertSame($expected, $actual);
+    }
+
     public function testCompileSource()
     {
         $jsPhpize = new JsPhpize();
