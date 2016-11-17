@@ -4,14 +4,8 @@ namespace JsPhpize\Nodes;
 
 class Main extends Block
 {
-    /**
-     * @var string
-     */
-    protected $helperPrefix;
-
-    public function __construct($helperPrefix, $parentheses = null)
+    public function __construct($parentheses = null)
     {
-        $this->helperPrefix = $helperPrefix;
         parent::__construct('main', $parentheses);
     }
 }

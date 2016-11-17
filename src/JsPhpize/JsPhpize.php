@@ -8,8 +8,8 @@ use JsPhpize\Parser\Parser;
 
 class JsPhpize
 {
-    const CONST_PREFIX = '__JP_';
-    const VAR_PREFIX = '__jp_';
+    const CONST_PREFIX = '__JPC_';
+    const VAR_PREFIX = '__jpv_';
 
     /**
      * @var string
@@ -64,6 +64,9 @@ class JsPhpize
         $parser = new Parser($this, $input, $filename);
         $compiler = new Compiler($this);
         $block = $parser->parse();
+        var_dump($input, $block->getInstructions()[0]);
+        exit;
+        // $this->getOption('varPrefix', JsPhpize::VAR_PREFIX) . 'h_'
         if ($catchDependencies) {
             $this->dependencies = array_merge($this->dependencies, $block->popDependencies());
         }

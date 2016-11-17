@@ -2,7 +2,9 @@
 
 namespace JsPhpize\Nodes;
 
-class Parenthesis
+use JsPhpize\Parse\Exception;
+
+class Parenthesis extends Value
 {
     /**
      * @var array
@@ -17,16 +19,16 @@ class Parenthesis
     public function addNodes($nodes)
     {
         $nodes = array_filter(is_array($nodes) ? $nodes : func_get_args());
-        $this->nodes = array_merge($this->nodes, $nodes);
+        foreach ($nodes as $node) {
+            if (!$node instanceof Value) {
+                throw new Exception('Every node in a parenthesis must be an instance of Value.', 11);
+            }
+            $this->nodes[] = $node;
+        }
     }
 
     public function addNode()
     {
         $this->addNodes(func_get_args());
-    }
-
-    public function __toString()
-    {
-        return implode(' ', $this->nodes);
     }
 }

@@ -46,8 +46,14 @@ class Lexer extends Scanner
 
     public function exceptionInfos()
     {
+        static $fileInfo = null;
+
+        if (is_null($fileInfo)) {
+            $fileInfo = $this->filename ? ' in ' . realpath($this->filename) : '';
+        }
+
         return
-            ($this->filename ? ' in ' . realpath($this->filename) : '') .
+            $fileInfo .
             ' on line ' . $this->line .
             ' near from ' . trim($this->consumed);
     }

@@ -115,9 +115,6 @@ EOD;
         }
     }
 
-    /**
-     * @group group
-     */
     public function testCompileConcat()
     {
         $jsPhpize = new JsPhpize();
@@ -129,6 +126,21 @@ EOD;
         $expected = 'group[4]';
 
         $this->assertSame($expected, $actual);
+    }
+
+    /**
+     * @group concat
+     */
+    public function testConcatenation()
+    {
+
+            $jsPhpize = new JsPhpize();
+            $actual = $jsPhpize->compile("'a' + a.i", array(
+                'a' => 'b',
+            ));
+            $expected = 'ab';
+
+            $this->assertSame($expected, $actual);
     }
 
     public function testCompileSource()
