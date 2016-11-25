@@ -2,7 +2,7 @@
 
 namespace JsPhpize\Nodes;
 
-class Dyiade extends Value
+class Ternary extends Value
 {
     /**
      * @var Value
