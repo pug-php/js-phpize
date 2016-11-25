@@ -16,6 +16,9 @@
         <testsuite name="mainMethods">
             <file>tests/mainMethods.php</file>
         </testsuite>
+        <testsuite name="stream">
+            <file>tests/stream.php</file>
+        </testsuite>
     </testsuites>
     <filter>
         <whitelist processUncoveredFilesFromWhitelist="true">
