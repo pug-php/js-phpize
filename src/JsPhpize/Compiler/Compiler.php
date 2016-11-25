@@ -77,7 +77,7 @@ class Compiler
         $varPrefix = $this->varPrefix;
 
         return implode('', array_map(function ($name) use ($varPrefix) {
-            return '$GLOBALS[\'' . $this->varPrefix . $name . '\'] = ' .
+            return '$GLOBALS[\'' . $varPrefix . $name . '\'] = ' .
                 trim(file_get_contents(__DIR__ . '/Helpers/' . ucfirst($name) . '.h')) .
                 ";\n";
         }, $dependencies));
