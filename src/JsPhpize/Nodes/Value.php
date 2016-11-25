@@ -7,12 +7,12 @@ abstract class Value extends Node
     /**
      * @var array
      */
-    protected $before;
+    protected $before = array();
 
     /**
      * @var array
      */
-    protected $after;
+    protected $after = array();
 
     public function getBefore()
     {

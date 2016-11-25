@@ -2,7 +2,7 @@
 
 namespace JsPhpize\Nodes;
 
-use JsPhpize\Parse\Exception;
+use JsPhpize\Parser\Exception;
 
 class Instruction extends Node
 {
@@ -17,9 +17,9 @@ class Instruction extends Node
             throw new Exception('An instance of Assignation or Value was expected, ' . gettype($instruction) . ' value type given.', 10);
         }
 
-        if (!$instruction instanceof Assignation
-        && !$instruction instanceof Value) {
-            throw new Exception('An instance of Assignation or Value was expected, ' . get_class($instruction) . ' instance given.', 10);
+        if (!$instruction instanceof Value
+        && !$instruction instanceof Block) {
+            throw new Exception('An instance of Block or Value was expected, ' . get_class($instruction) . ' instance given.', 10);
         }
 
         $this->instructions[] = $instruction;

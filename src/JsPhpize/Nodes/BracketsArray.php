@@ -6,6 +6,6 @@ class BracketsArray extends ArrayBase
 {
     public function addItem(Constant $key, Value $value)
     {
-        $this->data[$key] = $value;
+        $this->data[] = array($key, $value);
     }
 }

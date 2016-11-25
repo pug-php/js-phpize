@@ -11,6 +11,11 @@ class Parenthesis extends Value
      */
     protected $nodes;
 
+    /**
+     * @var string
+     */
+    protected $separator = ',';
+
     public function __construct()
     {
         $this->nodes = array();
@@ -30,5 +35,10 @@ class Parenthesis extends Value
     public function addNode()
     {
         $this->addNodes(func_get_args());
+    }
+
+    public function setSeparator($separator)
+    {
+        $this->separator = $separator;
     }
 }

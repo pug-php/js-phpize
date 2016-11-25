@@ -11,7 +11,7 @@ class CompileTest extends \PHPUnit_Framework_TestCase
         $examples = __DIR__ . '/../examples';
         foreach (scandir($examples) as $file) {
             if (substr($file, -4) === '.php') {
-                $cases[] = array($examples . '/' . $file, $examples . '/' . substr($file, 0, -4) . '.js');
+                $cases[] = array($file, substr($file, 0, -4) . '.js');
             }
         }
 
@@ -23,9 +23,10 @@ class CompileTest extends \PHPUnit_Framework_TestCase
      */
     public function testJsPhpizeGeneration($phpFile, $jsFile)
     {
+        $examples = __DIR__ . '/../examples';
         $jsPhpize = new JsPhpize();
-        $expected = file_get_contents($phpFile);
-        $result = $jsPhpize->compile($jsFile);
+        $expected = file_get_contents($examples . '/' . $phpFile);
+        $result = $jsPhpize->compile($examples . '/' . $jsFile);
 
         $expected = str_replace("\r", '', trim($expected));
         $actual = str_replace("\r", '', trim($result));

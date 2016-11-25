@@ -11,7 +11,7 @@ class RenderTest extends \PHPUnit_Framework_TestCase
         $examples = __DIR__ . '/../examples';
         foreach (scandir($examples) as $file) {
             if (substr($file, -7) === '.return') {
-                $cases[] = array($examples . '/' . $file, $examples . '/' . substr($file, 0, -7) . '.js');
+                $cases[] = array($file, substr($file, 0, -7) . '.js');
             }
         }
 
@@ -23,9 +23,10 @@ class RenderTest extends \PHPUnit_Framework_TestCase
      */
     public function testJsPhpizeGeneration($returnFile, $jsFile)
     {
+        $examples = __DIR__ . '/../examples';
         $jsPhpize = new JsPhpize();
-        $expected = file_get_contents($returnFile);
-        $result = $jsPhpize->render($jsFile);
+        $expected = file_get_contents($examples . '/' . $returnFile);
+        $result = $jsPhpize->render($examples . '/' . $jsFile);
 
         $expected = str_replace("\r", '', trim($expected));
         $actual = str_replace("\r", '', trim($result));

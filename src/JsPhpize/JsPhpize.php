@@ -46,6 +46,16 @@ class JsPhpize
         return isset($this->options[$key]) ? $this->options[$key] : $default;
     }
 
+    public function getVarPrefix()
+    {
+        return $this->getOption('varPrefix', static::VAR_PREFIX);
+    }
+
+    public function getConstPrefix()
+    {
+        return $this->getOption('constPrefix', static::CONST_PREFIX);
+    }
+
     /**
      * Compile file or code (detect if $input is an exisisting file, else use it as content).
      *
@@ -64,14 +74,16 @@ class JsPhpize
         $parser = new Parser($this, $input, $filename);
         $compiler = new Compiler($this);
         $block = $parser->parse();
-        var_dump($input, $block->getInstructions()[0]);
-        exit;
-        // $this->getOption('varPrefix', JsPhpize::VAR_PREFIX) . 'h_'
-        if ($catchDependencies) {
-            $this->dependencies = array_merge($this->dependencies, $block->popDependencies());
-        }
+        $php = $compiler->compile($block);
 
-        return $compiler->compile($block);
+        $dependencies = $compiler->getDependencies();
+        if ($catchDependencies) {
+            $this->dependencies = $dependencies;
+            $dependencies = array();
+        }
+        $php = $compiler->compileDependencies($dependencies) . $php;
+
+        return $php;
     }
 
     /**
@@ -120,12 +132,9 @@ class JsPhpize
      */
     public function compileDependencies()
     {
-        $parser = new Parser($this, '', '__dependencies');
         $compiler = new Compiler($this);
-        $block = $parser->parse();
-        $block->addDependencies($this->dependencies);
 
-        return $compiler->compile($block);
+        return $compiler->compileDependencies($this->dependencies);
     }
 
     /**

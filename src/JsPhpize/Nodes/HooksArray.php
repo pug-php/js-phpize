@@ -10,9 +10,4 @@ class HooksArray extends ArrayBase
             $this->data[] = $value;
         }
     }
-
-    public function __toString()
-    {
-        return $this->export($this->data);
-    }
 }

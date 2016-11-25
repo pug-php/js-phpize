@@ -2,7 +2,7 @@
 
 namespace JsPhpize\Nodes;
 
-abstract class ArrayBase extends Node
+abstract class ArrayBase extends Value
 {
     protected $data = array();
 }

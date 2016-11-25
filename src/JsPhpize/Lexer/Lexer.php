@@ -29,6 +29,11 @@ class Lexer extends Scanner
     /**
      * @var string
      */
+    protected $fileInfo = null;
+
+    /**
+     * @var string
+     */
     protected $consumed = '';
 
     public function __construct(JsPhpize $engine, $input, $filename)
@@ -46,14 +51,12 @@ class Lexer extends Scanner
 
     public function exceptionInfos()
     {
-        static $fileInfo = null;
-
-        if (is_null($fileInfo)) {
-            $fileInfo = $this->filename ? ' in ' . realpath($this->filename) : '';
+        if (is_null($this->fileInfo)) {
+            $this->fileInfo = $this->filename ? ' in ' . realpath($this->filename) : '';
         }
 
         return
-            $fileInfo .
+            $this->fileInfo .
             ' on line ' . $this->line .
             ' near from ' . trim($this->consumed);
     }

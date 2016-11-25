@@ -5,11 +5,15 @@ namespace JsPhpize\Parser;
 use JsPhpize\JsPhpize;
 use JsPhpize\Lexer\Lexer;
 use JsPhpize\Lexer\Token;
+use JsPhpize\Nodes\Assignation;
+use JsPhpize\Nodes\Block;
 use JsPhpize\Nodes\BracketsArray;
 use JsPhpize\Nodes\Constant;
+use JsPhpize\Nodes\Dyiade;
 use JsPhpize\Nodes\FunctionCall;
 use JsPhpize\Nodes\HooksArray;
 use JsPhpize\Nodes\Main;
+use JsPhpize\Nodes\Parenthesis;
 use JsPhpize\Nodes\Variable;
 
 class Parser
@@ -55,7 +59,7 @@ class Parser
 
     protected function retrieveNext()
     {
-        while (($next = $this->lexer->next()) && $next->is('comment'));
+        while (($next = $this->lexer->next()) && $next->isNeutral());
 
         return $next;
     }
@@ -86,6 +90,10 @@ class Parser
 
     protected function unexpected($token)
     {
+        // var_dump($token);
+        // var_dump($this->stack[0]->instructions[2]->instructions[0]);
+        // exit;
+
         throw new Exception('Unexpected ' . $token->type . rtrim(' ' . ($token->value ?: '')) . $this->exceptionInfos(), 8);
     }
 
@@ -95,12 +103,14 @@ class Parser
         $exceptionInfos = $this->exceptionInfos();
         $expectComma = false;
         while ($token = $this->next()) {
+            $debug[] = $token;
             if ($token->is(')')) {
                 return $parentheses;
             }
             if ($expectComma) {
                 if ($token->is(',')) {
                     $expectComma = false;
+
                     continue;
                 }
                 $this->unexpected($token);
@@ -108,6 +118,7 @@ class Parser
             if ($value = $this->getValueFromToken($token)) {
                 $expectComma = true;
                 $parentheses->addNode($value);
+
                 continue;
             }
             $this->unexpected($token);
@@ -128,6 +139,7 @@ class Parser
             if ($expectComma) {
                 if ($token->is(',')) {
                     $expectComma = false;
+
                     continue;
                 }
                 $this->unexpected($token);
@@ -135,6 +147,7 @@ class Parser
             if ($value = $this->getValueFromToken($token)) {
                 $expectComma = true;
                 $array->addItem($value);
+
                 continue;
             }
             $this->unexpected($token);
@@ -155,6 +168,7 @@ class Parser
             if ($expectComma) {
                 if ($token->is(',')) {
                     $expectComma = false;
+
                     continue;
                 }
                 $this->unexpected($token);
@@ -164,7 +178,7 @@ class Parser
                 $value = $token->value;
                 if ($type === 'variable') {
                     $type = 'string';
-                    $value = var_export($type, true);
+                    $value = var_export($value, true);
                 }
                 $token = $this->next();
                 if (!$token) {
@@ -177,6 +191,8 @@ class Parser
                 $value = $this->expectValue($this->next());
                 $expectComma = true;
                 $array->addItem($key, $value);
+
+                continue;
             }
             $this->unexpected($token);
         }
@@ -224,10 +240,21 @@ class Parser
             break;
         }
 
-        return new Variable($name, $children);
+        $variable = new Variable($name, $children);
+
+        for ($i = count($this->stack) - 1; $i >= 0; $i--) {
+            $block = $this->stack[$i];
+            if ($block->isLet($name)) {
+                $variable->setScope($block);
+
+                break;
+            }
+        }
+
+        return $variable;
     }
 
-    protected function expectValue($next, $exception)
+    protected function expectValue($next, $exception = null)
     {
         if (!$next) {
             if ($exception instanceof \Exception) {
@@ -248,6 +275,7 @@ class Parser
 
     protected function parseValue($token)
     {
+        $debug = ($token->value === 'array_slice');
         $value = $token->is('variable')
             ? $this->parseVariable($token->value)
             : new Constant($token->type, $token->value);
@@ -256,19 +284,26 @@ class Parser
             if ($token->isValue()) {
                 $this->unexpected($this->next());
             }
+            if ($token->is('(')) {
+                $this->skip();
+                $arguments = array();
+                $value = new FunctionCall($value, $this->parseParentheses()->nodes);
+
+                continue;
+            }
+            if ($token->is('{') || $token->expectNoLeftMember()) {
+                $this->unexpected($this->next());
+            }
             if ($token->isOperator()) {
-                if ($token->is('{') || $token->expectNoLeftMember()) {
-                    $this->unexpected($this->next());
-                }
                 if ($token->isIn('++', '--')) {
                     $value->append($his->next()->value);
 
-                    continue;
+                    break;
                 }
-                if ($token->is('(')) {
+                if ($token->isAssignation()) {
                     $this->skip();
                     $arguments = array();
-                    $value = new FunctionCall($value, $this->parseParentheses()->nodes);
+                    $value = new Assignation($token->type, $value, $this->expectValue($this->next()));
 
                     continue;
                 }
@@ -291,8 +326,12 @@ class Parser
 
                     continue;
                 }
+
+                $this->skip();
                 $nextValue = $this->expectValue($this->next());
-                $value = new Dyiade($token->value, $value, $nextValue);
+                $value = new Dyiade($token->type, $value, $nextValue);
+
+                continue;
             }
 
             break;
@@ -313,8 +352,8 @@ class Parser
             return $this->parseBracketsArray();
         }
         if ($token->isOperator() && $token->isIn('~', '!', '--', '++', '-', '+', 'delete', 'typeof', 'void')) {
-            $value = $this->expectValue($next, $token);
-            $value->prepend($token->value);
+            $value = $this->expectValue($this->next(), $token);
+            $value->prepend($token->type);
 
             return $value;
         }
@@ -330,10 +369,13 @@ class Parser
         $next = $this->get(0);
         if ($next->is('(')) {
             $this->skip();
-            $block->setParentheses($this->parseParentheses());
+            $block->setValue($this->parseParentheses());
         }
         $next = $this->get(0);
         $waitForBracketToClose = $next->is('{');
+        if ($waitForBracketToClose && $block->type !== 'main') {
+            $this->skip();
+        }
         while ($token = $this->next()) {
             if ($token === $this->previousToken) {
                 $this->unexpected($token);
@@ -341,8 +383,41 @@ class Parser
             if ($token->is('}') && $waitForBracketToClose) {
                 break;
             }
+            if ($token->is('let')) {
+                $letVariable = $this->get(0);
+                if (!$letVariable->is('variable')) {
+                    $this->unexpected($letVariable, $token);
+                }
+                $block->let($letVariable->value);
+                continue;
+            }
             if ($token->is('keyword')) {
-                $block->addInstruction($this->parseBlock());
+                $name = $token->value;
+                $keyword = new Block($name);
+                switch ($name) {
+                    case 'return':
+                    case 'continue':
+                    case 'break':
+                        $afterKeyword = $this->get(0);
+                        if ($afterKeyword && $afterKeyword->isValue()) {
+                            $value = $this->expectValue($this->next());
+                            $keyword->setValue($value);
+                        }
+                        break;
+                    case 'case':
+                    case 'default':
+                        break;
+                    default:
+                        $next = $this->get(0);
+                        if ($next->is('(')) {
+                            $this->skip();
+                            $keyword->setValue($this->parseParentheses());
+                        }
+                }
+                if ($keyword->handleInstructions()) {
+                    $this->parseBlock($keyword);
+                }
+                $block->addInstruction($keyword);
                 continue;
             }
             if ($value = $this->getValueFromToken($token)) {

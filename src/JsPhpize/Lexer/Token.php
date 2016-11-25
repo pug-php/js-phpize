@@ -78,6 +78,11 @@ class Token
         return $this->isAssignation() || $this->isComparison() || $this->isArithmetic() || $this->isBinary() || $this->isLogical() || $this->isVarOperator();
     }
 
+    public function isNeutral()
+    {
+        return $this->isIn('comment', 'newline');
+    }
+
     public function expectNoLeftMember()
     {
         return in_array($this->type, array('!', '~')) || $this->isVarOperator();

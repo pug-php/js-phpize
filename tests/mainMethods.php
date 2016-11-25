@@ -9,14 +9,7 @@ class MainMethodsTest extends \PHPUnit_Framework_TestCase
         $jsPhpize = new JsPhpize();
         $actual = $jsPhpize->compileFile(__DIR__ . '/../examples/basic.js');
         $expected = <<<'EOD'
-$GLOBALS["__jp_h_plus"] = function ($base) {
-    foreach (array_slice(func_get_args(), 1) as $value) {
-        $base = is_string($base) || is_string($value) ? $base . $value : $base + $value;
-    }
-
-    return $base;
-};
-$GLOBALS["__jp_h_dot"] = function ($base) {
+$GLOBALS['__jpv_dot'] = function ($base) {
     foreach (array_slice(func_get_args(), 1) as $key) {
         $base = is_array($base)
             ? (isset($base[$key]) ? $base[$key] : null)
@@ -37,24 +30,27 @@ $GLOBALS["__jp_h_dot"] = function ($base) {
 
     return $base;
 };
+$GLOBALS['__jpv_plus'] = function ($base) {
+    foreach (array_slice(func_get_args(), 1) as $value) {
+        $base = is_string($base) || is_string($value) ? $base . $value : $base + $value;
+    }
+
+    return $base;
+};
 $foo = array( 'bar' => array( "baz" => "hello" ) );
-// Comment
 $biz = 'bar';
-// com
-return call_user_func($GLOBALS["__jp_h_plus"], call_user_func($GLOBALS["__jp_h_dot"], $foo, 'bar', "baz"), ' ' , call_user_func($GLOBALS["__jp_h_plus"], call_user_func($GLOBALS["__jp_h_dot"], $foo, $biz, 'baz'), " " , call_user_func($GLOBALS["__jp_h_dot"], $foo, 'bar', 'baz')));
+return call_user_func($GLOBALS['__jpv_plus'], call_user_func($GLOBALS['__jpv_dot'], $foo, 'bar', "baz"), ' ', call_user_func($GLOBALS['__jpv_dot'], $foo, $biz, 'baz'), " ", call_user_func($GLOBALS['__jpv_dot'], $foo, 'bar', 'baz'));
 EOD;
-        $actual = preg_replace('/\s/', '', $actual);
-        $expected = preg_replace('/\s/', '', $expected);
+        $actual = str_replace(';', ";\n", preg_replace('/\s/', '', $actual));
+        $expected = str_replace(';', ";\n", preg_replace('/\s/', '', $expected));
         $this->assertSame($expected, $actual);
         $this->assertSame('', $jsPhpize->compileDependencies());
 
         $actual = $jsPhpize->compileFile(__DIR__ . '/../examples/basic.js', true);
         $expected = <<<'EOD'
 $foo = array( 'bar' => array( "baz" => "hello" ) );
-// Comment
 $biz = 'bar';
-// com
-return call_user_func($GLOBALS["__jp_h_plus"], call_user_func($GLOBALS["__jp_h_dot"], $foo, 'bar', "baz"), ' ' , call_user_func($GLOBALS["__jp_h_plus"], call_user_func($GLOBALS["__jp_h_dot"], $foo, $biz, 'baz'), " " , call_user_func($GLOBALS["__jp_h_dot"], $foo, 'bar', 'baz')));
+return call_user_func($GLOBALS['__jpv_plus'], call_user_func($GLOBALS['__jpv_dot'], $foo, 'bar', "baz"), ' ', call_user_func($GLOBALS['__jpv_dot'], $foo, $biz, 'baz'), " ", call_user_func($GLOBALS['__jpv_dot'], $foo, 'bar', 'baz'));
 EOD;
         $actual = preg_replace('/\s/', '', $actual);
         $expected = preg_replace('/\s/', '', $expected);
@@ -62,14 +58,7 @@ EOD;
 
         $actual = $jsPhpize->compileDependencies();
         $expected = <<<'EOD'
-$GLOBALS["__jp_h_plus"] = function ($base) {
-    foreach (array_slice(func_get_args(), 1) as $value) {
-        $base = is_string($base) || is_string($value) ? $base . $value : $base + $value;
-    }
-
-    return $base;
-};
-$GLOBALS["__jp_h_dot"] = function ($base) {
+$GLOBALS['__jpv_dot'] = function ($base) {
     foreach (array_slice(func_get_args(), 1) as $key) {
         $base = is_array($base)
             ? (isset($base[$key]) ? $base[$key] : null)
@@ -86,6 +75,13 @@ $GLOBALS["__jp_h_dot"] = function ($base) {
                 )
                 : null
             );
+    }
+
+    return $base;
+};
+$GLOBALS['__jpv_plus'] = function ($base) {
+    foreach (array_slice(func_get_args(), 1) as $value) {
+        $base = is_string($base) || is_string($value) ? $base . $value : $base + $value;
     }
 
     return $base;
@@ -97,7 +93,17 @@ EOD;
 
         $jsPhpize->compileFile(__DIR__ . '/../examples/calcul.js', true);
         $actual = $jsPhpize->compileDependencies();
+        $expected = <<<'EOD'
+$GLOBALS['__jpv_plus'] = function ($base) {
+    foreach (array_slice(func_get_args(), 1) as $value) {
+        $base = is_string($base) || is_string($value) ? $base . $value : $base + $value;
+    }
+
+    return $base;
+};
+EOD;
         $actual = preg_replace('/\s/', '', $actual);
+        $expected = preg_replace('/\s/', '', $expected);
         $this->assertSame($expected, $actual);
     }
 
@@ -133,19 +139,22 @@ EOD;
      */
     public function testConcatenation()
     {
+        $jsPhpize = new JsPhpize();
+        $actual = $jsPhpize->render("return 'a' + a.i", array(
+            'a' => array(
+                'i' => 'b',
+            ),
+        ));
+        $expected = 'ab';
 
-            $jsPhpize = new JsPhpize();
-            $actual = $jsPhpize->compile("'a' + a.i", array(
-                'a' => 'b',
-            ));
-            $expected = 'ab';
-
-            $this->assertSame($expected, $actual);
+        $this->assertSame($expected, $actual);
     }
 
     public function testCompileSource()
     {
-        $jsPhpize = new JsPhpize();
+        $jsPhpize = new JsPhpize(array(
+            'varPrefix' => 'foo',
+        ));
         $actual = $jsPhpize->compileCode('b = 8');
         $expected = '$b = 8;';
         $actual = preg_replace('/\s/', '', $actual);
@@ -157,7 +166,7 @@ EOD;
         $actual = $jsPhpize->compileCode('calcul.js');
         chdir($dir);
         $expected = <<<'EOD'
-$GLOBALS["__jp_h_dot"] = function ($base) {
+$GLOBALS['foodot'] = function ($base) {
     foreach (array_slice(func_get_args(), 1) as $key) {
         $base = is_array($base)
             ? (isset($base[$key]) ? $base[$key] : null)
@@ -178,7 +187,7 @@ $GLOBALS["__jp_h_dot"] = function ($base) {
 
     return $base;
 };
-call_user_func($GLOBALS["__jp_h_dot"], $calcul, 'js');
+call_user_func($GLOBALS['foodot'], $calcul, 'js');
 EOD;
         $actual = preg_replace('/\s/', '', $actual);
         $expected = preg_replace('/\s/', '', $expected);

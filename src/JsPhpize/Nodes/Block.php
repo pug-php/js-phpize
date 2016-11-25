@@ -2,6 +2,9 @@
 
 namespace JsPhpize\Nodes;
 
+use JsPhpize\Parser\Exception;
+use JsPhpize\Nodes\Parenthesis;
+
 class Block extends Node
 {
     /**
@@ -10,9 +13,9 @@ class Block extends Node
     protected $type;
 
     /**
-     * @var string
+     * @var Value
      */
-    protected $parentheses;
+    protected $value;
 
     /**
      * @var array
@@ -24,16 +27,71 @@ class Block extends Node
      */
     protected $inInstruction;
 
-    public function __construct($type, $parentheses = null)
+    /**
+     * @var array
+     */
+    protected $letVariables = array();
+
+    public function __construct($type)
     {
         $this->type = $type;
         $this->instructions = array();
         $this->inInstruction = false;
-        $this->parentheses = $parentheses;
+    }
+
+    public function let($variable)
+    {
+        $this->letVariables[] = $variable;
+    }
+
+    public function getLetVariables()
+    {
+        $scope = $this;
+
+        return array_map(function ($name) use ($scope) {
+            $variable = new Variable($name, array());
+            $variable->setScope($scope);
+
+            return $variable;
+        }, $this->letVariables);
+    }
+
+    public function isLet($variable)
+    {
+        return in_array($variable, $this->letVariables);
+    }
+
+    public function handleInstructions()
+    {
+        return $this->needParenthesis() || in_array($this->type, array(
+            'main',
+            'else',
+            'try',
+            'finally',
+            'do',
+            'interface',
+            'class',
+        ));
+    }
+
+    public function needParenthesis()
+    {
+        return in_array($this->type, array(
+            'if',
+            'elseif',
+            'catch',
+            'for',
+            'while',
+            'function',
+        ));
     }
 
     public function addInstructions($instructions)
     {
+        if (!$this->handleInstructions()) {
+            throw new Exception($this->type . ' blocks cannot contains instructions.', 17);
+        }
+
         $instructions = is_array($instructions) ? $instructions : func_get_args();
         if (count($instructions)) {
             if (!$this->inInstruction) {
@@ -56,8 +114,16 @@ class Block extends Node
         $this->inInstruction = false;
     }
 
-    public function setParentheses(Parenthesis $parentheses)
+    public function setValue(Value $value)
     {
-        $this->parentheses = $parentheses;
+        if ($this->needParenthesis() && !($value instanceof Parenthesis)) {
+            throw new Exception($this->type . ' blocks need to be followed by a parenthesis.', 18);
+        }
+
+        if ($this->type === 'for') {
+            $value->setSeparator(';');
+        }
+
+        $this->value = $value;
     }
 }
