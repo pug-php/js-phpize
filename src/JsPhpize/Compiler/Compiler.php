@@ -5,16 +5,15 @@ namespace JsPhpize\Compiler;
 use JsPhpize\JsPhpize;
 use JsPhpize\Nodes\Assignation;
 use JsPhpize\Nodes\Block;
-use JsPhpize\Nodes\Value;
 use JsPhpize\Nodes\BracketsArray;
 use JsPhpize\Nodes\Constant;
 use JsPhpize\Nodes\Dyiade;
-use JsPhpize\Nodes\Instruction;
 use JsPhpize\Nodes\FunctionCall;
 use JsPhpize\Nodes\HooksArray;
-use JsPhpize\Nodes\Main;
+use JsPhpize\Nodes\Instruction;
 use JsPhpize\Nodes\Node;
 use JsPhpize\Nodes\Parenthesis;
+use JsPhpize\Nodes\Value;
 use JsPhpize\Nodes\Variable;
 
 class Compiler
@@ -106,7 +105,7 @@ class Compiler
         return $head . "{\n" .
             $this->compile($block, '  ' . $indent) .
             $letVariables .
-            $indent . "}";
+            $indent . '}';
     }
 
     protected function visitBracketsArray(BracketsArray $array, $indent)

@@ -30,7 +30,9 @@ class Variable extends Value implements Assignable
         $this->scope = $block;
     }
 
-    public function getNonAssignableReason() {}
+    public function getNonAssignableReason()
+    {
+    }
 
     public function isAssignable()
     {

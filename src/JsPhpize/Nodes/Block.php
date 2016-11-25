@@ -3,7 +3,6 @@
 namespace JsPhpize\Nodes;
 
 use JsPhpize\Parser\Exception;
-use JsPhpize\Nodes\Parenthesis;
 
 class Block extends Node
 {
@@ -23,7 +22,7 @@ class Block extends Node
     protected $instructions;
 
     /**
-     * @var boolean
+     * @var bool
      */
     protected $inInstruction;
 
