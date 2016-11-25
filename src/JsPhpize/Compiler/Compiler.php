@@ -206,7 +206,7 @@ class Compiler
         return $this->visitNodesArray($group->instructions, $indent, '', $indent . "%s;\n");
     }
 
-    protected function visitNode(Node $node, $indent)
+    public function visitNode(Node $node, $indent)
     {
         $method = preg_replace(
             '/^(.+\\\\)?([^\\\\]+)$/',
