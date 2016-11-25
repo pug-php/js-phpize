@@ -108,7 +108,7 @@ class Parser
                 return $parentheses;
             }
             if ($expectComma) {
-                if ($token->is(',')) {
+                if ($token->isIn(',', ';')) {
                     $expectComma = false;
 
                     continue;
@@ -296,7 +296,7 @@ class Parser
             }
             if ($token->isOperator()) {
                 if ($token->isIn('++', '--')) {
-                    $value->append($his->next()->value);
+                    $value->append($this->next()->type);
 
                     break;
                 }
@@ -382,6 +382,9 @@ class Parser
             }
             if ($token->is('}') && $waitForBracketToClose) {
                 break;
+            }
+            if ($token->is('var')) {
+                continue;
             }
             if ($token->is('let')) {
                 $letVariable = $this->get(0);
