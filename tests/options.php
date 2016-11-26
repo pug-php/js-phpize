@@ -52,4 +52,18 @@ class OptionsTest extends \PHPUnit_Framework_TestCase
             var a = FOOBAR;
         ');
     }
+
+    /**
+     * @expectedException     \JsPhpize\Lexer\Exception
+     * @expectedExceptionCode 4
+     */
+    public function testVarPrefixRestriction()
+    {
+        $jsPhpize = new JsPhpize(array(
+            'varPrefix' => 'test',
+        ));
+        $jsPhpize->render('
+            var a = test_zz;
+        ');
+    }
 }
