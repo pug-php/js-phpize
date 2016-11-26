@@ -20,7 +20,7 @@ class Scanner
     {
         $constant = trim($matches[0]);
         $constPrefix = $this->engine->getOption('constPrefix', JsPhpize::CONST_PREFIX);
-        if (substr($constant, 0, 5) === $constPrefix) {
+        if (strpos($constant, $constPrefix) === 0) {
             throw new Exception('Constants cannot start with ' . $constPrefix . ', this prefix is reserved for JsPhpize' . $this->exceptionInfos(), 1);
         }
         $translate = array(

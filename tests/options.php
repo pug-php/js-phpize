@@ -38,4 +38,18 @@ class OptionsTest extends \PHPUnit_Framework_TestCase
         }
         $this->assertSame(3, $code);
     }
+
+    /**
+     * @expectedException     \JsPhpize\Lexer\Exception
+     * @expectedExceptionCode 1
+     */
+    public function testConstPrefixRestriction()
+    {
+        $jsPhpize = new JsPhpize(array(
+            'constPrefix' => 'FOO',
+        ));
+        $jsPhpize->render('
+            var a = FOOBAR;
+        ');
+    }
 }
