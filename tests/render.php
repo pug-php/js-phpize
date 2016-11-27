@@ -10,7 +10,7 @@ class RenderTest extends \PHPUnit_Framework_TestCase
 
         $examples = __DIR__ . '/../examples';
         foreach (scandir($examples) as $file) {
-            if (substr($file, -7) === '.return' && strpos($file, 'lambda') !== false) {
+            if (substr($file, -7) === '.return') {
                 $cases[] = array($file, substr($file, 0, -7) . '.js');
             }
         }
