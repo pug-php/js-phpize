@@ -14,6 +14,7 @@ use JsPhpize\Nodes\Instruction;
 use JsPhpize\Nodes\Node;
 use JsPhpize\Nodes\Parenthesis;
 use JsPhpize\Nodes\Value;
+use JsPhpize\Nodes\Ternary;
 use JsPhpize\Nodes\Variable;
 
 class Compiler
@@ -218,10 +219,6 @@ class Compiler
         if ($node instanceof Value) {
             $php = $node->getBefore() . $php . $node->getAfter();
         }
-        if (!method_exists($this, $method)) {
-            var_dump($method);
-            exit;
-        }
 
         return $indent . $php;
     }
@@ -229,6 +226,13 @@ class Compiler
     protected function visitParenthesis(Parenthesis $parenthesis, $indent)
     {
         return '(' . $this->visitNodesArray($parenthesis->nodes, $indent, $parenthesis->separator) . ')';
+    }
+
+    protected function visitTernary(Ternary $ternary, $indent)
+    {
+        return $this->visitNode($ternary->condition, $indent) .
+            ' ? ' . $this->visitNode($ternary->trueValue, $indent) .
+            ' : ' . $this->visitNode($ternary->falseValue, $indent);
     }
 
     protected function visitVariable(Variable $variable, $indent)

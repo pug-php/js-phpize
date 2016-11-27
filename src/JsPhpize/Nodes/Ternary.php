@@ -22,7 +22,7 @@ class Ternary extends Value
     public function __construct(Value $condition, Value $trueValue, Value $falseValue)
     {
         $this->condition = $condition;
-        $this->rueValue = $trueValue;
+        $this->trueValue = $trueValue;
         $this->falseValue = $falseValue;
     }
 }

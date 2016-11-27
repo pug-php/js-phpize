@@ -13,7 +13,9 @@ use JsPhpize\Nodes\Dyiade;
 use JsPhpize\Nodes\FunctionCall;
 use JsPhpize\Nodes\HooksArray;
 use JsPhpize\Nodes\Main;
+use JsPhpize\Nodes\Node;
 use JsPhpize\Nodes\Parenthesis;
+use JsPhpize\Nodes\Ternary;
 use JsPhpize\Nodes\Value;
 use JsPhpize\Nodes\Variable;
 
@@ -296,12 +298,54 @@ class Parser
             }
             throw new Exception('Value expected before ' . $this->exceptionInfos(), 13);
         }
+        if ($next->is('function')) {
+            $function = new Block('function');
+            $next = $this->get(0);
+            if ($next->is('variable')) {
+                $this->skip();
+                $next = $this->get(0);
+            }
+            if (!$next->is('(')) {
+                $this->unexpected($next);
+            }
+            $this->skip();
+            $function->setValue($this->parseParentheses());
+            $next = $this->get(0);
+            if (!$next->is('{')) {
+                $this->unexpected($next);
+            }
+            $this->skip();
+            $this->parseBlock($function);
+            $this->skip();
+
+            return $function;
+        }
         $value = $this->getValueFromToken($next);
         if (!$value) {
             $this->unexpected($next);
         }
 
         return $value;
+    }
+
+    protected function parseTernary(Node $condition)
+    {
+        $trueValue = $this->expectValue($this->next());
+        $next = $this->next();
+        if (!$next) {
+            throw new Exception("Ternary expression not properly closed after '?' " . $this->exceptionInfos(), 14);
+        }
+        if (!$next->is(':')) {
+            throw new Exception("':' expected but $next given " . $this->exceptionInfos(), 15);
+        }
+        $next = $this->next();
+        if (!$next) {
+            throw new Exception("Ternary expression not properly closed after ':' " . $this->exceptionInfos(), 16);
+        }
+        $falseValue = $this->expectValue($next);
+        $next = $this->get(0);
+
+        return new Ternary($condition, $trueValue, $falseValue);
     }
 
     protected function parseValue($token)
@@ -341,20 +385,7 @@ class Parser
                 }
                 if ($token->is('?')) {
                     $this->skip();
-                    $trueValue = $this->expectValue($this->next());
-                    $next = $this->next();
-                    if (!$next) {
-                        throw new Exception("Ternary expression not properly closed after '?' " . $this->exceptionInfos(), 14);
-                    }
-                    if (!$next->is(':')) {
-                        throw new Exception("':' expected but $next given " . $this->exceptionInfos(), 15);
-                    }
-                    $next = $this->next();
-                    if (!$next) {
-                        throw new Exception("Ternary expression not properly closed after ':' " . $this->exceptionInfos(), 16);
-                    }
-                    $falseValue = $this->expectValue($this->next());
-                    $value = new Ternary($value, $trueValue, $falseValue);
+                    $value = $this->parseTernary($value);
 
                     continue;
                 }
@@ -362,6 +393,11 @@ class Parser
                 $this->skip();
                 $nextValue = $this->expectValue($this->next());
                 $value = new Dyiade($token->type, $value, $nextValue);
+                $token = $this->get(0);
+                if ($token && $token->is('?')) {
+                    $this->skip();
+                    $value = $this->parseTernary($value);
+                }
 
                 continue;
             }
