@@ -13,8 +13,8 @@ use JsPhpize\Nodes\HooksArray;
 use JsPhpize\Nodes\Instruction;
 use JsPhpize\Nodes\Node;
 use JsPhpize\Nodes\Parenthesis;
-use JsPhpize\Nodes\Value;
 use JsPhpize\Nodes\Ternary;
+use JsPhpize\Nodes\Value;
 use JsPhpize\Nodes\Variable;
 
 class Compiler
