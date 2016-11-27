@@ -7,7 +7,6 @@ use JsPhpize\Lexer\Lexer;
 use JsPhpize\Lexer\Token;
 use JsPhpize\Nodes\Assignation;
 use JsPhpize\Nodes\Block;
-use JsPhpize\Nodes\Value;
 use JsPhpize\Nodes\BracketsArray;
 use JsPhpize\Nodes\Constant;
 use JsPhpize\Nodes\Dyiade;
@@ -15,6 +14,7 @@ use JsPhpize\Nodes\FunctionCall;
 use JsPhpize\Nodes\HooksArray;
 use JsPhpize\Nodes\Main;
 use JsPhpize\Nodes\Parenthesis;
+use JsPhpize\Nodes\Value;
 use JsPhpize\Nodes\Variable;
 
 class Parser
@@ -121,6 +121,7 @@ class Parser
                 if ($next && $next->is('lambda')) {
                     return $this->parseLambda($parentheses);
                 }
+
                 return $parentheses;
             }
             if ($expectComma) {
