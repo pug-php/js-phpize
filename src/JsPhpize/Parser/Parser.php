@@ -101,9 +101,14 @@ class Parser
         $next = $this->next();
         if ($next) {
             if ($next->is('{')) {
-                $this->skip();
                 $this->parseBlock($lambda);
+                $this->skip();
+
+                return $lambda;
             }
+            $return = new Block('return');
+            $return->setValue($this->expectValue($next));
+            $lambda->addInstruction($return);
         }
 
         return $lambda;
@@ -119,6 +124,8 @@ class Parser
             if ($token->is(')')) {
                 $next = $this->get(0);
                 if ($next && $next->is('lambda')) {
+                    $this->skip();
+
                     return $this->parseLambda($parentheses);
                 }
 
@@ -255,7 +262,10 @@ class Parser
             }
 
             if ($next->is('lambda')) {
-                return $this->parseLambda(new Variable($name, $children));
+                $parenthesis = new Parenthesis();
+                $parenthesis->addNode(new Variable($name, $children));
+
+                return $this->parseLambda($parenthesis);
             }
 
             break;

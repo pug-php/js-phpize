@@ -56,8 +56,10 @@ class Compiler
         $this->helpers[$helper] = true;
 
         return 'call_user_func(' .
-            '$GLOBALS[\'' . $this->varPrefix . $helper . '\'], ' .
-            implode(', ', $arguments) .
+            '$GLOBALS[\'' . $this->varPrefix . $helper . '\']' .
+            implode('', array_map(function ($argument) {
+                return ', ' . $argument;
+            }, $arguments)) .
         ')';
     }
 
@@ -187,8 +189,8 @@ class Compiler
             return 'function_exists(' . var_export($name, true) . ') ? ' .
                 $name . '(' . $arguments . ') : ' .
                 'call_user_func(' .
-                    $this->visitNode($function, $indent) . ', ' .
-                    $arguments .
+                    $this->visitNode($function, $indent) .
+                    ($arguments === '' ? '' : ', ' . $arguments) .
                 ')';
         }
 
