@@ -21,10 +21,14 @@ class Assignation extends Value
      */
     protected $operator;
 
-    public function __construct($operator, Assignable $leftHand, Value $rightHand)
+    public function __construct($operator, Assignable $leftHand, Node $rightHand)
     {
         if (!$leftHand->isAssignable()) {
             throw new Exception($leftHand->getNonAssignableReason(), 9);
+        }
+
+        if (!($rightHand instanceof Value) && (!($rightHand instanceof Block) || $rightHand->type !== 'function')) {
+            throw new Exception('Only Value instance or Function block could be assigned.', 19);
         }
 
         $this->operator = $operator;

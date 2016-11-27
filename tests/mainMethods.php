@@ -19,7 +19,7 @@ $GLOBALS['__jpv_dot'] = function ($base) {
                     : (method_exists($base, $method = "get" . ucfirst($key))
                         ? $base->$method()
                         : (method_exists($base, $key)
-                            ? $base->$key()
+                            ? array($base, $key)
                             : null
                         )
                     )
@@ -68,7 +68,7 @@ $GLOBALS['__jpv_dot'] = function ($base) {
                     : (method_exists($base, $method = "get" . ucfirst($key))
                         ? $base->$method()
                         : (method_exists($base, $key)
-                            ? $base->$key()
+                            ? array($base, $key)
                             : null
                         )
                     )
@@ -176,7 +176,7 @@ $GLOBALS['foodot'] = function ($base) {
                     : (method_exists($base, $method = "get" . ucfirst($key))
                         ? $base->$method()
                         : (method_exists($base, $key)
-                            ? $base->$key()
+                            ? array($base, $key)
                             : null
                         )
                     )

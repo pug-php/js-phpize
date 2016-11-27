@@ -7,6 +7,7 @@ use JsPhpize\Lexer\Lexer;
 use JsPhpize\Lexer\Token;
 use JsPhpize\Nodes\Assignation;
 use JsPhpize\Nodes\Block;
+use JsPhpize\Nodes\Value;
 use JsPhpize\Nodes\BracketsArray;
 use JsPhpize\Nodes\Constant;
 use JsPhpize\Nodes\Dyiade;
@@ -90,11 +91,22 @@ class Parser
 
     protected function unexpected($token)
     {
-        // var_dump($token);
-        // var_dump($this->stack[0]->instructions[2]->instructions[0]);
-        // exit;
-
         throw new Exception('Unexpected ' . $token->type . rtrim(' ' . ($token->value ?: '')) . $this->exceptionInfos(), 8);
+    }
+
+    protected function parseLambda(Value $parameters)
+    {
+        $lambda = new Block('function');
+        $lambda->setValue($parameters);
+        $next = $this->next();
+        if ($next) {
+            if ($next->is('{')) {
+                $this->skip();
+                $this->parseBlock($lambda);
+            }
+        }
+
+        return $lambda;
     }
 
     protected function parseParentheses()
@@ -105,6 +117,10 @@ class Parser
         while ($token = $this->next()) {
             $debug[] = $token;
             if ($token->is(')')) {
+                $next = $this->get(0);
+                if ($next && $next->is('lambda')) {
+                    return $this->parseLambda($parentheses);
+                }
                 return $parentheses;
             }
             if ($expectComma) {
@@ -237,6 +253,10 @@ class Parser
                 continue;
             }
 
+            if ($next->is('lambda')) {
+                return $this->parseLambda(new Variable($name, $children));
+            }
+
             break;
         }
 
@@ -303,7 +323,8 @@ class Parser
                 if ($token->isAssignation()) {
                     $this->skip();
                     $arguments = array();
-                    $value = new Assignation($token->type, $value, $this->expectValue($this->next()));
+                    $valueToAssign = $this->expectValue($this->next());
+                    $value = new Assignation($token->type, $value, $valueToAssign);
 
                     continue;
                 }
