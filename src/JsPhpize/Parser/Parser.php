@@ -4,7 +4,6 @@ namespace JsPhpize\Parser;
 
 use JsPhpize\JsPhpize;
 use JsPhpize\Lexer\Lexer;
-use JsPhpize\Lexer\Token;
 use JsPhpize\Nodes\Assignation;
 use JsPhpize\Nodes\Block;
 use JsPhpize\Nodes\BracketsArray;
