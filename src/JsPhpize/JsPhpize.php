@@ -202,7 +202,7 @@ class JsPhpize
      */
     public function renderCode($code, array $variables = array())
     {
-        return $this->compile($code, 'source.js', $variables);
+        return $this->render($code, 'source.js', $variables);
     }
 
     /**

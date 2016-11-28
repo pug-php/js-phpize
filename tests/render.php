@@ -33,4 +33,30 @@ class RenderTest extends \PHPUnit_Framework_TestCase
 
         $this->assertSame($expected, $actual, $jsFile . ' should render ' . $expected);
     }
+
+    public function testRenderFile()
+    {
+        $examples = __DIR__ . '/../examples';
+        $jsPhpize = new JsPhpize();
+        $expected = file_get_contents($examples . '/basic.return');
+        $result = $jsPhpize->renderFile($examples . '/basic.js');
+
+        $expected = str_replace("\r", '', trim($expected));
+        $actual = str_replace("\r", '', trim($result));
+
+        $this->assertSame($expected, $actual);
+    }
+
+    public function testRenderCode()
+    {
+        $examples = __DIR__ . '/../examples';
+        $jsPhpize = new JsPhpize();
+        $expected = file_get_contents($examples . '/basic.return');
+        $result = $jsPhpize->renderCode(file_get_contents($examples . '/basic.js'));
+
+        $expected = str_replace("\r", '', trim($expected));
+        $actual = str_replace("\r", '', trim($result));
+
+        $this->assertSame($expected, $actual);
+    }
 }
