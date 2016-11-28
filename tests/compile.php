@@ -54,7 +54,7 @@ class CompileTest extends \PHPUnit_Framework_TestCase
         $jsPhpize = new JsPhpize();
         $result = $jsPhpize->render('a()', array(
             'a' => function () {
-                throw new \JsPhpize\Compiler\Exception("custom", 1111111);
+                throw new \JsPhpize\Compiler\Exception('custom', 1111111);
             },
         ));
     }
@@ -78,7 +78,7 @@ class CompileTest extends \PHPUnit_Framework_TestCase
             a();
         ', array(
             'a' => function () {
-                throw new \Exception("custom", 123456);
+                throw new \Exception('custom', 123456);
             },
         ));
     }
