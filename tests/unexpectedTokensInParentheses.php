@@ -33,5 +33,4 @@ class UnexpectedTokensInParenthesesTest extends \PHPUnit_Framework_TestCase
         $jsPhpize = new JsPhpize();
         $jsPhpize->render('(}');
     }
-
 }

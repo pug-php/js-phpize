@@ -33,5 +33,4 @@ class UnexpectedTokensInHooksTest extends \PHPUnit_Framework_TestCase
         $jsPhpize = new JsPhpize();
         $jsPhpize->render('[5 if]');
     }
-
 }
