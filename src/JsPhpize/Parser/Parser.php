@@ -116,7 +116,6 @@ class Parser
         $exceptionInfos = $this->exceptionInfos();
         $expectComma = false;
         while ($token = $this->next()) {
-            $debug[] = $token;
             if ($token->is(')')) {
                 $next = $this->get(0);
                 if ($next && $next->is('lambda')) {
@@ -328,7 +327,7 @@ class Parser
             throw new Exception("Ternary expression not properly closed after '?' " . $this->exceptionInfos(), 14);
         }
         if (!$next->is(':')) {
-            throw new Exception("':' expected but $next given " . $this->exceptionInfos(), 15);
+            throw new Exception("':' expected but " . ($next->value ?: $next->type) . ' given ' . $this->exceptionInfos(), 15);
         }
         $next = $this->next();
         if (!$next) {
@@ -342,7 +341,6 @@ class Parser
 
     protected function parseValue($token)
     {
-        $debug = ($token->value === 'array_slice');
         $value = $token->is('variable')
             ? $this->parseVariable($token->value)
             : new Constant($token->type, $token->value);

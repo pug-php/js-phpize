@@ -33,37 +33,37 @@ class Token
         return in_array($this->type, array('variable', 'constant', 'string', 'number'));
     }
 
-    public function isComparison()
+    protected function isComparison()
     {
         return in_array($this->type, array('===', '!==', '>=', '<=', '<>', '!=', '==', '>', '<'));
     }
 
-    public function isLogical()
+    protected function isLogical()
     {
         return in_array($this->type, array('&&', '||', '!'));
     }
 
-    public function isBinary()
+    protected function isBinary()
     {
         return in_array($this->type, array('&', '|', '^', '~', '>>', '<<', '>>>'));
     }
 
-    public function isArithmetic()
+    protected function isArithmetic()
     {
         return in_array($this->type, array('+', '-', '/', '*', '%', '**', '--', '++'));
     }
 
-    public function isVarOperator()
+    protected function isVarOperator()
     {
         return in_array($this->type, array('delete', 'void', 'typeof'));
     }
 
-    public function isOpener()
+    protected function isOpener()
     {
         return in_array($this->type, array('{', '(', '['));
     }
 
-    public function isCloser()
+    protected function isCloser()
     {
         return in_array($this->type, array('}', ')', ']'));
     }
@@ -88,7 +88,7 @@ class Token
         return in_array($this->type, array('!', '~')) || $this->isVarOperator();
     }
 
-    public function expectRightMember()
+    protected function expectRightMember()
     {
         return $this->isOperator() || $this->isOpener();
     }
@@ -96,10 +96,5 @@ class Token
     public function __get($key)
     {
         return isset($this->data[$key]) ? $this->data[$key] : null;
-    }
-
-    public function __toString()
-    {
-        return $this->value ?: $this->type;
     }
 }
