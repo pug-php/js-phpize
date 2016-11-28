@@ -70,6 +70,7 @@ class Block extends Node
             'do',
             'interface',
             'class',
+            'switch',
         ));
     }
 

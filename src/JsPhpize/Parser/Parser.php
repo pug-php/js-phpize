@@ -458,7 +458,18 @@ class Parser
                         }
                         break;
                     case 'case':
+                        $value = $this->expectValue($this->next());
+                        $keyword->setValue($value);
+                        $colon = $this->next();
+                        if (!$colon || !$colon->is(':')) {
+                            throw new Exception("'case' must be followed by a value and a colon.", 21);
+                        }
+                        break;
                     case 'default':
+                        $colon = $this->next();
+                        if (!$colon || !$colon->is(':')) {
+                            throw new Exception("'default' must be followed by a colon.", 22);
+                        }
                         break;
                     default:
                         $next = $this->get(0);
