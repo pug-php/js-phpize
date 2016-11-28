@@ -4,7 +4,6 @@ namespace JsPhpize\Parser;
 
 use JsPhpize\JsPhpize;
 use JsPhpize\Lexer\Lexer;
-use JsPhpize\Lexer\Token;
 use JsPhpize\Nodes\Assignation;
 use JsPhpize\Nodes\Block;
 use JsPhpize\Nodes\BracketsArray;
@@ -45,11 +44,6 @@ class Parser
      * @var array
      */
     protected $stack;
-
-    /**
-     * @var Token
-     */
-    protected $previousToken;
 
     public function __construct(JsPhpize $engine, $input, $filename)
     {
@@ -264,6 +258,7 @@ class Parser
             }
 
             if ($next->is('lambda')) {
+                $this->skip();
                 $parenthesis = new Parenthesis();
                 $parenthesis->addNode(new Variable($name, $children));
 
@@ -287,16 +282,13 @@ class Parser
         return $variable;
     }
 
-    protected function expectValue($next, $exception = null)
+    protected function expectValue($next, $token = null)
     {
         if (!$next) {
-            if ($exception instanceof \Exception) {
-                throw $exception;
+            if ($token) {
+                $this->unexpected($token);
             }
-            if ($exception instanceof Token) {
-                $this->unexpected($exception);
-            }
-            throw new Exception('Value expected before ' . $this->exceptionInfos(), 13);
+            throw new Exception('Value expected after ' . $this->exceptionInfos(), 20);
         }
         if ($next->is('function')) {
             $function = new Block('function');
@@ -369,6 +361,12 @@ class Parser
             if ($token->is('{') || $token->expectNoLeftMember()) {
                 $this->unexpected($this->next());
             }
+            if ($token->is('?')) {
+                $this->skip();
+                $value = $this->parseTernary($value);
+
+                continue;
+            }
             if ($token->isOperator()) {
                 if ($token->isIn('++', '--')) {
                     $value->append($this->next()->type);
@@ -383,21 +381,11 @@ class Parser
 
                     continue;
                 }
-                if ($token->is('?')) {
-                    $this->skip();
-                    $value = $this->parseTernary($value);
-
-                    continue;
-                }
 
                 $this->skip();
                 $nextValue = $this->expectValue($this->next());
                 $value = new Dyiade($token->type, $value, $nextValue);
                 $token = $this->get(0);
-                if ($token && $token->is('?')) {
-                    $this->skip();
-                    $value = $this->parseTernary($value);
-                }
 
                 continue;
             }
@@ -433,7 +421,6 @@ class Parser
     public function parseBlock($block)
     {
         $this->stack[] = $block;
-        $this->previousToken = null;
         $next = $this->get(0);
         if ($next->is('(')) {
             $this->skip();
@@ -445,9 +432,6 @@ class Parser
             $this->skip();
         }
         while ($token = $this->next()) {
-            if ($token === $this->previousToken) {
-                $this->unexpected($token);
-            }
             if ($token->is('}') && $waitForBracketToClose) {
                 break;
             }
