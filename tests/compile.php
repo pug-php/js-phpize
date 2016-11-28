@@ -52,7 +52,7 @@ class CompileTest extends \PHPUnit_Framework_TestCase
     public function testCompilerException()
     {
         $jsPhpize = new JsPhpize();
-        $result = $jsPhpize->render('a()', array(
+        $jsPhpize->render('a()', array(
             'a' => function () {
                 throw new \JsPhpize\Compiler\Exception('custom', 1111111);
             },
@@ -67,7 +67,7 @@ class CompileTest extends \PHPUnit_Framework_TestCase
     public function testCompilerWrappedException()
     {
         $jsPhpize = new JsPhpize();
-        $result = $jsPhpize->render('
+        $jsPhpize->render('
             foo = 9;
             /* here come a very long long long long long long long long long
              * long long long long long long long long long long long long long

@@ -8,35 +8,9 @@ class MainMethodsTest extends \PHPUnit_Framework_TestCase
     {
         $jsPhpize = new JsPhpize();
         $actual = $jsPhpize->compileFile(__DIR__ . '/../examples/basic.js');
-        $expected = <<<'EOD'
-$GLOBALS['__jpv_dot'] = function ($base) {
-    foreach (array_slice(func_get_args(), 1) as $key) {
-        $base = is_array($base)
-            ? (isset($base[$key]) ? $base[$key] : null)
-            : (is_object($base)
-                ? (isset($base->$key)
-                    ? $base->$key
-                    : (method_exists($base, $method = "get" . ucfirst($key))
-                        ? $base->$method()
-                        : (method_exists($base, $key)
-                            ? array($base, $key)
-                            : null
-                        )
-                    )
-                )
-                : null
-            );
-    }
-
-    return $base;
-};
-$GLOBALS['__jpv_plus'] = function ($base) {
-    foreach (array_slice(func_get_args(), 1) as $value) {
-        $base = is_string($base) || is_string($value) ? $base . $value : $base + $value;
-    }
-
-    return $base;
-};
+        $expected = '$GLOBALS[\'__jpv_dot\'] = ' . file_get_contents(__DIR__ . '/../src/JsPhpize/Compiler/Helpers/Dot.h') . ';';
+        $expected .= '$GLOBALS[\'__jpv_plus\'] = ' . file_get_contents(__DIR__ . '/../src/JsPhpize/Compiler/Helpers/Plus.h') . ';';
+        $expected .= <<<'EOD'
 $foo = array( 'bar' => array( "baz" => "hello" ) );
 $biz = 'bar';
 return call_user_func($GLOBALS['__jpv_plus'], call_user_func($GLOBALS['__jpv_dot'], $foo, 'bar', "baz"), ' ', call_user_func($GLOBALS['__jpv_dot'], $foo, $biz, 'baz'), " ", call_user_func($GLOBALS['__jpv_dot'], $foo, 'bar', 'baz'));
@@ -57,51 +31,16 @@ EOD;
         $this->assertSame($expected, $actual);
 
         $actual = $jsPhpize->compileDependencies();
-        $expected = <<<'EOD'
-$GLOBALS['__jpv_dot'] = function ($base) {
-    foreach (array_slice(func_get_args(), 1) as $key) {
-        $base = is_array($base)
-            ? (isset($base[$key]) ? $base[$key] : null)
-            : (is_object($base)
-                ? (isset($base->$key)
-                    ? $base->$key
-                    : (method_exists($base, $method = "get" . ucfirst($key))
-                        ? $base->$method()
-                        : (method_exists($base, $key)
-                            ? array($base, $key)
-                            : null
-                        )
-                    )
-                )
-                : null
-            );
-    }
+        $expected = '$GLOBALS[\'__jpv_dot\'] = ' . file_get_contents(__DIR__ . '/../src/JsPhpize/Compiler/Helpers/Dot.h') . ';';
+        $expected .= '$GLOBALS[\'__jpv_plus\'] = ' . file_get_contents(__DIR__ . '/../src/JsPhpize/Compiler/Helpers/Plus.h') . ';';
 
-    return $base;
-};
-$GLOBALS['__jpv_plus'] = function ($base) {
-    foreach (array_slice(func_get_args(), 1) as $value) {
-        $base = is_string($base) || is_string($value) ? $base . $value : $base + $value;
-    }
-
-    return $base;
-};
-EOD;
         $actual = preg_replace('/\s/', '', $actual);
         $expected = preg_replace('/\s/', '', $expected);
         $this->assertSame($expected, $actual);
 
         $jsPhpize->compileFile(__DIR__ . '/../examples/calcul.js', true);
         $actual = $jsPhpize->compileDependencies();
-        $expected = <<<'EOD'
-$GLOBALS['__jpv_plus'] = function ($base) {
-    foreach (array_slice(func_get_args(), 1) as $value) {
-        $base = is_string($base) || is_string($value) ? $base . $value : $base + $value;
-    }
-
-    return $base;
-};
-EOD;
+        $expected = '$GLOBALS[\'__jpv_plus\'] = ' . file_get_contents(__DIR__ . '/../src/JsPhpize/Compiler/Helpers/Plus.h') . ';';
         $actual = preg_replace('/\s/', '', $actual);
         $expected = preg_replace('/\s/', '', $expected);
         $this->assertSame($expected, $actual);
@@ -165,28 +104,9 @@ EOD;
         chdir(__DIR__ . '/../examples');
         $actual = $jsPhpize->compileCode('calcul.js');
         chdir($dir);
-        $expected = <<<'EOD'
-$GLOBALS['foodot'] = function ($base) {
-    foreach (array_slice(func_get_args(), 1) as $key) {
-        $base = is_array($base)
-            ? (isset($base[$key]) ? $base[$key] : null)
-            : (is_object($base)
-                ? (isset($base->$key)
-                    ? $base->$key
-                    : (method_exists($base, $method = "get" . ucfirst($key))
-                        ? $base->$method()
-                        : (method_exists($base, $key)
-                            ? array($base, $key)
-                            : null
-                        )
-                    )
-                )
-                : null
-            );
-    }
+        $expected = '$GLOBALS[\'foodot\'] = ' . file_get_contents(__DIR__ . '/../src/JsPhpize/Compiler/Helpers/Dot.h') . ';';
 
-    return $base;
-};
+        $expected .= <<<'EOD'
 call_user_func($GLOBALS['foodot'], $calcul, 'js');
 EOD;
         $actual = preg_replace('/\s/', '', $actual);
