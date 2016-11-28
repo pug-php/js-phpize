@@ -2,7 +2,7 @@
 
 namespace JsPhpize\Nodes;
 
-use JsPhpize\Parse\Exception;
+use JsPhpize\Parser\Exception;
 
 abstract class Node
 {

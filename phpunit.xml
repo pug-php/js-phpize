@@ -24,6 +24,8 @@
         </testsuite>
         <testsuite name="badSyntaxes">
             <file>tests/badSyntaxes.php</file>
+            <file>tests/unexpectedTokens.php</file>
+            <file>tests/constantRestrictions.php</file>
         </testsuite>
     </testsuites>
     <filter>
