@@ -20,6 +20,8 @@ engines:
     - 41ada8ab27cb7d56ab534d0b2abc4702
     - eb746d53b9a8dabef2c1041d8e37158d
     - ef7cef7244578b6906e8785db37f6f48
+    # Allow 'is' method
+    - 2ea85a0da934bbb59152f07507296053
 ratings:
   paths:
   - "**.php"

@@ -425,12 +425,12 @@ class Parser
             $block->setValue($this->parseParentheses());
         }
         $next = $this->get(0);
-        $waitForBracketToClose = $next->is('{');
-        if ($waitForBracketToClose && $block->type !== 'main') {
+        $waitForClosure = $next->is('{');
+        if ($waitForClosure && $block->type !== 'main') {
             $this->skip();
         }
         while ($token = $this->next()) {
-            if ($token->is('}') && $waitForBracketToClose) {
+            if ($token->is('}') && $waitForClosure) {
                 break;
             }
             if ($token->is('var')) {
@@ -489,7 +489,7 @@ class Parser
                 continue;
             }
             if ($token->is(';')) {
-                if (!$waitForBracketToClose && !$block instanceof Main) {
+                if (!$waitForClosure && !$block instanceof Main) {
                     break;
                 }
                 $block->endInstruction();

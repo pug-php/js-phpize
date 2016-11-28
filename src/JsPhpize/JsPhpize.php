@@ -6,11 +6,8 @@ use JsPhpize\Compiler\Compiler;
 use JsPhpize\Compiler\Exception;
 use JsPhpize\Parser\Parser;
 
-class JsPhpize
+class JsPhpize extends JsPhpizeOptions
 {
-    const CONST_PREFIX = '__JPC_';
-    const VAR_PREFIX = '__jpv_';
-
     /**
      * @var string
      */
@@ -35,26 +32,6 @@ class JsPhpize
      * @var array
      */
     protected $sharedVariables = array();
-
-    public function __construct(array $options = array())
-    {
-        $this->options = $options;
-    }
-
-    public function getOption($key, $default = null)
-    {
-        return isset($this->options[$key]) ? $this->options[$key] : $default;
-    }
-
-    public function getVarPrefix()
-    {
-        return $this->getOption('varPrefix', static::VAR_PREFIX);
-    }
-
-    public function getConstPrefix()
-    {
-        return $this->getOption('constPrefix', static::CONST_PREFIX);
-    }
 
     /**
      * Compile file or code (detect if $input is an exisisting file, else use it as content).
