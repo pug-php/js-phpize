@@ -325,60 +325,12 @@ class Parser
 
     protected function parseValue($token)
     {
-        $value = $token->is('variable')
+        return $token->is('variable')
             ? $this->parseVariable($token->value)
             : new Constant($token->type, $token->value);
-
-        while ($token = $this->get(0)) {
-            if ($token->isValue()) {
-                $this->unexpected($this->next());
-            }
-            if ($token->is('(')) {
-                $this->skip();
-                $arguments = array();
-                $value = new FunctionCall($value, $this->parseParentheses()->nodes);
-
-                continue;
-            }
-            if ($token->is('{') || $token->expectNoLeftMember()) {
-                $this->unexpected($this->next());
-            }
-            if ($token->is('?')) {
-                $this->skip();
-                $value = $this->parseTernary($value);
-
-                continue;
-            }
-            if ($token->isOperator()) {
-                if ($token->isIn('++', '--')) {
-                    $value->append($this->next()->type);
-
-                    break;
-                }
-                if ($token->isAssignation()) {
-                    $this->skip();
-                    $arguments = array();
-                    $valueToAssign = $this->expectValue($this->next());
-                    $value = new Assignation($token->type, $value, $valueToAssign);
-
-                    continue;
-                }
-
-                $this->skip();
-                $nextValue = $this->expectValue($this->next());
-                $value = new Dyiade($token->type, $value, $nextValue);
-                $token = $this->get(0);
-
-                continue;
-            }
-
-            break;
-        }
-
-        return $value;
     }
 
-    protected function getValueFromToken($token)
+    protected function getInitialValue($token)
     {
         if ($token->is('function')) {
             $function = new Block('function');
@@ -422,6 +374,65 @@ class Parser
         }
     }
 
+    protected function appendFunctionsCalls(&$value)
+    {
+        while ($token = $this->get(0)) {
+            if ($token->isValue()) {
+                $this->unexpected($this->next());
+            }
+            if ($token->is('{') || $token->expectNoLeftMember()) {
+                $this->unexpected($this->next());
+            }
+            if ($token->is('?')) {
+                $this->skip();
+                $value = $this->parseTernary($value);
+
+                continue;
+            }
+            if ($token->is('(')) {
+                $this->skip();
+                $arguments = array();
+                $value = new FunctionCall($value, $this->parseParentheses()->nodes);
+
+                continue;
+            }
+            if ($token->isOperator()) {
+                if ($token->isIn('++', '--')) {
+                    $value->append($this->next()->type);
+
+                    break;
+                }
+                if ($token->isAssignation()) {
+                    $this->skip();
+                    $arguments = array();
+                    $valueToAssign = $this->expectValue($this->next());
+                    $value = new Assignation($token->type, $value, $valueToAssign);
+
+                    continue;
+                }
+
+                $this->skip();
+                $nextValue = $this->expectValue($this->next());
+                $value = new Dyiade($token->type, $value, $nextValue);
+                $token = $this->get(0);
+
+                continue;
+            }
+
+            break;
+        }
+    }
+
+    protected function getValueFromToken($token)
+    {
+        $value = $this->getInitialValue($token);
+        if ($value) {
+            $this->appendFunctionsCalls($value);
+        }
+
+        return $value;
+    }
+
     public function parseBlock($block)
     {
         $this->stack[] = $block;
@@ -458,7 +469,7 @@ class Parser
                     case 'continue':
                     case 'break':
                         $afterKeyword = $this->get(0);
-                        if ($afterKeyword && $afterKeyword->isValue()) {
+                        if (!$afterKeyword->is(';')) {
                             $value = $this->expectValue($this->next());
                             $keyword->setValue($value);
                         }
