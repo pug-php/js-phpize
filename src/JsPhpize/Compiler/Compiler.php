@@ -183,19 +183,20 @@ class Compiler
         $function = $functionCall->function;
         $arguments = $functionCall->arguments;
         $arguments = $this->visitNodesArray($arguments, $indent, ', ');
+        $call = 'call_user_func(' .
+            $this->visitNode($function, $indent) .
+            ($arguments === '' ? '' : ', ' . $arguments) .
+        ')';
 
         if ($function instanceof Variable) {
             $name = $function->name;
 
             return 'function_exists(' . var_export($name, true) . ') ? ' .
                 $name . '(' . $arguments . ') : ' .
-                'call_user_func(' .
-                    $this->visitNode($function, $indent) .
-                    ($arguments === '' ? '' : ', ' . $arguments) .
-                ')';
+                $call;
         }
 
-        return $this->visitNode($function, $indent) . '(' . $arguments . ')';
+        return $call;
     }
 
     protected function visitHooksArray(HooksArray $array, $indent)

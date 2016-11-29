@@ -10,7 +10,7 @@ class Block extends Node
     protected $type;
 
     /**
-     * @var Value
+     * @var Node
      */
     protected $value;
 
@@ -108,7 +108,7 @@ class Block extends Node
         $this->inInstruction = false;
     }
 
-    public function setValue(Value $value)
+    public function setValue(Node $value)
     {
         if ($this->type === 'for') {
             $value->setSeparator(';');
