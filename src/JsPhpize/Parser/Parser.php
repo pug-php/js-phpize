@@ -377,9 +377,6 @@ class Parser
     protected function appendFunctionsCalls(&$value)
     {
         while ($token = $this->get(0)) {
-            if ($token->isValue()) {
-                $this->unexpected($this->next());
-            }
             if ($token->is('{') || $token->expectNoLeftMember()) {
                 $this->unexpected($this->next());
             }

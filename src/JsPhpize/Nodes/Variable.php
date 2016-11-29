@@ -33,9 +33,4 @@ class Variable extends Value implements Assignable
     public function getNonAssignableReason()
     {
     }
-
-    public function isAssignable()
-    {
-        return true;
-    }
 }

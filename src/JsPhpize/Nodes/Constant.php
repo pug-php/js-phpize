@@ -37,9 +37,4 @@ class Constant extends Value implements Assignable
             return "'M_' prefix is reserved to mathematical constants.";
         }
     }
-
-    public function isAssignable()
-    {
-        return !$this->getNonAssignableReason();
-    }
 }
