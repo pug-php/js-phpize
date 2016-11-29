@@ -267,7 +267,6 @@ class Compiler
     public function compile(Block $block, $indent = '')
     {
         $output = '';
-        $line = array();
 
         foreach ($block->instructions as $instruction) {
             $output .= $this->visitNode($instruction, $indent);

@@ -38,11 +38,10 @@ class JsPhpize extends JsPhpizeOptions
      *
      * @param string $input             file or content
      * @param string $filename          if specified, input is used as content and filename as its name
-     * @param bool   $catchDependencies if true, dependencies are not compiled and can be grouped and get separatly
      *
      * @return string
      */
-    public function compile($input, $filename = null, $catchDependencies = false)
+    public function compile($input, $filename = null)
     {
         if ($filename === null) {
             $filename = file_exists($input) ? $input : null;
@@ -54,7 +53,7 @@ class JsPhpize extends JsPhpizeOptions
         $php = $compiler->compile($block);
 
         $dependencies = $compiler->getDependencies();
-        if ($catchDependencies) {
+        if ($this->getOption('catchDependencies')) {
             $this->dependencies = $dependencies;
             $dependencies = array();
         }
@@ -67,39 +66,24 @@ class JsPhpize extends JsPhpizeOptions
      * Compile a file.
      *
      * @param string $file              input file
-     * @param bool   $catchDependencies if true, dependencies are not compiled and can be grouped and get separatly
      *
      * @return string
      */
-    public function compileFile($file, $catchDependencies = false)
+    public function compileFile($file)
     {
-        return $this->compile(file_get_contents($file), $file, $catchDependencies);
+        return $this->compile(file_get_contents($file), $file);
     }
 
     /**
      * Compile raw code.
      *
      * @param string $code              input code
-     * @param bool   $catchDependencies if true, dependencies are not compiled and can be grouped and get separatly
      *
      * @return string
      */
-    public function compileCode($code, $catchDependencies = false)
+    public function compileCode($code)
     {
-        return $this->compile($code, 'source.js', $catchDependencies);
-    }
-
-    /**
-     * Compile without the dependencies.
-     *
-     * @param string $input    file or content
-     * @param string $filename if specified, input is used as content and filename as its name
-     *
-     * @return string
-     */
-    public function compileWithoutDependencies($input, $filename = null)
-    {
-        return $this->compile($input, $filename, true);
+        return $this->compile($code, 'source.js');
     }
 
     /**
