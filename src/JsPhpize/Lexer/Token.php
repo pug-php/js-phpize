@@ -58,16 +58,6 @@ class Token
         return in_array($this->type, array('delete', 'void', 'typeof'));
     }
 
-    protected function isOpener()
-    {
-        return in_array($this->type, array('{', '(', '['));
-    }
-
-    protected function isCloser()
-    {
-        return in_array($this->type, array('}', ')', ']'));
-    }
-
     public function isAssignation()
     {
         return substr($this->type, -1) === '=' && !$this->isComparison();
@@ -86,11 +76,6 @@ class Token
     public function expectNoLeftMember()
     {
         return in_array($this->type, array('!', '~')) || $this->isVarOperator();
-    }
-
-    protected function expectRightMember()
-    {
-        return $this->isOperator() || $this->isOpener();
     }
 
     public function __get($key)
