@@ -36,8 +36,8 @@ class JsPhpize extends JsPhpizeOptions
     /**
      * Compile file or code (detect if $input is an exisisting file, else use it as content).
      *
-     * @param string $input             file or content
-     * @param string $filename          if specified, input is used as content and filename as its name
+     * @param string $input    file or content
+     * @param string $filename if specified, input is used as content and filename as its name
      *
      * @return string
      */
@@ -65,7 +65,7 @@ class JsPhpize extends JsPhpizeOptions
     /**
      * Compile a file.
      *
-     * @param string $file              input file
+     * @param string $file input file
      *
      * @return string
      */
@@ -77,7 +77,7 @@ class JsPhpize extends JsPhpizeOptions
     /**
      * Compile raw code.
      *
-     * @param string $code              input code
+     * @param string $code input code
      *
      * @return string
      */
