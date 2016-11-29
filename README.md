@@ -2,7 +2,7 @@
 [![Latest Stable Version](https://poser.pugx.org/js-phpize/js-phpize/v/stable.png)](https://packagist.org/packages/js-phpize/js-phpize)
 [![Build Status](https://travis-ci.org/pug-php/js-phpize.svg?branch=master)](https://travis-ci.org/pug-php/js-phpize)
 [![StyleCI](https://styleci.io/repos/65670436/shield?style=flat)](https://styleci.io/repos/65670436)
-[![Test Coverage](https://codeclimate.com/github/pug-php/js-phpize/badges/coverage.svg)](https://codecov.io/github/pug-php/js-phpize?branch=master)
+[![Test Coverage](https://codecov.io/gh/pug-php/js-phpize/branch/master/graph/badge.svg)](https://codecov.io/gh/pug-php/js-phpize)
 [![Code Climate](https://codeclimate.com/github/pug-php/js-phpize/badges/gpa.svg)](https://codeclimate.com/github/pug-php/js-phpize)
 
 Convert js-like syntax to standalone PHP code.
