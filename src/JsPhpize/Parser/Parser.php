@@ -482,7 +482,7 @@ class Parser
                         if ($next->is('(')) {
                             $this->skip();
                             $keyword->setValue($this->parseParentheses());
-                        } elseif($keyword->needParenthesis()) {
+                        } elseif ($keyword->needParenthesis()) {
                             throw new Exception("'" . $keyword->type . "' block need parentheses.", 17);
                         }
                 }

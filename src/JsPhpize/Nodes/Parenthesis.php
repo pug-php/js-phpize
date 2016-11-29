@@ -2,8 +2,6 @@
 
 namespace JsPhpize\Nodes;
 
-use JsPhpize\Parser\Exception;
-
 class Parenthesis extends Value
 {
     /**
