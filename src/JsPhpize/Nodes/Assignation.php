@@ -27,8 +27,6 @@ class Assignation extends Value
             throw new Exception($leftHand->getNonAssignableReason(), 9);
         }
 
-        $rightHand->mustBeAssignable();
-
         $this->operator = $operator;
         $this->leftHand = $leftHand;
         $this->rightHand = $rightHand;

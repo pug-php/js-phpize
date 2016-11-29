@@ -53,4 +53,14 @@ class UnexpectedTokensInBracketsTest extends \PHPUnit_Framework_TestCase
         $jsPhpize = new JsPhpize();
         $jsPhpize->render('{a:5, if}');
     }
+
+    /**
+     * @expectedException     \JsPhpize\Parser\Exception
+     * @expectedExceptionCode 8
+     */
+    public function testOperatorAfterValueInBrackets()
+    {
+        $jsPhpize = new JsPhpize();
+        $jsPhpize->render('{a:5, +}');
+    }
 }

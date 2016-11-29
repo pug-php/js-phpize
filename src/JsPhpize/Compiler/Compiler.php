@@ -127,7 +127,7 @@ class Compiler
         )));
     }
 
-    protected function visitConstant(Constant $constant, $indent)
+    protected function visitConstant(Constant $constant)
     {
         $value = $constant->value;
         if ($constant->type === 'string' && substr($constant->value, 0, 1) === '"') {

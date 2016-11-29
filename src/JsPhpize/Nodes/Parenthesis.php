@@ -25,9 +25,6 @@ class Parenthesis extends Value
     {
         $nodes = array_filter(is_array($nodes) ? $nodes : func_get_args());
         foreach ($nodes as $node) {
-            if (!$node instanceof Value) {
-                throw new Exception('Every node in a parenthesis must be an instance of Value.', 11);
-            }
             $this->nodes[] = $node;
         }
     }

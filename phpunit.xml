@@ -25,6 +25,7 @@
         <testsuite name="badSyntaxes">
             <file>tests/badSyntaxes.php</file>
             <file>tests/badSwitchSyntaxes.php</file>
+            <file>tests/badKeywordSyntaxes.php</file>
             <file>tests/unexpectedTokens.php</file>
             <file>tests/unexpectedTokensInBrackets.php</file>
             <file>tests/unexpectedTokensInHooks.php</file>

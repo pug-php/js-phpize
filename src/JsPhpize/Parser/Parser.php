@@ -192,13 +192,19 @@ class Parser
                 }
                 $this->unexpected($token);
             }
-            if ($token->isValue()) {
+            $type = null;
+            if ($token->is('keyword')) {
+                $type = 'string';
+                $value = var_export($token->value, true);
+            } elseif ($token->isValue()) {
                 $type = $token->type;
                 $value = $token->value;
                 if ($type === 'variable') {
                     $type = 'string';
                     $value = var_export($value, true);
                 }
+            }
+            if ($type) {
                 $token = $this->next();
                 if (!$token) {
                     throw new Exception('Missing value after ' . $value . $this->exceptionInfos(), 12);
@@ -289,28 +295,6 @@ class Parser
             }
             throw new Exception('Value expected after ' . $this->exceptionInfos(), 20);
         }
-        if ($next->is('function')) {
-            $function = new Block('function');
-            $next = $this->get(0);
-            if ($next->is('variable')) {
-                $this->skip();
-                $next = $this->get(0);
-            }
-            if (!$next->is('(')) {
-                $this->unexpected($next);
-            }
-            $this->skip();
-            $function->setValue($this->parseParentheses());
-            $next = $this->get(0);
-            if (!$next->is('{')) {
-                $this->unexpected($next);
-            }
-            $this->skip();
-            $this->parseBlock($function);
-            $this->skip();
-
-            return $function;
-        }
         $value = $this->getValueFromToken($next);
         if (!$value) {
             $this->unexpected($next);
@@ -396,6 +380,28 @@ class Parser
 
     protected function getValueFromToken($token)
     {
+        if ($token->is('function')) {
+            $function = new Block('function');
+            $token = $this->get(0);
+            if ($token->is('variable')) {
+                $this->skip();
+                $token = $this->get(0);
+            }
+            if (!$token->is('(')) {
+                $this->unexpected($token);
+            }
+            $this->skip();
+            $function->setValue($this->parseParentheses());
+            $token = $this->get(0);
+            if (!$token->is('{')) {
+                $this->unexpected($token);
+            }
+            $this->skip();
+            $this->parseBlock($function);
+            $this->skip();
+
+            return $function;
+        }
         if ($token->is('(')) {
             return $this->parseParentheses();
         }
@@ -476,6 +482,8 @@ class Parser
                         if ($next->is('(')) {
                             $this->skip();
                             $keyword->setValue($this->parseParentheses());
+                        } elseif($keyword->needParenthesis()) {
+                            throw new Exception("'" . $keyword->type . "' block need parentheses.", 17);
                         }
                 }
                 if ($keyword->handleInstructions()) {
