@@ -20,7 +20,10 @@ EOD;
         $this->assertSame($expected, $actual);
         $this->assertSame('', $jsPhpize->compileDependencies());
 
-        $actual = $jsPhpize->compileFile(__DIR__ . '/../examples/basic.js', true);
+        $jsPhpizeCatchDeps = new JsPhpize(array(
+            'catchDependencies' => true,
+        ));
+        $actual = $jsPhpizeCatchDeps->compileFile(__DIR__ . '/../examples/basic.js');
         $expected = <<<'EOD'
 $foo = array( 'bar' => array( "baz" => "hello" ) );
 $biz = 'bar';
@@ -30,7 +33,7 @@ EOD;
         $expected = preg_replace('/\s/', '', $expected);
         $this->assertSame($expected, $actual);
 
-        $actual = $jsPhpize->compileDependencies();
+        $actual = $jsPhpizeCatchDeps->compileDependencies();
         $expected = '$GLOBALS[\'__jpv_dot\'] = ' . file_get_contents(__DIR__ . '/../src/JsPhpize/Compiler/Helpers/Dot.h') . ';';
         $expected .= '$GLOBALS[\'__jpv_plus\'] = ' . file_get_contents(__DIR__ . '/../src/JsPhpize/Compiler/Helpers/Plus.h') . ';';
 
@@ -38,8 +41,8 @@ EOD;
         $expected = preg_replace('/\s/', '', $expected);
         $this->assertSame($expected, $actual);
 
-        $jsPhpize->compileFile(__DIR__ . '/../examples/calcul.js', true);
-        $actual = $jsPhpize->compileDependencies();
+        $jsPhpizeCatchDeps->compileFile(__DIR__ . '/../examples/calcul.js');
+        $actual = $jsPhpizeCatchDeps->compileDependencies();
         $expected = '$GLOBALS[\'__jpv_plus\'] = ' . file_get_contents(__DIR__ . '/../src/JsPhpize/Compiler/Helpers/Plus.h') . ';';
         $actual = preg_replace('/\s/', '', $actual);
         $expected = preg_replace('/\s/', '', $expected);
