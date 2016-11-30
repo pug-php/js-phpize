@@ -223,11 +223,12 @@ class Compiler
         return implode('', array_map(function ($instruction) use ($visitNode, $indent) {
             $value = call_user_func($visitNode, $instruction, $indent);
 
-            return $indent . (
-                $instruction instanceof Block && $instruction->handleInstructions()
+            return $indent .
+                ($instruction instanceof Block && $instruction->handleInstructions()
                     ? $value
                     : $value . ';'
-                ). "\n";
+                ) .
+                "\n";
         }, $group->instructions));
     }
 
