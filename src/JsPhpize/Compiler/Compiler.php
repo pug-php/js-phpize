@@ -94,8 +94,8 @@ class Compiler
 
     protected function visitBlock(Block $block, $indent)
     {
-        $head = $block->type . ' ' . ($block->value
-            ? $this->visitNode($block->value, $indent)
+        $head = $block->type . ($block->value
+            ? ' ' . $this->visitNode($block->value, $indent)
             : ''
         );
 
@@ -105,7 +105,7 @@ class Compiler
 
         $letVariables = $this->visitNodesArray($block->getLetVariables(), $indent, '', $indent . "unset(%s);\n");
 
-        return $head . "{\n" .
+        return $head . " {\n" .
             $this->compile($block, '  ' . $indent) .
             $letVariables .
             $indent . '}';
@@ -218,7 +218,17 @@ class Compiler
 
     protected function visitInstruction(Instruction $group, $indent)
     {
-        return $this->visitNodesArray($group->instructions, $indent, '', $indent . "%s;\n");
+        $visitNode = array($this, 'visitNode');
+
+        return implode('', array_map(function ($instruction) use ($visitNode, $indent) {
+            $value = call_user_func($visitNode, $instruction, $indent);
+
+            return $indent . (
+                $instruction instanceof Block && $instruction->handleInstructions()
+                    ? $value
+                    : $value . ';'
+                ). "\n";
+        }, $group->instructions));
     }
 
     public function visitNode(Node $node, $indent)
@@ -233,12 +243,12 @@ class Compiler
             $php = $node->getBefore() . $php . $node->getAfter();
         }
 
-        return $indent . $php;
+        return $php;
     }
 
     protected function visitParenthesis(Parenthesis $parenthesis, $indent)
     {
-        return '(' . $this->visitNodesArray($parenthesis->nodes, $indent, $parenthesis->separator) . ')';
+        return '(' . $this->visitNodesArray($parenthesis->nodes, $indent, $parenthesis->separator . ' ') . ')';
     }
 
     protected function visitTernary(Ternary $ternary, $indent)

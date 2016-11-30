@@ -175,6 +175,37 @@ class Parser
         throw new Exception('Missing ] to match ' . $exceptionInfos, 6);
     }
 
+    protected function getBracketsArrayItemKeyFromToken($token)
+    {
+        $type = null;
+
+        if ($token->is('keyword')) {
+            $type = 'string';
+            $value = var_export($token->value, true);
+        } elseif ($token->isValue()) {
+            $type = $token->type;
+            $value = $token->value;
+            if ($type === 'variable') {
+                $type = 'string';
+                $value = var_export($value, true);
+            }
+        }
+
+        if ($type) {
+            $token = $this->next();
+            if (!$token) {
+                throw new Exception('Missing value after ' . $value . $this->exceptionInfos(), 12);
+            }
+            if (!$token->is(':')) {
+                $this->unexpected($token);
+            }
+            $key = new Constant($type, $value);
+            $value = $this->expectValue($this->next());
+
+            return array($key, $value);
+        }
+    }
+
     protected function parseBracketsArray()
     {
         $array = new BracketsArray();
@@ -192,28 +223,8 @@ class Parser
                 }
                 $this->unexpected($token);
             }
-            $type = null;
-            if ($token->is('keyword')) {
-                $type = 'string';
-                $value = var_export($token->value, true);
-            } elseif ($token->isValue()) {
-                $type = $token->type;
-                $value = $token->value;
-                if ($type === 'variable') {
-                    $type = 'string';
-                    $value = var_export($value, true);
-                }
-            }
-            if ($type) {
-                $token = $this->next();
-                if (!$token) {
-                    throw new Exception('Missing value after ' . $value . $this->exceptionInfos(), 12);
-                }
-                if (!$token->is(':')) {
-                    $this->unexpected($token);
-                }
-                $key = new Constant($type, $value);
-                $value = $this->expectValue($this->next());
+            if ($pair = $this->getBracketsArrayItemKeyFromToken($token)) {
+                list($key, $value) = $pair;
                 $expectComma = true;
                 $array->addItem($key, $value);
 
@@ -440,7 +451,7 @@ class Parser
         return $value;
     }
 
-    protected function parseKeyword($token)
+    protected function parseKeywordStatement($token)
     {
         $name = $token->value;
         $keyword = new Block($name);
@@ -477,6 +488,13 @@ class Parser
                     throw new Exception("'" . $keyword->type . "' block need parentheses.", 17);
                 }
         }
+
+        return $keyword;
+    }
+
+    protected function parseKeyword($token)
+    {
+        $keyword = $this->parseKeywordStatement($token);
         if ($keyword->handleInstructions()) {
             $this->parseBlock($keyword);
         }
@@ -494,6 +512,17 @@ class Parser
         return $letVariable->value;
     }
 
+    protected function getInstructionFromToken($token)
+    {
+        if ($token->is('keyword')) {
+            return $this->parseKeyword($token);
+        }
+
+        if ($value = $this->getValueFromToken($token)) {
+            return $value;
+        }
+    }
+
     protected function parseInstructions($block, $waitForClosure)
     {
         while ($token = $this->next()) {
@@ -507,12 +536,8 @@ class Parser
                 $block->let($this->parseLet($token));
                 continue;
             }
-            if ($token->is('keyword')) {
-                $block->addInstruction($this->parseKeyword($token));
-                continue;
-            }
-            if ($value = $this->getValueFromToken($token)) {
-                $block->addInstruction($value);
+            if ($instruction = $this->getInstructionFromToken($token)) {
+                $block->addInstruction($instruction);
                 continue;
             }
             if ($token->is(';')) {
