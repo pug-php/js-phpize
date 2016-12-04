@@ -20,7 +20,6 @@ class OptionsTest extends \PHPUnit_Framework_TestCase
             return a;
         '));
 
-
         $jsPhpize = new JsPhpize(array(
             'disallow' => 'foo comment bar',
         ));

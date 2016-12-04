@@ -202,7 +202,6 @@ class Compiler
                 return $staticCall;
             }
 
-
             return 'function_exists(' . var_export($name, true) . ') ? ' .
                 $staticCall . ' : ' .
                 $dynamicCall;
