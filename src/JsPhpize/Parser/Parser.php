@@ -451,6 +451,32 @@ class Parser
         return $value;
     }
 
+    protected function expectColon($errorMessage, $errorCode)
+    {
+        $colon = $this->next();
+        if (!$colon || !$colon->is(':')) {
+            throw new Exception($errorMessage, $errorCode);
+        }
+    }
+
+    protected function handleOptionalValue($keyword, $afterKeyword)
+    {
+        if (!$afterKeyword->is(';')) {
+            $value = $this->expectValue($this->next());
+            $keyword->setValue($value);
+        }
+    }
+
+    protected function handleParentheses($keyword, $afterKeyword)
+    {
+        if ($afterKeyword && $afterKeyword->is('(')) {
+            $this->skip();
+            $keyword->setValue($this->parseParentheses());
+        } elseif ($keyword->needParenthesis()) {
+            throw new Exception("'" . $keyword->type . "' block need parentheses.", 17);
+        }
+    }
+
     protected function parseKeywordStatement($token)
     {
         $name = $token->value;
@@ -459,34 +485,18 @@ class Parser
             case 'return':
             case 'continue':
             case 'break':
-                $afterKeyword = $this->get(0);
-                if (!$afterKeyword->is(';')) {
-                    $value = $this->expectValue($this->next());
-                    $keyword->setValue($value);
-                }
+                $this->handleOptionalValue($keyword, $this->get(0));
                 break;
             case 'case':
                 $value = $this->expectValue($this->next());
                 $keyword->setValue($value);
-                $colon = $this->next();
-                if (!$colon || !$colon->is(':')) {
-                    throw new Exception("'case' must be followed by a value and a colon.", 21);
-                }
+                $this->expectColon("'case' must be followed by a value and a colon.", 21);
                 break;
             case 'default':
-                $colon = $this->next();
-                if (!$colon || !$colon->is(':')) {
-                    throw new Exception("'default' must be followed by a colon.", 22);
-                }
+                $this->expectColon("'default' must be followed by a colon.", 22);
                 break;
             default:
-                $next = $this->get(0);
-                if ($next && $next->is('(')) {
-                    $this->skip();
-                    $keyword->setValue($this->parseParentheses());
-                } elseif ($keyword->needParenthesis()) {
-                    throw new Exception("'" . $keyword->type . "' block need parentheses.", 17);
-                }
+                $this->handleParentheses($keyword, $this->get(0));
         }
 
         return $keyword;
