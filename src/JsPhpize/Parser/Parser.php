@@ -481,7 +481,7 @@ class Parser
                 break;
             default:
                 $next = $this->get(0);
-                if ($next->is('(')) {
+                if ($next && $next->is('(')) {
                     $this->skip();
                     $keyword->setValue($this->parseParentheses());
                 } elseif ($keyword->needParenthesis()) {
@@ -523,10 +523,16 @@ class Parser
         }
     }
 
-    protected function parseInstructions($block, $waitForClosure)
+    protected function getEndTokenFromBlock($block)
     {
+        return $block->multipleInstructions ? '}' : ';';
+    }
+
+    protected function parseInstructions($block)
+    {
+        $endToken = $this->getEndTokenFromBlock($block);
         while ($token = $this->next()) {
-            if ($token->is('}') && $waitForClosure) {
+            if ($token->is($endToken)) {
                 break;
             }
             if ($token->is('var')) {
@@ -541,9 +547,6 @@ class Parser
                 continue;
             }
             if ($token->is(';')) {
-                if (!$waitForClosure && !$block instanceof Main) {
-                    break;
-                }
                 $block->endInstruction();
                 continue;
             }
@@ -555,16 +558,20 @@ class Parser
     {
         $this->stack[] = $block;
         $next = $this->get(0);
-        if ($next->is('(')) {
+        if ($next && $next->is('(')) {
             $this->skip();
             $block->setValue($this->parseParentheses());
         }
-        $next = $this->get(0);
-        $waitForClosure = $next->is('{');
-        if ($waitForClosure && $block->type !== 'main') {
-            $this->skip();
+        if (!$block->multipleInstructions) {
+            $next = $this->get(0);
+            if ($next && $next->is('{')) {
+                $block->enableMultipleInstructions();
+            }
+            if ($block->multipleInstructions) {
+                $this->skip();
+            }
         }
-        $this->parseInstructions($block, $waitForClosure);
+        $this->parseInstructions($block);
         array_pop($this->stack);
     }
 

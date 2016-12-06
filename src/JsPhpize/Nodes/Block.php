@@ -25,6 +25,11 @@ class Block extends Node
     protected $inInstruction;
 
     /**
+     * @var bool
+     */
+    protected $multipleInstructions = false;
+
+    /**
      * @var array
      */
     protected $letVariables = array();
@@ -115,5 +120,10 @@ class Block extends Node
         }
 
         $this->value = $value;
+    }
+
+    public function enableMultipleInstructions()
+    {
+        $this->multipleInstructions = true;
     }
 }
