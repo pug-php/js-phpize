@@ -99,6 +99,18 @@ class JsPhpize extends JsPhpizeOptions
     }
 
     /**
+     * Flush all saved dependencies.
+     *
+     * @return $this
+     */
+    public function flushDependencies()
+    {
+        $this->dependencies = array();
+
+        return $this;
+    }
+
+    /**
      * Compile and return the code execution result.
      *
      * @param string $input     file or content

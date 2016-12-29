@@ -34,6 +34,7 @@ EOD;
         $this->assertSame($expected, $actual);
 
         $actual = $jsPhpizeCatchDeps->compileDependencies();
+        $jsPhpizeCatchDeps->flushDependencies();
         $expected = '$GLOBALS[\'__jpv_dot\'] = ' . file_get_contents(__DIR__ . '/../src/JsPhpize/Compiler/Helpers/Dot.h') . ';';
         $expected .= '$GLOBALS[\'__jpv_plus\'] = ' . file_get_contents(__DIR__ . '/../src/JsPhpize/Compiler/Helpers/Plus.h') . ';';
 
