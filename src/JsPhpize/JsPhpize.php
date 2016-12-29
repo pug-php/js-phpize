@@ -54,7 +54,7 @@ class JsPhpize extends JsPhpizeOptions
 
         $dependencies = $compiler->getDependencies();
         if ($this->getOption('catchDependencies')) {
-            $this->dependencies = $dependencies;
+            $this->dependencies = array_merge($this->dependencies, $dependencies);
             $dependencies = array();
         }
         $php = $compiler->compileDependencies($dependencies) . $php;
@@ -96,6 +96,18 @@ class JsPhpize extends JsPhpizeOptions
         $compiler = new Compiler($this);
 
         return $compiler->compileDependencies($this->dependencies);
+    }
+
+    /**
+     * Flush all saved dependencies.
+     *
+     * @return $this
+     */
+    public function flushDependencies()
+    {
+        $this->dependencies = array();
+
+        return $this;
     }
 
     /**

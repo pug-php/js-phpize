@@ -37,6 +37,6 @@ abstract class TokenCrawler
 
     protected function unexpected($token)
     {
-        throw new Exception('Unexpected ' . $token->type . rtrim(' ' . ($token->value ?: '')) . $this->exceptionInfos(), 8);
+        return new Exception('Unexpected ' . $token->type . rtrim(' ' . ($token->value ?: '')) . $this->exceptionInfos(), 8);
     }
 }

@@ -93,7 +93,7 @@ class Parser extends TokenExtractor
 
                     continue;
                 }
-                $this->unexpected($token);
+                throw $this->unexpected($token);
             }
             if ($value = $this->getValueFromToken($token)) {
                 $expectComma = true;
@@ -101,7 +101,7 @@ class Parser extends TokenExtractor
 
                 continue;
             }
-            $this->unexpected($token);
+            throw $this->unexpected($token);
         }
 
         throw new Exception('Missing ) to match ' . $exceptionInfos, 5);
@@ -122,7 +122,7 @@ class Parser extends TokenExtractor
 
                     continue;
                 }
-                $this->unexpected($token);
+                throw $this->unexpected($token);
             }
             if ($value = $this->getValueFromToken($token)) {
                 $expectComma = true;
@@ -130,7 +130,7 @@ class Parser extends TokenExtractor
 
                 continue;
             }
-            $this->unexpected($token);
+            throw $this->unexpected($token);
         }
 
         throw new Exception('Missing ] to match ' . $exceptionInfos, 6);
@@ -151,7 +151,7 @@ class Parser extends TokenExtractor
 
                     continue;
                 }
-                $this->unexpected($token);
+                throw $this->unexpected($token);
             }
             if ($pair = $this->getBracketsArrayItemKeyFromToken($token)) {
                 list($key, $value) = $pair;
@@ -160,7 +160,7 @@ class Parser extends TokenExtractor
 
                 continue;
             }
-            $this->unexpected($token);
+            throw $this->unexpected($token);
         }
 
         throw new Exception('Missing } to match ' . $exceptionInfos, 7);
@@ -237,13 +237,13 @@ class Parser extends TokenExtractor
             $token = $this->get(0);
         }
         if (!$token->is('(')) {
-            $this->unexpected($token);
+            throw $this->unexpected($token);
         }
         $this->skip();
         $function->setValue($this->parseParentheses());
         $token = $this->get(0);
         if (!$token->is('{')) {
-            $this->unexpected($token);
+            throw $this->unexpected($token);
         }
         $this->skip();
         $this->parseBlock($function);
@@ -291,7 +291,7 @@ class Parser extends TokenExtractor
     {
         $letVariable = $this->get(0);
         if (!$letVariable->is('variable')) {
-            $this->unexpected($letVariable, $token);
+            throw $this->unexpected($letVariable, $token);
         }
 
         return $letVariable->value;
@@ -319,7 +319,7 @@ class Parser extends TokenExtractor
                 $block->endInstruction();
                 continue;
             }
-            $this->unexpected($token);
+            throw $this->unexpected($token);
         }
     }
 

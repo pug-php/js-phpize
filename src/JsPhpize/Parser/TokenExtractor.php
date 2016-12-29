@@ -31,7 +31,7 @@ abstract class TokenExtractor extends TokenCrawler
                 throw new Exception('Missing value after ' . $value . $this->exceptionInfos(), 12);
             }
             if (!$token->is(':')) {
-                $this->unexpected($token);
+                throw $this->unexpected($token);
             }
             $key = new Constant($type, $value);
             $value = $this->expectValue($this->next());
@@ -50,7 +50,7 @@ abstract class TokenExtractor extends TokenCrawler
                 return new Constant('string', var_export($token->value, true));
             }
 
-            $this->unexpected($token);
+            throw $this->unexpected($token);
         }
 
         if ($token->is('[')) {
@@ -68,7 +68,7 @@ abstract class TokenExtractor extends TokenCrawler
                 return $value;
             }
 
-            $this->unexpected($token);
+            throw $this->unexpected($token);
         }
     }
 
@@ -145,7 +145,7 @@ abstract class TokenExtractor extends TokenCrawler
     {
         while ($token = $this->get(0)) {
             if ($token->is('{') || $token->expectNoLeftMember()) {
-                $this->unexpected($this->next());
+                throw $this->unexpected($this->next());
             }
             if ($token->is('?')) {
                 $this->skip();
@@ -191,13 +191,13 @@ abstract class TokenExtractor extends TokenCrawler
     {
         if (!$next) {
             if ($token) {
-                $this->unexpected($token);
+                throw $this->unexpected($token);
             }
             throw new Exception('Value expected after ' . $this->exceptionInfos(), 20);
         }
         $value = $this->getValueFromToken($next);
         if (!$value) {
-            $this->unexpected($next);
+            throw $this->unexpected($next);
         }
 
         return $value;
