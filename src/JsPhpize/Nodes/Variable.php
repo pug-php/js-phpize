@@ -32,5 +32,6 @@ class Variable extends Value implements Assignable
 
     public function getNonAssignableReason()
     {
+        return false;
     }
 }

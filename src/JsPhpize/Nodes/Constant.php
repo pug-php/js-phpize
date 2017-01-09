@@ -36,5 +36,7 @@ class Constant extends Value implements Assignable
         if (substr($this->value, 0, 2) === 'M_') {
             return "'M_' prefix is reserved to mathematical constants.";
         }
+
+        return false;
     }
 }

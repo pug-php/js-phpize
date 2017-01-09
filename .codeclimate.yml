@@ -21,7 +21,7 @@ engines:
     - eb746d53b9a8dabef2c1041d8e37158d
     - ef7cef7244578b6906e8785db37f6f48
     # Allow 'is' method
-    - 2ea85a0da934bbb59152f07507296053
+    - ace61d689ad3cd8ba10c4f88c6d33768
     # Allow eval in unit tests
     - a766751f59d0dda7f074443addea8e6f
 ratings:

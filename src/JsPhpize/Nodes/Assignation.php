@@ -23,7 +23,9 @@ class Assignation extends Value
 
     public function __construct($operator, Assignable $leftHand, Node $rightHand)
     {
-        if ($reason = $leftHand->getNonAssignableReason()) {
+        $reason = $leftHand->getNonAssignableReason();
+
+        if ($reason !== false) {
             throw new Exception($reason, 9);
         }
 
