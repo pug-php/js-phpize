@@ -1,15 +1,20 @@
 function ($base) {
-    $getCallable = function ($base, $key) {
+    $getFromArray = function ($base, $key) {
+        return isset($base[$key])
+            ? $base[$key]
+            : null;
+    };
+    $getCallable = function ($base, $key) use ($getFromArray) {
         if (is_callable(array($base, $key))) {
             return array($base, $key);
+        }
+        if ($base instanceof \ArrayAccess) {
+            return $getFromArray($base, $key);
         }
     };
     foreach (array_slice(func_get_args(), 1) as $key) {
         $base = is_array($base)
-            ? (isset($base[$key])
-                ? $base[$key]
-                : null
-             )
+            ? $getFromArray($base, $key)
             : (is_object($base)
                 ? (isset($base->$key)
                     ? $base->$key

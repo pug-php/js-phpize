@@ -24,6 +24,33 @@ class MagicMethodObject
     }
 }
 
+class ArrayAccessObject implements \ArrayAccess
+{
+    protected $data = array(
+        'foo' => 'bar',
+    );
+
+    public function offsetGet($name)
+    {
+        return $this->data[$name];
+    }
+
+    public function offsetExists($name)
+    {
+        return isset($this->data[$name]);
+    }
+
+    public function offsetSet($name, $value)
+    {
+        $this->data[$name] = $value;
+    }
+
+    public function offsetUnset($name)
+    {
+        unset($this->data[$name]);
+    }
+}
+
 class DotHelperTest extends \PHPUnit_Framework_TestCase
 {
     protected function getDotHelper()
@@ -113,5 +140,14 @@ class DotHelperTest extends \PHPUnit_Framework_TestCase
         $this->assertSame('bar', $dotHelper($object, 'foo'));
         $this->assertSame('biz', call_user_func($dotHelper($object, 'bar')));
         $this->assertSame(null, call_user_func($dotHelper($object, 'biz')));
+    }
+
+    public function testArrayAccess()
+    {
+        $dotHelper = $this->getDotHelper();
+        $object = new ArrayAccessObject();
+
+        $this->assertSame('bar', $dotHelper($object, 'foo'));
+        $this->assertSame(null, $dotHelper($object, 'biz'));
     }
 }
