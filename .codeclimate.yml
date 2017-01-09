@@ -11,6 +11,9 @@ engines:
     enabled: true
   phpmd:
     enabled: true
+    checks:
+      Design/CouplingBetweenObjects:
+        enabled: false
     exclude_fingerprints:
     # Ignore Stream checks
     - 862522819408aad57533cfe39d74fde2

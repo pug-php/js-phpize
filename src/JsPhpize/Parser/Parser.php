@@ -304,7 +304,7 @@ class Parser extends TokenExtractor
             if ($token->is($endToken)) {
                 break;
             }
-            if ($token->is('var')) {
+            if ($token->isIn('var', 'const')) {
                 continue;
             }
             if ($token->is('let')) {

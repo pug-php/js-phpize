@@ -87,6 +87,13 @@ class Compiler
 
     protected function visitAssignation(Assignation $assignation, $indent)
     {
+        if ($assignation->leftHand instanceof Constant && $assignation->leftHand->type === 'constant') {
+            return 'define(' .
+                var_export(strval($assignation->leftHand->value), true) . ', ' .
+                $this->visitNode($assignation->rightHand, $indent) .
+            ')';
+        }
+
         return $this->visitNode($assignation->leftHand, $indent) .
             ' ' . $assignation->operator .
             ' ' . $this->visitNode($assignation->rightHand, $indent);

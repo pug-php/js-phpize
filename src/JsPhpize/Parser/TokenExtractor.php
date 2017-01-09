@@ -2,6 +2,7 @@
 
 namespace JsPhpize\Parser;
 
+use JsPhpize\Lexer\Token;
 use JsPhpize\Nodes\Assignation;
 use JsPhpize\Nodes\Constant;
 use JsPhpize\Nodes\Dyiade;
@@ -9,21 +10,33 @@ use JsPhpize\Nodes\FunctionCall;
 
 abstract class TokenExtractor extends TokenCrawler
 {
-    protected function getBracketsArrayItemKeyFromToken($token)
+    protected function getStringExport($value)
     {
-        $type = null;
+        return array('string', var_export($value, true));
+    }
 
+    protected function getTypeAndValueFromToken(Token $token)
+    {
         if ($token->is('keyword')) {
-            $type = 'string';
-            $value = var_export($token->value, true);
-        } elseif ($token->isValue()) {
+            return $this->getStringExport($token->value);
+        }
+
+        if ($token->isValue()) {
             $type = $token->type;
             $value = $token->value;
+
             if ($type === 'variable') {
-                $type = 'string';
-                $value = var_export($value, true);
+                return $this->getStringExport($value);
             }
+
+            return array($token->type, $token->value);
         }
+
+        return array(null, null);
+    }
+    protected function getBracketsArrayItemKeyFromToken($token)
+    {
+        list($type, $value) = $this->getTypeAndValueFromToken($token);
 
         if ($type) {
             $token = $this->next();
