@@ -35,7 +35,7 @@ abstract class TokenExtractor extends TokenCrawler
             $this->skip();
             $token = $this->next();
 
-            if ($token->is('variable')) {
+            if ($token && $token->type === 'variable') {
                 return new Constant('string', var_export($token->value, true));
             }
 
@@ -68,7 +68,7 @@ abstract class TokenExtractor extends TokenCrawler
 
     protected function getInstructionFromToken($token)
     {
-        if ($token->is('keyword')) {
+        if ($token->type === 'keyword') {
             return $this->parseKeyword($token);
         }
 
@@ -107,7 +107,7 @@ abstract class TokenExtractor extends TokenCrawler
 
     protected function getInitialValue($token)
     {
-        if ($token->is('function')) {
+        if ($token->isFunction()) {
             return $this->parseFunction($token);
         }
         if ($token->is('(')) {
@@ -119,7 +119,7 @@ abstract class TokenExtractor extends TokenCrawler
         if ($token->is('{')) {
             return $this->parseBracketsArray();
         }
-        if ($token->isOperator() && $token->isIn('~', '!', '--', '++', '-', '+', 'delete', 'typeof', 'void')) {
+        if ($token->isLeftHandOperator()) {
             $value = $this->expectValue($this->next(), $token);
             $value->prepend($token->type);
 

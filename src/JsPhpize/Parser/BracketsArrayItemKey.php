@@ -31,7 +31,7 @@ class BracketsArrayItemKey
     {
         $token = $this->token;
 
-        if ($token->is('keyword')) {
+        if ($token->type === 'keyword') {
             return $this->getStringExport($token->value);
         }
 

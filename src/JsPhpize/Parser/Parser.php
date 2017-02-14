@@ -79,7 +79,7 @@ class Parser extends TokenExtractor
         while ($token = $this->next()) {
             if ($token->is(')')) {
                 $next = $this->get(0);
-                if ($next && $next->is('lambda')) {
+                if ($next && $next->type === 'lambda') {
                     $this->skip();
 
                     return $this->parseLambda($parentheses);
@@ -170,7 +170,7 @@ class Parser extends TokenExtractor
     {
         $children = array();
         while ($next = $this->get(0)) {
-            if ($next->is('lambda')) {
+            if ($next->type === 'lambda') {
                 $this->skip();
                 $parenthesis = new Parenthesis();
                 $parenthesis->addNode(new Variable($name, $children));
@@ -223,7 +223,7 @@ class Parser extends TokenExtractor
 
     protected function parseValue($token)
     {
-        return $token->is('variable')
+        return $token->type === 'variable'
             ? $this->parseVariable($token->value)
             : new Constant($token->type, $token->value);
     }
@@ -232,7 +232,7 @@ class Parser extends TokenExtractor
     {
         $function = new Block('function');
         $token = $this->get(0);
-        if ($token->is('variable')) {
+        if ($token->type === 'variable') {
             $this->skip();
             $token = $this->get(0);
         }
@@ -290,7 +290,7 @@ class Parser extends TokenExtractor
     protected function parseLet($token)
     {
         $letVariable = $this->get(0);
-        if (!$letVariable->is('variable')) {
+        if ($letVariable->type !== 'variable') {
             throw $this->unexpected($letVariable, $token);
         }
 
@@ -304,12 +304,14 @@ class Parser extends TokenExtractor
             if ($token->is($endToken)) {
                 break;
             }
-            if ($token->isIn('var', 'const')) {
-                continue;
-            }
-            if ($token->is('let')) {
-                $block->let($this->parseLet($token));
-                continue;
+            if ($token->type === 'keyword') {
+                if ($token->isIn('var', 'const')) {
+                    continue;
+                }
+                if ($token->value === 'let') {
+                    $block->let($this->parseLet($token));
+                    continue;
+                }
             }
             if ($instruction = $this->getInstructionFromToken($token)) {
                 $block->addInstruction($instruction);
