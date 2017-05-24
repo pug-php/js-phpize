@@ -209,7 +209,7 @@ class Compiler
                 return $staticCall;
             }
 
-            return 'function_exists(' . var_export($name, true) . ') ? ' .
+            return 'function_exists(' . var_export($name, true) . ') || in_array(' . var_export($name, true) . ', array(\'isset\', \'array\', \'empty\', \'eval\', \'list\', \'unset\'))? ' .
                 $staticCall . ' : ' .
                 $dynamicCall;
         }
