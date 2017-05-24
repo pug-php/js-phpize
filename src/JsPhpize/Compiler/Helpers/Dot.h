@@ -6,7 +6,7 @@ function ($base) {
     };
     $getCallable = function ($base, $key) use ($getFromArray) {
         if (is_callable(array($base, $key))) {
-            return array($base, $key);
+            return $base->$key();
         }
         if ($base instanceof \ArrayAccess) {
             return $getFromArray($base, $key);
@@ -21,7 +21,7 @@ function ($base) {
                     : (method_exists($base, $method = "get" . ucfirst($key))
                         ? $base->$method()
                         : (method_exists($base, $key)
-                            ? array($base, $key)
+                            ? $base->$key()
                             : $getCallable($base, $key)
                         )
                     )
