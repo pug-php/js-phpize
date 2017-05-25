@@ -25,7 +25,7 @@ class JsPhpizeOptions
      *
      * @param array $options list of options.
      */
-    public function __construct(array $options = [])
+    public function __construct(array $options = array())
     {
         $this->options = $options;
         if (!isset($this->options['patterns'])) {
