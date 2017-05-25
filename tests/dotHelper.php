@@ -155,7 +155,7 @@ class DotHelperTest extends \PHPUnit_Framework_TestCase
         $dotHelper = $this->getDotHelper();
         $object = new MagicMethodObject();
         $partialObject = new SemiMagicMethodObject();
-        $callerObject = new MagicCallerMethodObject();
+        $callerObject = new MagicCallMethodObject();
 
         $this->assertSame($object->foo, $dotHelper($object, 'foo'));
         $this->assertSame($object->nonexistent, $dotHelper($object, 'nonexistent')); #null with above class
