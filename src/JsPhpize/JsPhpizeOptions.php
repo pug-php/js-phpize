@@ -29,7 +29,7 @@ class JsPhpizeOptions
     {
         $this->options = $options;
         if (!isset($this->options['patterns'])) {
-            $this->options['patterns'] = [
+            $this->options['patterns'] = array(
                 new Pattern(10, 'newline', '\n'),
                 new Pattern(20, 'comment', '\/\/.*?\n|\/\*[\s\S]*?\*\/'),
                 new Pattern(30, 'string', '"(?:\\\\.|[^"\\\\])*"|\'(?:\\\\.|[^\'\\\\])*\''),
@@ -45,7 +45,7 @@ class JsPhpizeOptions
                 new Pattern(130, 'constant', 'null|undefined|Infinity|NaN|true|false|Math\.[A-Z][A-Z0-9_]*|[A-Z][A-Z0-9\\\\_\\x7f-\\xff]*|[\\\\\\x7f-\\xff_][A-Z0-9\\\\_\\x7f-\\xff]*[A-Z][A-Z0-9\\\\_\\x7f-\\xff]*', true),
                 new Pattern(130, 'variable', '[a-zA-Z\\\\\\x7f-\\xff\\$_][a-zA-Z0-9\\\\_\\x7f-\\xff\\$]*', '$'),
                 new Pattern(140, 'operator', '[\\s\\S]'),
-            ];
+            );
         }
     }
 
