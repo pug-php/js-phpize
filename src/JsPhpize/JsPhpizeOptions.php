@@ -25,27 +25,27 @@ class JsPhpizeOptions
      *
      * @param array $options list of options.
      */
-    public function __construct(array $options = array())
+    public function __construct(array $options = [])
     {
         $this->options = $options;
         if (!isset($this->options['patterns'])) {
-            $this->options['patterns'] = array(
+            $this->options['patterns'] = [
                 new Pattern(10, 'newline', '\n'),
-                new Pattern(20,'comment', '\/\/.*?\n|\/\*[\s\S]*?\*\/'),
-                new Pattern(30,'string', '"(?:\\\\.|[^"\\\\])*"|\'(?:\\\\.|[^\'\\\\])*\''),
-                new Pattern(40,'number', '0[bB][01]+|0[oO][0-7]+|0[xX][0-9a-fA-F]+|(\d+(\.\d*)?|\.\d+)([eE]-?\d+)?'),
+                new Pattern(20, 'comment', '\/\/.*?\n|\/\*[\s\S]*?\*\/'),
+                new Pattern(30, 'string', '"(?:\\\\.|[^"\\\\])*"|\'(?:\\\\.|[^\'\\\\])*\''),
+                new Pattern(40, 'number', '0[bB][01]+|0[oO][0-7]+|0[xX][0-9a-fA-F]+|(\d+(\.\d*)?|\.\d+)([eE]-?\d+)?'),
                 new Pattern(50, 'lambda', '=>'),
-                new Pattern(60, 'operator', array('delete', 'typeof', 'void'), true),
-                new Pattern(70, 'operator', array('>>>=', '<<=', '>>=', '**=')),
-                new Pattern(80, 'operator', array('++', '--', '&&', '||', '**', '>>>', '<<', '>>')),
-                new Pattern(90, 'operator', array('===', '!==', '>=', '<=', '<>', '!=', '==', '>', '<')),
+                new Pattern(60, 'operator', ['delete', 'typeof', 'void'], true),
+                new Pattern(70, 'operator', ['>>>=', '<<=', '>>=', '**=']),
+                new Pattern(80, 'operator', ['++', '--', '&&', '||', '**', '>>>', '<<', '>>']),
+                new Pattern(90, 'operator', ['===', '!==', '>=', '<=', '<>', '!=', '==', '>', '<']),
                 new Pattern(100, 'operator', '[\\|\\^&%\\/\\*\\+\\-]='),
                 new Pattern(110, 'operator', '[\\[\\]\\{\\}\\(\\)\\:\\.\\/\\*~\\!\\^\\|&%\\?,;\\+\\-]'),
-                new Pattern(120, 'keyword', array('as', 'async', 'await', 'break', 'case', 'catch', 'class', 'const', 'continue', 'debugger', 'default', 'do', 'else', 'enum', 'export', 'extends', 'finally', 'for', 'from', 'function', 'get', 'if', 'implements', 'import', 'in', 'instanceof', 'interface', 'let', 'new', 'of', 'package', 'private', 'protected', 'public', 'return', 'set', 'static', 'super', 'switch', 'throw', 'try', 'var', 'while', 'with', 'yield', 'yield*'), true),
+                new Pattern(120, 'keyword', ['as', 'async', 'await', 'break', 'case', 'catch', 'class', 'const', 'continue', 'debugger', 'default', 'do', 'else', 'enum', 'export', 'extends', 'finally', 'for', 'from', 'function', 'get', 'if', 'implements', 'import', 'in', 'instanceof', 'interface', 'let', 'new', 'of', 'package', 'private', 'protected', 'public', 'return', 'set', 'static', 'super', 'switch', 'throw', 'try', 'var', 'while', 'with', 'yield', 'yield*'], true),
                 new Pattern(130, 'constant', 'null|undefined|Infinity|NaN|true|false|Math\.[A-Z][A-Z0-9_]*|[A-Z][A-Z0-9\\\\_\\x7f-\\xff]*|[\\\\\\x7f-\\xff_][A-Z0-9\\\\_\\x7f-\\xff]*[A-Z][A-Z0-9\\\\_\\x7f-\\xff]*', true),
                 new Pattern(130, 'variable', '[a-zA-Z\\\\\\x7f-\\xff\\$_][a-zA-Z0-9\\\\_\\x7f-\\xff\\$]*', '$'),
                 new Pattern(140, 'operator', '[\\s\\S]'),
-            );
+            ];
         }
     }
 
@@ -80,7 +80,7 @@ class JsPhpizeOptions
     /**
      * Retrieve an option value.
      *
-     * @param string $key     option name.
+     * @param string $key option name.
      * @param mixed  $default value to return if the option is not set.
      *
      * @return mixed

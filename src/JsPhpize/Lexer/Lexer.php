@@ -95,12 +95,15 @@ class Lexer extends Scanner
         if (preg_match('/^\s*(' . $pattern . ')/', $this->input, $matches)) {
             return $this->{'scan' . ucfirst($method)}($matches);
         }
+
+        return false;
     }
 
     /**
-     * @return Token|false
-     *
+
      * @throws Exception
+     *
+     * @return Token|false
      */
     public function next()
     {

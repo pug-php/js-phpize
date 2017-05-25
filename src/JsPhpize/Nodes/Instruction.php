@@ -10,7 +10,7 @@ class Instruction extends Node
     protected $instructions;
 
     /**
-     * @var boolean
+     * @var bool
      */
     protected $appendReturn;
 

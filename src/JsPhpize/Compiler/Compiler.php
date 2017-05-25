@@ -358,9 +358,6 @@ class Compiler
 
         $count = count($block->instructions);
         foreach ($block->instructions as $index => $instruction) {
-            /**
-             * @var Instruction $instruction
-             */
             if ($index === $count - 1 && $this->engine->getOption('returnLastStatement')) {
                 $instruction->prependReturn();
             }
