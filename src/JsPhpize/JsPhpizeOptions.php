@@ -70,7 +70,7 @@ class JsPhpizeOptions
      *
      * @return $this
      */
-    public function removePatterns(callable $removeFunction)
+    public function removePatterns($removeFunction)
     {
         $this->options['patterns'] = array_filter($this->options['patterns'], $removeFunction);
 
