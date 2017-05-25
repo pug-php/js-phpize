@@ -80,7 +80,7 @@ class JsPhpizeOptions
     /**
      * Retrieve an option value.
      *
-     * @param string $key option name.
+     * @param string $key     option name.
      * @param mixed  $default value to return if the option is not set.
      *
      * @return mixed
