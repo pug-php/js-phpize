@@ -24,6 +24,24 @@ class MagicMethodObject
     }
 }
 
+class MagicCallMethodObject
+{
+    public function __call($name, array $args)
+    {
+        if ($name === 'bar') {
+            return 'biz';
+        }
+    }
+}
+class SemiMagicMethodObject
+{
+    public function __get($name)
+    {
+        if ($name === 'bar') {
+            return 'biz';
+        }
+    }
+}
 class ArrayAccessObject implements \ArrayAccess
 {
     protected $data = array(
@@ -136,8 +154,13 @@ class DotHelperTest extends \PHPUnit_Framework_TestCase
     {
         $dotHelper = $this->getDotHelper();
         $object = new MagicMethodObject();
+        $partialObject = new SemiMagicMethodObject();
+        $callerObject = new MagicCallerMethodObject();
 
-        $this->assertSame('bar', $dotHelper($object, 'foo'));
+        $this->assertSame($object->foo, $dotHelper($object, 'foo'));
+        $this->assertSame($object->nonexistent, $dotHelper($object, 'nonexistent')); #null with above class
+        $this->expectException($dotHelper($callerObject, 'foo'));
+        $this->assertSame($partialObject->bar, $dotHelper($partialObject, 'bar')); #biz
         $this->assertSame('biz', call_user_func($dotHelper($object, 'bar')));
         $this->assertSame(null, call_user_func($dotHelper($object, 'biz')));
     }
