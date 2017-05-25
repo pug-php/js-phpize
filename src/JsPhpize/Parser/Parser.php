@@ -23,16 +23,6 @@ class Parser extends TokenExtractor
     protected $engine;
 
     /**
-     * @var Lexer
-     */
-    protected $lexer;
-
-    /**
-     * @var array
-     */
-    protected $tokens;
-
-    /**
      * @var array
      */
     protected $dependencies;
@@ -287,11 +277,11 @@ class Parser extends TokenExtractor
         return $keyword;
     }
 
-    protected function parseLet($token)
+    protected function parseLet()
     {
         $letVariable = $this->get(0);
         if ($letVariable->type !== 'variable') {
-            throw $this->unexpected($letVariable, $token);
+            throw $this->unexpected($letVariable);
         }
 
         return $letVariable->value;
