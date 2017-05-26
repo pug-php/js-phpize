@@ -149,15 +149,17 @@ class DotHelperTest extends \PHPUnit_Framework_TestCase
                 ),
             ), 'foo', 'bar', 'biz'));
     }
+
     /**
-    * @expectedException PHPUnit_Framework_Error_Notice
-    */
+     * @expectedException PHPUnit_Framework_Error_Notice
+     */
     public function testUndefinedProperties()
     {
-      $dotHelper = $this->getDotHelper();
-      $object = new MagicCallMethodObject();
-      $dotHelper($object, 'foo');
+        $dotHelper = $this->getDotHelper();
+        $object = new MagicCallMethodObject();
+        $dotHelper($object, 'foo');
     }
+
     public function testMagicMethod()
     {
         $dotHelper = $this->getDotHelper();
