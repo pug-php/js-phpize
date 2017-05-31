@@ -209,6 +209,76 @@ class Compiler
                 return $staticCall;
             }
 
+            if (in_array($name, array(
+                '__halt_compiler',
+                'abstract',
+                'and',
+                'array',
+                'as',
+                'break',
+                'callable',
+                'case',
+                'catch',
+                'class',
+                'clone',
+                'const',
+                'continue',
+                'declare',
+                'default',
+                'die',
+                'do',
+                'echo',
+                'else',
+                'elseif',
+                'empty',
+                'enddeclare',
+                'endfor',
+                'endforeach',
+                'endif',
+                'endswitch',
+                'endwhile',
+                'eval',
+                'exit',
+                'extends',
+                'final',
+                'for',
+                'foreach',
+                'function',
+                'global',
+                'goto',
+                'if',
+                'implements',
+                'include',
+                'include_once',
+                'instanceof',
+                'insteadof',
+                'interface',
+                'isset',
+                'list',
+                'namespace',
+                'new',
+                'or',
+                'print',
+                'private',
+                'protected',
+                'public',
+                'require',
+                'require_once',
+                'return',
+                'static',
+                'switch',
+                'throw',
+                'trait',
+                'try',
+                'unset',
+                'use',
+                'var',
+                'while',
+                'xor',
+            ))) {
+                return $staticCall;
+            }
+
             return 'function_exists(' . var_export($name, true) . ') ? ' .
                 $staticCall . ' : ' .
                 $dynamicCall;
@@ -225,14 +295,15 @@ class Compiler
     protected function visitInstruction(Instruction $group, $indent)
     {
         $visitNode = array($this, 'visitNode');
+        $isReturnPrepended = $group->isReturnPrepended();
 
-        return implode('', array_map(function ($instruction) use ($visitNode, $indent) {
+        return implode('', array_map(function ($instruction) use ($visitNode, $indent, $isReturnPrepended) {
             $value = call_user_func($visitNode, $instruction, $indent);
 
             return $indent .
                 ($instruction instanceof Block && $instruction->handleInstructions()
                     ? $value
-                    : $value . ';'
+                    : ($isReturnPrepended ? ' return ' : '') . $value . ';'
                 ) .
                 "\n";
         }, $group->instructions));
@@ -285,7 +356,11 @@ class Compiler
     {
         $output = '';
 
-        foreach ($block->instructions as $instruction) {
+        $count = count($block->instructions);
+        foreach ($block->instructions as $index => $instruction) {
+            if ($index === $count - 1 && $this->engine->getOption('returnLastStatement')) {
+                $instruction->prependReturn();
+            }
             $output .= $this->visitNode($instruction, $indent);
         }
 

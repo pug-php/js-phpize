@@ -2,8 +2,20 @@
 
 namespace JsPhpize\Parser;
 
+use JsPhpize\Lexer\Lexer;
+
 abstract class TokenCrawler
 {
+    /**
+     * @var Lexer
+     */
+    protected $lexer;
+
+    /**
+     * @var array
+     */
+    protected $tokens;
+
     protected function retrieveNext()
     {
         while (($next = $this->lexer->next()) && $next->isNeutral());
