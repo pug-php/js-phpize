@@ -2,6 +2,7 @@
 
 namespace JsPhpize\Parser;
 
+use JsPhpize\Lexer\Token;
 use JsPhpize\Nodes\Assignation;
 use JsPhpize\Nodes\Constant;
 use JsPhpize\Nodes\Dyiade;
@@ -29,13 +30,13 @@ abstract class TokenExtractor extends TokenCrawler
         }
     }
 
-    protected function getVariableChildFromToken($token)
+    protected function getVariableChildFromToken(Token $token)
     {
         if ($token->is('.')) {
             $this->skip();
             $token = $this->next();
 
-            if ($token && $token->type === 'variable') {
+            if ($token && $token->isValidMember()) {
                 return new Constant('string', var_export($token->value, true));
             }
 
