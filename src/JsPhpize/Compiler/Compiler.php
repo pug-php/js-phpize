@@ -189,6 +189,7 @@ class Compiler
     {
         $function = $functionCall->function;
         $arguments = $functionCall->arguments;
+        $applicant = $functionCall->applicant;
         $arguments = $this->visitNodesArray($arguments, $indent, ', ');
         $dynamicCall = 'call_user_func(' .
             $this->visitNode($function, $indent) .
@@ -198,6 +199,10 @@ class Compiler
         if ($function instanceof Variable) {
             $name = $function->name;
             $staticCall = $name . '(' . $arguments . ')';
+
+            if ($applicant === 'new') {
+                return $staticCall;
+            }
 
             if (in_array($name, array(
                 'array',

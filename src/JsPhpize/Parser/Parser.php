@@ -247,10 +247,12 @@ class Parser extends TokenExtractor
         $name = $token->value;
         $keyword = new Block($name);
         switch ($name) {
+            case 'new':
+            case 'clone':
             case 'return':
             case 'continue':
             case 'break':
-                $this->handleOptionalValue($keyword, $this->get(0));
+                $this->handleOptionalValue($keyword, $this->get(0), $name);
                 break;
             case 'case':
                 $value = $this->expectValue($this->next());
