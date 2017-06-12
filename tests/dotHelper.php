@@ -140,6 +140,19 @@ class DotHelperTest extends \PHPUnit_Framework_TestCase
         $this->assertSame('bar', $dotHelper($object, 'foo'));
         $this->assertSame('biz', call_user_func($dotHelper($object, 'bar')));
         $this->assertSame(null, call_user_func($dotHelper($object, 'biz')));
+
+        $jsPhpize = new JsPhpize(array(
+            'returnLastStatement' => true,
+        ));
+        $hello = $jsPhpize->render('__page.seo.title', array(
+            '__page' => array(
+                'seo' => array(
+                    'title' => 'Hello',
+                ),
+            ),
+        ));
+
+        $this->assertSame('Hello', $hello);
     }
 
     public function testArrayAccess()
