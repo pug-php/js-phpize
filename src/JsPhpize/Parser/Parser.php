@@ -206,7 +206,7 @@ class Parser extends TokenExtractor
             throw new Exception("Ternary expression not properly closed after ':' " . $this->exceptionInfos(), 16);
         }
         $falseValue = $this->expectValue($next);
-        $next = $this->get(0);
+        $this->get(0);
 
         return new Ternary($condition, $trueValue, $falseValue);
     }
