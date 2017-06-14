@@ -145,7 +145,7 @@ abstract class TokenExtractor extends TokenCrawler
             }
             if ($token->is('(')) {
                 $this->skip();
-                $value = new FunctionCall($value, $this->parseParentheses()->nodes, $applicant);
+                $value = $this->parseFunctionCallChildren($value, $applicant);
 
                 continue;
             }

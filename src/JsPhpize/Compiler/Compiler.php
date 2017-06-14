@@ -196,7 +196,7 @@ class Compiler
             ($arguments === '' ? '' : ', ' . $arguments) .
         ')';
 
-        if ($function instanceof Variable) {
+        if ($function instanceof Variable && count($function->children) === 0) {
             $name = $function->name;
             $staticCall = $name . '(' . $arguments . ')';
 
@@ -287,6 +287,12 @@ class Compiler
             return 'function_exists(' . var_export($name, true) . ') ? ' .
                 $staticCall . ' : ' .
                 $dynamicCall;
+        }
+
+        if (count($functionCall->children)) {
+            $arguments = $this->mapNodesArray($functionCall->children, $indent);
+            array_unshift($arguments, $dynamicCall);
+            $dynamicCall = $this->helperWrap('dot', $arguments);
         }
 
         return $dynamicCall;
