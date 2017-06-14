@@ -24,6 +24,13 @@ function ($base) {
                     return substr($base, $pos, 1);
                 };
             }
+            if ($key === 'indexOf') {
+                return function ($needle) use ($base) {
+                    $pos = strpos($base, $needle);
+
+                    return $pos === false ? -1 : $pos;
+                };
+            }
             if ($key === 'toUpperCase') {
                 return function () use ($base) {
                     return strtoupper($base);
