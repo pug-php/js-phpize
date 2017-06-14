@@ -6,7 +6,6 @@ use JsPhpize\Lexer\Token;
 use JsPhpize\Nodes\Assignation;
 use JsPhpize\Nodes\Constant;
 use JsPhpize\Nodes\Dyiade;
-use JsPhpize\Nodes\FunctionCall;
 
 abstract class TokenExtractor extends TokenCrawler
 {
