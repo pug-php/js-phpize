@@ -114,7 +114,6 @@ class JsPhpizeOptions
             : $key;
     }
 
-
     /**
      * Retrieve the prefix of specific constants.
      *
