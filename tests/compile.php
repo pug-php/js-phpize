@@ -54,14 +54,14 @@ class CompileTest extends \PHPUnit_Framework_TestCase
         ));
         $result = $jsPhpize->compileCode('} else {');
 
-        $expected = str_replace("\r", '', trim("} else {"));
+        $expected = str_replace("\r", '', trim('} else {'));
         $actual = str_replace("\r", '', trim($result));
 
         $this->assertSame($expected, $actual);
 
         $result = $jsPhpize->compileCode('}');
 
-        $expected = str_replace("\r", '', trim("}"));
+        $expected = str_replace("\r", '', trim('}'));
         $actual = str_replace("\r", '', trim($result));
 
         $this->assertSame($expected, $actual);
