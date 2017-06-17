@@ -101,6 +101,21 @@ class JsPhpizeOptions
     }
 
     /**
+     * Retrieve the prefix of specific variables.
+     *
+     * @return string
+     */
+    public function getHelperName($key)
+    {
+        $helpers = $this->getOption('helpers', []);
+
+        return is_array($helpers) && isset($helpers[$key])
+            ? $helpers[$key]
+            : $key;
+    }
+
+
+    /**
      * Retrieve the prefix of specific constants.
      *
      * @return string

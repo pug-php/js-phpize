@@ -163,4 +163,34 @@ class DotHelperTest extends \PHPUnit_Framework_TestCase
         $this->assertSame('bar', $dotHelper($object, 'foo'));
         $this->assertSame(null, $dotHelper($object, 'biz'));
     }
+
+    public function testCustomHelper()
+    {
+        $plusHelper = 'function ($base) {
+            foreach (array_slice(func_get_args(), 1) as $value) {
+                $base = $base * $value;
+            }
+        
+            return $base;
+        }';
+        $jsPhpize = new JsPhpize(array(
+            'helpers' => array(
+                'plus' => $plusHelper,
+            ),
+            'returnLastStatement' => true,
+        ));
+
+        $this->assertEquals(18, $jsPhpize->render('3 + 6'));
+
+        $jsPhpize = new JsPhpize(array(
+            'helpers' => array(
+                'dot' => 'plus',
+            ),
+            'returnLastStatement' => true,
+        ));
+
+        $this->assertEquals('xb', $jsPhpize->render('a.b', array(
+            'a' => 'x',
+        )));
+    }
 }

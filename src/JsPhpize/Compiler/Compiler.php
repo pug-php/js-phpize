@@ -79,8 +79,19 @@ class Compiler
         $varPrefix = $this->varPrefix;
 
         return implode('', array_map(function ($name) use ($varPrefix) {
+            $code = $name;
+            $file = $name;
+
+            if (preg_match('/^[a-z0-9_-]+$/', $file)) {
+                $file = __DIR__ . '/Helpers/' . ucfirst($name) . '.h';
+            }
+
+            if (file_exists($file)) {
+                $code = file_get_contents($file);
+            }
+
             return '$GLOBALS[\'' . $varPrefix . $name . '\'] = ' .
-                trim(file_get_contents(__DIR__ . '/Helpers/' . ucfirst($name) . '.h')) .
+                trim($code) .
                 ";\n";
         }, $dependencies));
     }
@@ -159,7 +170,9 @@ class Compiler
                 $arguments[] = $this->visitNode($dyiade->rightHand, $indent);
             }
 
-            return $this->helperWrap('plus', $arguments);
+            $plus = $this->engine->getHelperName('plus');
+
+            return $this->helperWrap($plus, $arguments);
         }
 
         return $leftHand . ' ' . $dyiade->operator . ' ' . $rightHand;
@@ -292,7 +305,8 @@ class Compiler
         if (count($functionCall->children)) {
             $arguments = $this->mapNodesArray($functionCall->children, $indent);
             array_unshift($arguments, $dynamicCall);
-            $dynamicCall = $this->helperWrap('dot', $arguments);
+            $dot = $this->engine->getHelperName('dot');
+            $dynamicCall = $this->helperWrap($dot, $arguments);
         }
 
         return $dynamicCall;
@@ -357,7 +371,8 @@ class Compiler
         if (count($variable->children)) {
             $arguments = $this->mapNodesArray($variable->children, $indent);
             array_unshift($arguments, $php);
-            $php = $this->helperWrap('dot', $arguments);
+            $dot = $this->engine->getHelperName('dot');
+            $php = $this->helperWrap($dot, $arguments);
         }
 
         return $php;
