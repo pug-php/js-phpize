@@ -43,6 +43,11 @@ class Token
         return $this->typeIn(array('variable', 'constant', 'string', 'number'));
     }
 
+    public function isValidMember()
+    {
+        return $this->typeIn(array('variable', 'keyword'));
+    }
+
     protected function isComparison()
     {
         return $this->typeIn(array('===', '!==', '>=', '<=', '<>', '!=', '==', '>', '<'));

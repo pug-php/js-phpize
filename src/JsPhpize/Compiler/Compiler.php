@@ -189,15 +189,20 @@ class Compiler
     {
         $function = $functionCall->function;
         $arguments = $functionCall->arguments;
+        $applicant = $functionCall->applicant;
         $arguments = $this->visitNodesArray($arguments, $indent, ', ');
         $dynamicCall = 'call_user_func(' .
             $this->visitNode($function, $indent) .
             ($arguments === '' ? '' : ', ' . $arguments) .
         ')';
 
-        if ($function instanceof Variable) {
+        if ($function instanceof Variable && count($function->children) === 0) {
             $name = $function->name;
             $staticCall = $name . '(' . $arguments . ')';
+
+            if ($applicant === 'new') {
+                return $staticCall;
+            }
 
             if (in_array($name, array(
                 'array',
@@ -282,6 +287,12 @@ class Compiler
             return 'function_exists(' . var_export($name, true) . ') ? ' .
                 $staticCall . ' : ' .
                 $dynamicCall;
+        }
+
+        if (count($functionCall->children)) {
+            $arguments = $this->mapNodesArray($functionCall->children, $indent);
+            array_unshift($arguments, $dynamicCall);
+            $dynamicCall = $this->helperWrap('dot', $arguments);
         }
 
         return $dynamicCall;

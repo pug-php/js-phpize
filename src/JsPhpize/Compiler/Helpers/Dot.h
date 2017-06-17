@@ -12,6 +12,39 @@ function ($base) {
             return $getFromArray($base, $key);
         }
     };
+    $fallbackDot = function ($base, $key) use ($getCallable) {
+        if (is_string($base)) {
+            if ($key === 'substr' || $key === 'slice') {
+                return function ($start, $length = null) use ($base) {
+                    return func_num_args() === 1 ? substr($base, $start) : substr($base, $start, $length);
+                };
+            }
+            if ($key === 'charAt') {
+                return function ($pos) use ($base) {
+                    return substr($base, $pos, 1);
+                };
+            }
+            if ($key === 'indexOf') {
+                return function ($needle) use ($base) {
+                    $pos = strpos($base, $needle);
+
+                    return $pos === false ? -1 : $pos;
+                };
+            }
+            if ($key === 'toUpperCase') {
+                return function () use ($base) {
+                    return strtoupper($base);
+                };
+            }
+            if ($key === 'toLowerCase') {
+                return function () use ($base) {
+                    return strtolower($base);
+                };
+            }
+        }
+
+        return $getCallable($base, $key);
+    };
     foreach (array_slice(func_get_args(), 1) as $key) {
         $base = is_array($base)
             ? $getFromArray($base, $key)
@@ -26,7 +59,7 @@ function ($base) {
                         )
                     )
                 )
-                : $getCallable($base, $key)
+                : $fallbackDot($base, $key)
             );
     }
 

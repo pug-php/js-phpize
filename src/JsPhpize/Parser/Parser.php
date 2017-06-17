@@ -7,6 +7,7 @@ use JsPhpize\Lexer\Lexer;
 use JsPhpize\Nodes\Block;
 use JsPhpize\Nodes\BracketsArray;
 use JsPhpize\Nodes\Constant;
+use JsPhpize\Nodes\FunctionCall;
 use JsPhpize\Nodes\HooksArray;
 use JsPhpize\Nodes\Main;
 use JsPhpize\Nodes\Node;
@@ -168,9 +169,39 @@ class Parser extends TokenExtractor
         throw new Exception('Missing } to match ' . $exceptionInfos, 7);
     }
 
+    protected function parseFunctionCallChildren($function, $applicant = null)
+    {
+        $arguments = $this->parseParentheses()->nodes;
+        $children = array();
+
+        while ($next = $this->get(0)) {
+            if ($value = $this->getVariableChildFromToken($next)) {
+                $children[] = $value;
+
+                $next = $this->get(0);
+                if ($next && $next->is('(')) {
+                    $this->skip();
+
+                    return $this->parseFunctionCallChildren(
+                        new FunctionCall($function, $arguments, $children, $applicant)
+                    );
+
+                    break;
+                }
+
+                continue;
+            }
+
+            break;
+        }
+
+        return new FunctionCall($function, $arguments, $children, $applicant);
+    }
+
     protected function parseVariable($name)
     {
         $children = array();
+        $variable = null;
         while ($next = $this->get(0)) {
             if ($next->type === 'lambda') {
                 $this->skip();
@@ -183,20 +214,31 @@ class Parser extends TokenExtractor
             if ($value = $this->getVariableChildFromToken($next)) {
                 $children[] = $value;
 
+                $next = $this->get(0);
+                if ($next && $next->is('(')) {
+                    $this->skip();
+
+                    $variable = $this->parseFunctionCallChildren(new Variable($name, $children));
+
+                    break;
+                }
+
                 continue;
             }
 
             break;
         }
 
-        $variable = new Variable($name, $children);
+        if ($variable === null) {
+            $variable = new Variable($name, $children);
 
-        for ($i = count($this->stack) - 1; $i >= 0; $i--) {
-            $block = $this->stack[$i];
-            if ($block->isLet($name)) {
-                $variable->setScope($block);
+            for ($i = count($this->stack) - 1; $i >= 0; $i--) {
+                $block = $this->stack[$i];
+                if ($block->isLet($name)) {
+                    $variable->setScope($block);
 
-                break;
+                    break;
+                }
             }
         }
 
@@ -265,10 +307,12 @@ class Parser extends TokenExtractor
         $name = $token->value;
         $keyword = new Block($name);
         switch ($name) {
+            case 'new':
+            case 'clone':
             case 'return':
             case 'continue':
             case 'break':
-                $this->handleOptionalValue($keyword, $this->get(0));
+                $this->handleOptionalValue($keyword, $this->get(0), $name);
                 break;
             case 'case':
                 $value = $this->expectValue($this->next());
