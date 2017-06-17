@@ -107,7 +107,7 @@ class JsPhpizeOptions
      */
     public function getHelperName($key)
     {
-        $helpers = $this->getOption('helpers', []);
+        $helpers = $this->getOption('helpers', array());
 
         return is_array($helpers) && isset($helpers[$key])
             ? $helpers[$key]
