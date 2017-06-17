@@ -215,4 +215,16 @@ class DotHelperTest extends \PHPUnit_Framework_TestCase
             'a' => new MagicGetterWithNoIsset(),
         )));
     }
+
+    public function testHelperFile()
+    {
+        $jsPhpize = new JsPhpize(array(
+            'helpers' => array(
+                'plus' => __DIR__ . '/Plus.h',
+            ),
+            'returnLastStatement' => true,
+        ));
+
+        $this->assertEquals(6, $jsPhpize->render('13 + 7'));
+    }
 }

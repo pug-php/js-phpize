@@ -23,7 +23,7 @@
             <file>tests/options.php</file>
         </testsuite>
         <testsuite name="helpers">
-            <file>tests/dotHelper.php</file>
+            <file>tests/helpers.php</file>
         </testsuite>
         <testsuite name="badSyntaxes">
             <file>tests/badSyntaxes.php</file>
