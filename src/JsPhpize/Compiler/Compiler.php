@@ -82,7 +82,7 @@ class Compiler
             $code = $name;
             $file = $name;
 
-            if (preg_match('/^[a-z0-9_-]+$/', $file)) {
+            if (preg_match('/^[a-z0-9_-]+$/i', $file)) {
                 $file = __DIR__ . '/Helpers/' . ucfirst($name) . '.h';
             }
 

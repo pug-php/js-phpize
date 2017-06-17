@@ -51,6 +51,14 @@ class ArrayAccessObject implements \ArrayAccess
     }
 }
 
+class MagicGetterWithNoIsset
+{
+    public function __get($name)
+    {
+        return $name;
+    }
+}
+
 class DotHelperTest extends \PHPUnit_Framework_TestCase
 {
     protected function getDotHelper()
@@ -191,6 +199,20 @@ class DotHelperTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals('xb', $jsPhpize->render('a.b', array(
             'a' => 'x',
+        )));
+    }
+
+    public function testDotObjectHelper()
+    {
+        $jsPhpize = new JsPhpize(array(
+            'helpers' => array(
+                'dot' => 'dotObject',
+            ),
+            'returnLastStatement' => true,
+        ));
+
+        $this->assertEquals('hello', $jsPhpize->render('a.hello', array(
+            'a' => new MagicGetterWithNoIsset(),
         )));
     }
 }
