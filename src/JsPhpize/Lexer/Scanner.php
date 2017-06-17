@@ -23,16 +23,19 @@ class Scanner
         if (strpos($constant, $constPrefix) === 0) {
             throw new Exception('Constants cannot start with ' . $constPrefix . ', this prefix is reserved for JsPhpize' . $this->exceptionInfos(), 1);
         }
+
         $translate = array(
             'Infinity' => 'INF',
             'NaN' => 'NAN',
             'undefined' => 'null',
         );
+
         if (isset($translate[$constant])) {
             $constant = $translate[$constant];
         } elseif (substr($matches[0], 0, 5) === 'Math.') {
             $constant = 'M_' . substr($constant, 5);
         }
+
         $this->consume($matches[0]);
 
         return $this->token('constant', $constant);

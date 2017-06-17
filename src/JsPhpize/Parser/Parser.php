@@ -77,20 +77,24 @@ class Parser extends TokenExtractor
 
                 return $parentheses;
             }
+
             if ($expectComma) {
                 if ($token->isIn(',', ';')) {
                     $expectComma = false;
 
                     continue;
                 }
+
                 throw $this->unexpected($token);
             }
+
             if ($value = $this->getValueFromToken($token)) {
                 $expectComma = true;
                 $parentheses->addNode($value);
 
                 continue;
             }
+
             throw $this->unexpected($token);
         }
 
@@ -106,20 +110,24 @@ class Parser extends TokenExtractor
             if ($token->is(']')) {
                 return $array;
             }
+
             if ($expectComma) {
                 if ($token->is(',')) {
                     $expectComma = false;
 
                     continue;
                 }
+
                 throw $this->unexpected($token);
             }
+
             if ($value = $this->getValueFromToken($token)) {
                 $expectComma = true;
                 $array->addItem($value);
 
                 continue;
             }
+
             throw $this->unexpected($token);
         }
 
@@ -135,14 +143,17 @@ class Parser extends TokenExtractor
             if ($token->is('}')) {
                 return $array;
             }
+
             if ($expectComma) {
                 if ($token->is(',')) {
                     $expectComma = false;
 
                     continue;
                 }
+
                 throw $this->unexpected($token);
             }
+
             if ($pair = $this->getBracketsArrayItemKeyFromToken($token)) {
                 list($key, $value) = $pair;
                 $expectComma = true;
@@ -150,6 +161,7 @@ class Parser extends TokenExtractor
 
                 continue;
             }
+
             throw $this->unexpected($token);
         }
 
@@ -198,15 +210,18 @@ class Parser extends TokenExtractor
         if (!$next) {
             throw new Exception("Ternary expression not properly closed after '?' " . $this->exceptionInfos(), 14);
         }
+
         if (!$next->is(':')) {
             throw new Exception("':' expected but " . ($next->value ?: $next->type) . ' given ' . $this->exceptionInfos(), 15);
         }
+
         $next = $this->next();
         if (!$next) {
             throw new Exception("Ternary expression not properly closed after ':' " . $this->exceptionInfos(), 16);
         }
+
         $falseValue = $this->expectValue($next);
-        $next = $this->get(0);
+        $this->get(0);
 
         return new Ternary($condition, $trueValue, $falseValue);
     }
@@ -226,15 +241,18 @@ class Parser extends TokenExtractor
             $this->skip();
             $token = $this->get(0);
         }
+
         if (!$token->is('(')) {
             throw $this->unexpected($token);
         }
+
         $this->skip();
         $function->setValue($this->parseParentheses());
         $token = $this->get(0);
         if (!$token->is('{')) {
             throw $this->unexpected($token);
         }
+
         $this->skip();
         $this->parseBlock($function);
         $this->skip();
@@ -294,23 +312,31 @@ class Parser extends TokenExtractor
             if ($token->is($endToken)) {
                 break;
             }
+
             if ($token->type === 'keyword') {
                 if ($token->isIn('var', 'const')) {
                     continue;
                 }
+
                 if ($token->value === 'let') {
                     $block->let($this->parseLet($token));
+
                     continue;
                 }
             }
+
             if ($instruction = $this->getInstructionFromToken($token)) {
                 $block->addInstruction($instruction);
+
                 continue;
             }
+
             if ($token->is(';')) {
                 $block->endInstruction();
+
                 continue;
             }
+
             throw $this->unexpected($token);
         }
     }

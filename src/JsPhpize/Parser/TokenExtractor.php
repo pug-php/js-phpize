@@ -19,9 +19,11 @@ abstract class TokenExtractor extends TokenCrawler
             if (!$token) {
                 throw new Exception('Missing value after ' . $value . $this->exceptionInfos(), 12);
             }
+
             if (!$token->is(':')) {
                 throw $this->unexpected($token);
             }
+
             $key = new Constant($type, $value);
             $value = $this->expectValue($this->next());
 
@@ -136,12 +138,14 @@ abstract class TokenExtractor extends TokenCrawler
             if ($token->is('{') || $token->expectNoLeftMember()) {
                 throw $this->unexpected($this->next());
             }
+
             if ($token->is('?')) {
                 $this->skip();
                 $value = $this->parseTernary($value);
 
                 continue;
             }
+
             if ($token->is('(')) {
                 $this->skip();
                 $arguments = array();
@@ -149,12 +153,14 @@ abstract class TokenExtractor extends TokenCrawler
 
                 continue;
             }
+
             if ($token->isOperator()) {
                 if ($token->isIn('++', '--')) {
                     $value->append($this->next()->type);
 
                     break;
                 }
+
                 if ($token->isAssignation()) {
                     $this->skip();
                     $arguments = array();
@@ -167,7 +173,7 @@ abstract class TokenExtractor extends TokenCrawler
                 $this->skip();
                 $nextValue = $this->expectValue($this->next());
                 $value = new Dyiade($token->type, $value, $nextValue);
-                $token = $this->get(0);
+                $this->get(0);
 
                 continue;
             }
@@ -182,8 +188,10 @@ abstract class TokenExtractor extends TokenCrawler
             if ($token) {
                 throw $this->unexpected($token);
             }
+
             throw new Exception('Value expected after ' . $this->exceptionInfos(), 20);
         }
+
         $value = $this->getValueFromToken($next);
         if (!$value) {
             throw $this->unexpected($next);

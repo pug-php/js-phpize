@@ -11,7 +11,7 @@ class BadSyntaxesTest extends \PHPUnit_Framework_TestCase
     public function testNoParenthesesClose()
     {
         $jsPhpize = new JsPhpize();
-        $jsPhpize->render('(');
+        $jsPhpize->render('if ( {}');
     }
 
     /**
@@ -21,7 +21,7 @@ class BadSyntaxesTest extends \PHPUnit_Framework_TestCase
     public function testNoHookClose()
     {
         $jsPhpize = new JsPhpize();
-        $jsPhpize->render('[');
+        $jsPhpize->render('a = [1,');
     }
 
     /**
@@ -41,7 +41,7 @@ class BadSyntaxesTest extends \PHPUnit_Framework_TestCase
     public function testNoBracketClose()
     {
         $jsPhpize = new JsPhpize();
-        $jsPhpize->render('{');
+        $jsPhpize->render('a = {a: "b",');
     }
 
     /**
@@ -51,7 +51,7 @@ class BadSyntaxesTest extends \PHPUnit_Framework_TestCase
     public function testValueExpected()
     {
         $jsPhpize = new JsPhpize();
-        $jsPhpize->render('a[');
+        $jsPhpize->render('a =');
     }
 
     /**

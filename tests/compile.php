@@ -47,6 +47,26 @@ class CompileTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($expected, $actual);
     }
 
+    public function testTruncatedCode()
+    {
+        $jsPhpize = new JsPhpize(array(
+            'catchDependencies' => true,
+        ));
+        $result = $jsPhpize->compileCode('} else {');
+
+        $expected = str_replace("\r", '', trim("} else {"));
+        $actual = str_replace("\r", '', trim($result));
+
+        $this->assertSame($expected, $actual);
+
+        $result = $jsPhpize->compileCode('}');
+
+        $expected = str_replace("\r", '', trim("}"));
+        $actual = str_replace("\r", '', trim($result));
+
+        $this->assertSame($expected, $actual);
+    }
+
     /**
      * @expectedException     \JsPhpize\Compiler\Exception
      * @expectedExceptionCode 1111111

@@ -47,6 +47,13 @@ class JsPhpize extends JsPhpizeOptions
             $filename = file_exists($input) ? $input : null;
             $input = $filename === null ? $input : file_get_contents($filename);
         }
+
+        $start = '';
+        $end = '';
+        if (preg_match('/^([)}\]\s]*)(.*?)([({\[\s]*)$/', trim($input), $match)) {
+            list(, $start, $input, $end) = $match;
+        }
+
         $parser = new Parser($this, $input, $filename);
         $compiler = new Compiler($this);
         $block = $parser->parse();
@@ -57,9 +64,10 @@ class JsPhpize extends JsPhpizeOptions
             $this->dependencies = array_merge($this->dependencies, $dependencies);
             $dependencies = array();
         }
-        $php = $compiler->compileDependencies($dependencies) . $php;
 
-        return $php;
+        $php = $compiler->compileDependencies($dependencies) . $start . $php . $end;
+
+        return preg_replace('/\{(\s*\}\s*\{)+$/', '{', $php);
     }
 
     /**
@@ -148,6 +156,7 @@ class JsPhpize extends JsPhpizeOptions
             if (strlen($summary) > 50) {
                 $summary = substr($summary, 0, 47) . '...';
             }
+
             throw new Exception("An error occur in [$summary]:\n" . $e->getMessage(), 2, E_ERROR, __FILE__, __LINE__, $e);
         }
     }
