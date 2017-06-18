@@ -279,19 +279,19 @@ class Parser extends TokenExtractor
     {
         $function = new Block('function');
         $token = $this->get(0);
-        if ($token->type === 'variable') {
+        if ($token && $token->type === 'variable') {
             $this->skip();
             $token = $this->get(0);
         }
 
-        if (!$token->is('(')) {
+        if ($token && !$token->is('(')) {
             throw $this->unexpected($token);
         }
 
         $this->skip();
         $function->setValue($this->parseParentheses());
         $token = $this->get(0);
-        if (!$token->is('{')) {
+        if ($token && !$token->is('{')) {
             throw $this->unexpected($token);
         }
 
