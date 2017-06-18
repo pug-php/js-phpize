@@ -41,6 +41,16 @@ function ($base) {
                     return strtolower($base);
                 };
             }
+            if ($key === 'split') {
+                return function ($delimiter) use ($base) {
+                    return explode($delimiter, $base);
+                };
+            }
+            if ($key === 'replace') {
+                return function ($from, $to) use ($base) {
+                    return str_replace($from, $to, $base);
+                };
+            }
         }
 
         return $getCallable($base, $key);
