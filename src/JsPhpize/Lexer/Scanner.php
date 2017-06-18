@@ -73,6 +73,10 @@ class Scanner
             throw new Exception('Variables cannot start with ' . $varPrefix . ', this prefix is reserved for JsPhpize' . $this->exceptionInfos(), 4);
         }
 
+        if ($this->engine->getOption('ignoreDollarVariable') && substr($matches[0], 0, 1) === '$') {
+            $matches[0] = ' ' . substr($matches[0], 1);
+        }
+
         return $this->valueToken('variable', $matches);
     }
 }

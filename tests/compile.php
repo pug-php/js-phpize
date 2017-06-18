@@ -68,6 +68,24 @@ class CompileTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @group i
+     */
+    public function testCompileDollar()
+    {
+        $jsPhpize = new JsPhpize([
+            'ignoreDollarVariable' => true,
+        ]);
+
+        $actual = trim($jsPhpize->compile('$item'));
+
+        $this->assertSame('$item;', $actual);
+
+        $actual = trim($jsPhpize->compile('isset(item) ? item : \'\''));
+
+        $this->assertSame('isset($item) ? $item : \'\';', $actual);
+    }
+
+    /**
      * @expectedException     \JsPhpize\Compiler\Exception
      * @expectedExceptionCode 1111111
      */
