@@ -67,9 +67,6 @@ class CompileTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($expected, $actual);
     }
 
-    /**
-     * @group i
-     */
     public function testCompileDollar()
     {
         $jsPhpize = new JsPhpize([
