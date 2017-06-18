@@ -241,5 +241,22 @@ class DotHelperTest extends \PHPUnit_Framework_TestCase
             '1,3',
             implode(',', $jsPhpize->render('a = [1,2,3]; a.filter(function (i) { return i % 2; })'))
         );
+
+        $jsPhpize = new JsPhpize(array(
+            'helpers' => array(
+                'dot' => 'dotWithArrayPrototype',
+            ),
+        ));
+
+        $items = array(1, 2, 3);
+        ob_start();
+        eval($jsPhpize->compile('items.forEach(function (item) { echo(item); })'));
+        $actual = ob_get_contents();
+        ob_end_clean();
+
+        $this->assertSame(
+            '123',
+            $actual
+        );
     }
 }
