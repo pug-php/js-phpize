@@ -270,7 +270,7 @@ class DotHelperTest extends \PHPUnit_Framework_TestCase
         $items = array(2, 4, 6);
         eval(
             $jsPhpize->compile('items.forEach(function (item) {') .
-            ' ?><?= ' . $jsPhpize->compile('item') . ' ?><?php ' .
+            ' ?><?php echo ' . $jsPhpize->compile('item') . ' ?><?php ' .
             $jsPhpize->compile('})') .
             ' ?>'
         );
