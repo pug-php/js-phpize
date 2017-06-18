@@ -12,7 +12,7 @@ function ($base) {
         }
         if ($key === 'filter') {
             return function ($callback, $flag = 0) use ($base) {
-                return array_filter($base, $callback, $flag);
+                return func_num_args() === 1 ? array_filter($base, $callback) : array_filter($base, $callback, $flag);
             };
         }
         if ($key === 'pop') {
