@@ -328,7 +328,10 @@ class Compiler
             return $indent .
                 ($instruction instanceof Block && $instruction->handleInstructions()
                     ? $value
-                    : ($isReturnPrepended ? ' return ' : '') . $value . ';'
+                    : ($isReturnPrepended && !preg_match('/^\s*return(?![a-zA-Z0-9_])/', $value)
+                        ? ' return '
+                        : ''
+                    ) . $value . ';'
                 ) .
                 "\n";
         }, $group->instructions));
