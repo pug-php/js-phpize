@@ -237,15 +237,9 @@ class DotHelperTest extends \PHPUnit_Framework_TestCase
             'returnLastStatement' => true,
         ));
 
-        file_put_contents(
-            'error.php',
-            "<?php\n".
-            $jsPhpize->compile('a = [1,2,3]; a.filter(function (i) { return i % 2; })')
-        );
-        exit;
-        $this->assertEquals(
-            array(1, 3),
-            $jsPhpize->render('a = [1,2,3]; a.filter(function (i) { return i % 2; })')
+        $this->assertSame(
+            '1,3',
+            implode(',', $jsPhpize->render('a = [1,2,3]; a.filter(function (i) { return i % 2; })'))
         );
     }
 }
