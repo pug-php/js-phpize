@@ -69,9 +69,9 @@ class CompileTest extends \PHPUnit_Framework_TestCase
 
     public function testCompileDollar()
     {
-        $jsPhpize = new JsPhpize([
+        $jsPhpize = new JsPhpize(array(
             'ignoreDollarVariable' => true,
-        ]);
+        ));
 
         $actual = trim($jsPhpize->compile('$item'));
 
