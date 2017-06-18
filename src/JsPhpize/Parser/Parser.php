@@ -99,6 +99,12 @@ class Parser extends TokenExtractor
             throw $this->unexpected($token);
         }
 
+        if ($this->engine->getOption('allowTruncatedParentheses')) {
+            $this->engine->setFlag(JsPhpize::FLAG_TRUNCATED_PARENTHESES);
+
+            return $parentheses;
+        }
+
         throw new Exception('Missing ) to match ' . $exceptionInfos, 5);
     }
 

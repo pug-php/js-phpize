@@ -8,6 +8,8 @@ use JsPhpize\Parser\Parser;
 
 class JsPhpize extends JsPhpizeOptions
 {
+    const FLAG_TRUNCATED_PARENTHESES = 1;
+
     /**
      * @var string
      */
@@ -34,6 +36,11 @@ class JsPhpize extends JsPhpizeOptions
     protected $sharedVariables = array();
 
     /**
+     * @var int
+     */
+    protected $flags = 0;
+
+    /**
      * Compile file or code (detect if $input is an exisisting file, else use it as content).
      *
      * @param string $input    file or content
@@ -43,6 +50,8 @@ class JsPhpize extends JsPhpizeOptions
      */
     public function compile($input, $filename = null)
     {
+        $this->flags = 0;
+
         if ($filename === null) {
             $filename = file_exists($input) ? $input : null;
             $input = $filename === null ? $input : file_get_contents($filename);
@@ -59,6 +68,14 @@ class JsPhpize extends JsPhpizeOptions
         $block = $parser->parse();
         $php = $compiler->compile($block);
 
+        if ($this->flags & JsPhpize::FLAG_TRUNCATED_PARENTHESES) {
+            $php = preg_replace('/\)[\s;]*$/', '', $php);
+        }
+
+        if (substr(ltrim($end), 0, 1) === '{') {
+            $php = preg_replace('/\s*\{\s*\}\s*$/', '', $php);
+        }
+
         $dependencies = $compiler->getDependencies();
         if ($this->getOption('catchDependencies')) {
             $this->dependencies = array_merge($this->dependencies, $dependencies);
@@ -68,6 +85,21 @@ class JsPhpize extends JsPhpizeOptions
         $php = $compiler->compileDependencies($dependencies) . $start . $php . $end;
 
         return preg_replace('/\{(\s*\}\s*\{)+$/', '{', $php);
+    }
+
+    /**
+     * @param int  $flag    flag to set
+     * @param bool $enabled flag state
+     */
+    public function setFlag($flag, $enabled = true)
+    {
+        if ($enabled) {
+            $this->flags |= $flag;
+
+            return;
+        }
+
+        $this->flags &= ~$flag;
     }
 
     /**
