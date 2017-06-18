@@ -1,81 +1,81 @@
 function ($base) {
     $arrayPrototype = function ($base, $key) {
         if ($key === 'forEach') {
-            return return function ($callback, $userData = null) use (&$base) {
+            return function ($callback, $userData = null) use (&$base) {
                 return array_walk($base, $callback, $userData);
             };
         }
         if ($key === 'map') {
-            return return function ($callback) use (&$base) {
+            return function ($callback) use (&$base) {
                 return array_map($callback, $base);
             };
         }
         if ($key === 'filter') {
-            return return function ($callback, $flag = 0) use ($base) {
+            return function ($callback, $flag = 0) use ($base) {
                 return array_filter($base, $callback, $flag);
             };
         }
         if ($key === 'pop') {
-            return return function () use (&$base) {
+            return function () use (&$base) {
                 return array_pop($base);
             };
         }
         if ($key === 'shift') {
-            return return function () use (&$base) {
+            return function () use (&$base) {
                 return array_shift($base);
             };
         }
         if ($key === 'push') {
-            return return function ($item) use (&$base) {
+            return function ($item) use (&$base) {
                 return array_push($base, $item);
             };
         }
         if ($key === 'unshift') {
-            return return function ($item) use (&$base) {
+            return function ($item) use (&$base) {
                 return array_unshift($base, $item);
             };
         }
         if ($key === 'indexOf') {
-            return return function ($item) use (&$base) {
+            return function ($item) use (&$base) {
                 $search = array_search($base, $item);
 
                 return $search === false ? -1 : $search;
             };
         }
         if ($key === 'slice') {
-            return return function ($offset, $length = null, $preserveKeys = false) use (&$base) {
+            return function ($offset, $length = null, $preserveKeys = false) use (&$base) {
                 return array_slice($base, $offset, $length, $preserveKeys);
             };
         }
         if ($key === 'splice') {
-            return return function ($offset, $length = null, $replacements = array()) use (&$base) {
+            return function ($offset, $length = null, $replacements = array()) use (&$base) {
                 return array_splice($base, $offset, $length, $replacements);
             };
         }
         if ($key === 'reverse') {
-            return return function () use (&$base) {
+            return function () use (&$base) {
                 return array_reverse($base);
             };
         }
         if ($key === 'reduce') {
-            return return function ($callback, $initial = null) use (&$base) {
+            return function ($callback, $initial = null) use (&$base) {
                 return array_reduce($base, $callback, $initial);
             };
         }
         if ($key === 'join') {
-            return return function ($glue) use (&$base) {
+            return function ($glue) use (&$base) {
                 return implode($glue, $base);
             };
         }
         if ($key === 'sort') {
-            return return function ($callback = null) use (&$base) {
+            return function ($callback = null) use (&$base) {
                 return $callback ? usort($base, $callback) : sort($base);
             };
         }
 
         return null;
     };
-    $getFromArray = function ($base, $key) {
+    $getFromArray = function ($base, $key) use ($arrayPrototype) {
         return isset($base[$key])
             ? $base[$key]
             : $arrayPrototype($base, $key);
