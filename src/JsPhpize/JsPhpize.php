@@ -16,7 +16,7 @@ class JsPhpize extends JsPhpizeOptions
     protected $stream = 'jsphpize.stream';
 
     /**
-     * @var bool
+     * @var array
      */
     protected $streamsRegistered = array();
 

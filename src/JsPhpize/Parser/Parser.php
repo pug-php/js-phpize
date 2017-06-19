@@ -62,6 +62,15 @@ class Parser extends TokenExtractor
         return $lambda;
     }
 
+    protected function parseValueCompletion(&$base, $token)
+    {
+        if ($token && $token->is('?')) {
+            $base = $this->parseTernary($base);
+        }
+
+        $this->appendFunctionsCalls($base);
+    }
+
     protected function parseParentheses()
     {
         $parentheses = new Parenthesis();
@@ -377,6 +386,14 @@ class Parser extends TokenExtractor
 
             if ($instruction = $this->getInstructionFromToken($token)) {
                 $block->addInstruction($instruction);
+
+                continue;
+            }
+
+            if ($token->isIn('?', '(', '[') || $token->isOperator()) {
+                $value = $block->value;
+                $this->parseValueCompletion($value, $token);
+                $block->addInstruction($value);
 
                 continue;
             }

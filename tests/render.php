@@ -19,6 +19,7 @@ class RenderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @group examples
      * @dataProvider caseProvider
      */
     public function testJsPhpizeGeneration($returnFile, $jsFile)

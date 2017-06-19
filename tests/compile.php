@@ -19,6 +19,7 @@ class CompileTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @group examples
      * @dataProvider caseProvider
      */
     public function testJsPhpizeGeneration($phpFile, $jsFile)
