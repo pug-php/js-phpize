@@ -127,7 +127,8 @@ class Block extends Node
         $this->multipleInstructions = true;
     }
 
-    public function getReadVariables() {
+    public function getReadVariables()
+    {
         $variables = $this->value->getReadVariables();
         foreach ($this->instructions as $instruction) {
             $variables = array_merge($variables, $instruction->getReadVariables());

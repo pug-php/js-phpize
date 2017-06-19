@@ -29,7 +29,8 @@ class Instruction extends Node
         return $this->appendReturn === true;
     }
 
-    public function getReadVariables() {
+    public function getReadVariables()
+    {
         $variables = array();
         foreach ($this->instructions as $instruction) {
             $variables = array_merge($variables, $instruction->getReadVariables());
