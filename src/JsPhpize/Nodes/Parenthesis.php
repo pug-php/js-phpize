@@ -36,4 +36,13 @@ class Parenthesis extends Value
     {
         $this->separator = $separator;
     }
+
+    public function getReadVariables() {
+        $variables = array();
+        foreach ($this->nodes as $node) {
+            $variables = array_merge($variables, $node->getReadVariables());
+        }
+
+        return $variables;
+    }
 }

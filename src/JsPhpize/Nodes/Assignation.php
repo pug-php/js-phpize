@@ -33,4 +33,8 @@ class Assignation extends Value
         $this->leftHand = $leftHand;
         $this->rightHand = $rightHand;
     }
+
+    public function getReadVariables() {
+        return $this->rightHand->getReadVariables();
+    }
 }

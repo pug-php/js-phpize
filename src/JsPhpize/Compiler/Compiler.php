@@ -121,6 +121,10 @@ class Compiler
             return $head;
         }
 
+        if ($block->type === 'function' && count($readVariables = $block->getReadVariables())) {
+            $head .= ' use (&$' . implode(', &$', $readVariables) . ')';
+        }
+
         $letVariables = $this->visitNodesArray($block->getLetVariables(), $indent, '', $indent . "unset(%s);\n");
 
         return $head . " {\n" .
