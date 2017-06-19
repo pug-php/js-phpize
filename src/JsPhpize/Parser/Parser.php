@@ -381,7 +381,7 @@ class Parser extends TokenExtractor
                 continue;
             }
 
-            if ($token->is(';')) {
+            if ($token->is(';') || !$this->engine->getOption('strict')) {
                 $block->endInstruction();
 
                 continue;

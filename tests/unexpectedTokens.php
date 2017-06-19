@@ -90,7 +90,9 @@ class UnexpectedTokensTest extends \PHPUnit_Framework_TestCase
      */
     public function testUnexpectedInBlock()
     {
-        $jsPhpize = new JsPhpize();
+        $jsPhpize = new JsPhpize(array(
+            'strict' => true,
+        ));
         $jsPhpize->render('a = true; )');
     }
 }

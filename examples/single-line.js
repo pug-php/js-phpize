@@ -1,0 +1,1 @@
+var counter = function() { return [count++, count++, count++] }
