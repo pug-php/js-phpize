@@ -26,7 +26,8 @@ class Ternary extends Value
         $this->falseValue = $falseValue;
     }
 
-    public function getReadVariables() {
+    public function getReadVariables()
+    {
         return array_merge(
             $this->condition->getReadVariables(),
             $this->trueValue->getReadVariables(),

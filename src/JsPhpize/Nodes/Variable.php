@@ -35,7 +35,8 @@ class Variable extends Value implements Assignable
         return false;
     }
 
-    public function getReadVariables() {
+    public function getReadVariables()
+    {
         $variables = array($this->name);
         foreach ($this->children as $child) {
             $variables = array_merge($variables, $child->getReadVariables());
