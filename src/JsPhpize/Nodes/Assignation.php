@@ -36,6 +36,9 @@ class Assignation extends Value
 
     public function getReadVariables()
     {
-        return $this->rightHand->getReadVariables();
+        return array_merge(
+            $this->leftHand->getReadVariables(),
+            $this->rightHand->getReadVariables()
+        );
     }
 }

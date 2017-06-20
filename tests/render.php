@@ -10,7 +10,7 @@ class RenderTest extends \PHPUnit_Framework_TestCase
 
         $examples = __DIR__ . '/../examples';
         foreach (scandir($examples) as $file) {
-            if (substr($file, -7) === '.return' && $file === 'prototype.return') {
+            if (substr($file, -7) === '.return') {
                 $cases[] = array($file, substr($file, 0, -7) . '.js');
             }
         }
@@ -27,7 +27,22 @@ class RenderTest extends \PHPUnit_Framework_TestCase
         $examples = __DIR__ . '/../examples';
         $jsPhpize = new JsPhpize();
         $expected = file_get_contents($examples . '/' . $returnFile);
-        $result = $jsPhpize->render($examples . '/' . $jsFile);
+        try {
+            $result = $jsPhpize->render($examples.'/'.$jsFile);
+        } catch (Throwable $error) {
+            $contents = $jsPhpize->compile($examples.'/'.$jsFile);
+            $message = "\n" . get_class($error) . ' in ' . $jsFile . ' line ' . $error->getLine() .
+                "\n" . $error->getMessage() . "\n";
+            foreach (explode("\n", $contents) as $index => $line) {
+                $number = $index + 1;
+                $message .= ($number === $error->getLine() ? '>' : ' ') .
+                    str_repeat(' ', 4 - strlen($number)) .
+                    $number . ' | ' .
+                    $line . "\n";
+            }
+
+            throw new Exception($message, 1, $error);
+        }
 
         $expected = str_replace("\r", '', trim($expected));
         $actual = str_replace("\r", '', trim($result));

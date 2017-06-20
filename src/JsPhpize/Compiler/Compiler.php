@@ -105,9 +105,24 @@ class Compiler
             ')';
         }
 
+        $rightHand = $this->visitNode($assignation->rightHand, $indent);
+
+        if ($assignation->leftHand instanceof Variable && count($assignation->leftHand->children)) {
+            $set = $this->engine->getHelperName('set');
+
+            while ($lastChild = $assignation->leftHand->popChild()) {
+                $rightHand = $this->helperWrap($set, array(
+                    $this->visitNode($assignation->leftHand, $indent),
+                    $this->visitNode($lastChild, $indent),
+                    var_export($assignation->operator, true),
+                    $rightHand
+                ));
+            }
+        }
+
         return $this->visitNode($assignation->leftHand, $indent) .
             ' ' . $assignation->operator .
-            ' ' . $this->visitNode($assignation->rightHand, $indent);
+            ' ' . $rightHand;
     }
 
     protected function visitBlock(Block $block, $indent)

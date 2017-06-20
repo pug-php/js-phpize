@@ -35,6 +35,11 @@ class Variable extends Value implements Assignable
         return false;
     }
 
+    public function popChild()
+    {
+        return array_pop($this->children);
+    }
+
     public function getReadVariables()
     {
         $variables = array($this->name);
