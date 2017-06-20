@@ -28,9 +28,9 @@ class RenderTest extends \PHPUnit_Framework_TestCase
         $jsPhpize = new JsPhpize();
         $expected = file_get_contents($examples . '/' . $returnFile);
         try {
-            $result = $jsPhpize->render($examples.'/'.$jsFile);
+            $result = $jsPhpize->render($examples . '/' . $jsFile);
         } catch (Throwable $error) {
-            $contents = $jsPhpize->compile($examples.'/'.$jsFile);
+            $contents = $jsPhpize->compile($examples . '/' . $jsFile);
             $message = "\n" . get_class($error) . ' in ' . $jsFile . ' line ' . $error->getLine() .
                 "\n" . $error->getMessage() . "\n";
             foreach (explode("\n", $contents) as $index => $line) {

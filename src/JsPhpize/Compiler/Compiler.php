@@ -115,7 +115,7 @@ class Compiler
                     $this->visitNode($assignation->leftHand, $indent),
                     $this->visitNode($lastChild, $indent),
                     var_export($assignation->operator, true),
-                    $rightHand
+                    $rightHand,
                 ));
             }
         }
