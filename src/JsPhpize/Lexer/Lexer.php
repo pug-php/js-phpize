@@ -63,10 +63,10 @@ class Lexer extends Scanner
 
     protected function consume($consumed)
     {
-        $consumed = is_int($consumed) ? substr($this->input, 0, $consumed) : $consumed;
-        $this->consumed = strlen(trim($consumed)) > 1 ? $consumed : $this->consumed . $consumed;
-        $this->line += substr_count($consumed, "\n");
-        $this->input = substr($this->input, strlen($consumed));
+        $consumed = is_int($consumed) ? mb_substr($this->input, 0, $consumed) : $consumed;
+        $this->consumed = mb_strlen(trim($consumed)) > 1 ? $consumed : $this->consumed . $consumed;
+        $this->line += mb_substr_count($consumed, "\n");
+        $this->input = mb_substr($this->input, mb_strlen($consumed));
     }
 
     protected function token($type, $data = array())
@@ -107,7 +107,7 @@ class Lexer extends Scanner
      */
     public function next()
     {
-        if (!strlen($this->input)) {
+        if (!mb_strlen($this->input)) {
             return false;
         }
 
@@ -126,6 +126,6 @@ class Lexer extends Scanner
             }
         }
 
-        throw new Exception('Unknow pattern found at: ' . substr($this->input, 0, 100), 12);
+        throw new Exception('Unknow pattern found at: ' . mb_substr($this->input, 0, 100), 12);
     }
 }

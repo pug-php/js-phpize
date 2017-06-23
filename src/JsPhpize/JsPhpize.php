@@ -72,7 +72,7 @@ class JsPhpize extends JsPhpizeOptions
             $php = preg_replace('/\)[\s;]*$/', '', $php);
         }
 
-        if (substr(ltrim($end), 0, 1) === '{') {
+        if (mb_substr(ltrim($end), 0, 1) === '{') {
             $php = preg_replace('/\s*\{\s*\}\s*$/', '', $php);
         }
 
@@ -185,8 +185,8 @@ class JsPhpize extends JsPhpizeOptions
             throw $e;
         } catch (\Exception $e) {
             $summary = $input;
-            if (strlen($summary) > 50) {
-                $summary = substr($summary, 0, 47) . '...';
+            if (mb_strlen($summary) > 50) {
+                $summary = mb_substr($summary, 0, 47) . '...';
             }
 
             throw new Exception("An error occur in [$summary]:\n" . $e->getMessage(), 2, E_ERROR, __FILE__, __LINE__, $e);

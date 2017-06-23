@@ -167,7 +167,7 @@ class Compiler
     protected function visitConstant(Constant $constant)
     {
         $value = $constant->value;
-        if ($constant->type === 'string' && substr($constant->value, 0, 1) === '"') {
+        if ($constant->type === 'string' && mb_substr($constant->value, 0, 1) === '"') {
             $value = str_replace('$', '\\$', $value);
         }
 

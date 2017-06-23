@@ -80,7 +80,7 @@ class Token
 
     public function isAssignation()
     {
-        return substr($this->type, -1) === '=' && !$this->isComparison();
+        return mb_substr($this->type, -1) === '=' && !$this->isComparison();
     }
 
     public function isOperator()

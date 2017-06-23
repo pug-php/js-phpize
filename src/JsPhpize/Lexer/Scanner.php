@@ -20,7 +20,7 @@ class Scanner
     {
         $constant = trim($matches[0]);
         $constPrefix = $this->engine->getOption('constPrefix', JsPhpize::CONST_PREFIX);
-        if (strpos($constant, $constPrefix) === 0) {
+        if (mb_strpos($constant, $constPrefix) === 0) {
             throw new Exception('Constants cannot start with ' . $constPrefix . ', this prefix is reserved for JsPhpize' . $this->exceptionInfos(), 1);
         }
 
@@ -32,8 +32,8 @@ class Scanner
 
         if (isset($translate[$constant])) {
             $constant = $translate[$constant];
-        } elseif (substr($matches[0], 0, 5) === 'Math.') {
-            $constant = 'M_' . substr($constant, 5);
+        } elseif (mb_substr($matches[0], 0, 5) === 'Math.') {
+            $constant = 'M_' . mb_substr($constant, 5);
         }
 
         $this->consume($matches[0]);
@@ -69,12 +69,12 @@ class Scanner
     public function scanVariable($matches)
     {
         $varPrefix = $this->engine->getOption('varPrefix', JsPhpize::VAR_PREFIX);
-        if (strpos($matches[1], $varPrefix) === 0) {
+        if (mb_strpos($matches[1], $varPrefix) === 0) {
             throw new Exception('Variables cannot start with ' . $varPrefix . ', this prefix is reserved for JsPhpize' . $this->exceptionInfos(), 4);
         }
 
-        if ($this->engine->getOption('ignoreDollarVariable') && substr($matches[0], 0, 1) === '$') {
-            $matches[0] = ' ' . substr($matches[0], 1);
+        if ($this->engine->getOption('ignoreDollarVariable') && mb_substr($matches[0], 0, 1) === '$') {
+            $matches[0] = ' ' . mb_substr($matches[0], 1);
         }
 
         return $this->valueToken('variable', $matches);

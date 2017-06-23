@@ -33,7 +33,7 @@ class Constant extends Value implements Assignable
         if (in_array($this->value, array('NAN', 'INF'))) {
             return "{$this->value} is not assignable.";
         }
-        if (substr($this->value, 0, 2) === 'M_') {
+        if (mb_substr($this->value, 0, 2) === 'M_') {
             return "'M_' prefix is reserved to mathematical constants.";
         }
 
