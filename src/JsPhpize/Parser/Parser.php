@@ -412,7 +412,7 @@ class Parser extends TokenExtractor
     {
         $this->stack[] = $block;
         $next = $this->get(0);
-        if ($next && $next->is('(')) {
+        if ($next && $next->is('(') && !($block instanceof Main)) {
             $this->skip();
             $block->setValue($this->parseParentheses());
         }

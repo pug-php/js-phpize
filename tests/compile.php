@@ -83,6 +83,16 @@ class CompileTest extends \PHPUnit_Framework_TestCase
         $this->assertSame('isset($item) ? $item : \'\';', $actual);
     }
 
+    public function testDoubleParentheses()
+    {
+        $jsPhpize = new JsPhpize();
+        $template = "(('is regular, javascript'))";
+
+        $actual = trim($jsPhpize->compile($template));
+
+        $this->assertSame($template . ';', $actual);
+    }
+
     /**
      * @expectedException     \JsPhpize\Compiler\Exception
      * @expectedExceptionCode 1111111
