@@ -40,7 +40,7 @@ class Token
 
     public function isValue()
     {
-        return $this->typeIn(array('variable', 'constant', 'string', 'number'));
+        return $this->typeIn(array('variable', 'constant', 'string', 'number', 'regexp'));
     }
 
     public function isValidMember()

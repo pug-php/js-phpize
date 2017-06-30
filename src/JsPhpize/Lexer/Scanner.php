@@ -79,4 +79,9 @@ class Scanner
 
         return $this->valueToken('variable', $matches);
     }
+
+    public function scanRegexp($matches)
+    {
+        return $this->valueToken('regexp', $matches);
+    }
 }

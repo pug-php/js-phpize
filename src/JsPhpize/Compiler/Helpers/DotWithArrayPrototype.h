@@ -88,7 +88,10 @@ function ($base) {
             return $getFromArray($base, $key);
         }
     };
-    $fallbackDot = function ($base, $key) use ($getCallable) {
+    $getRegExp = function ($value) {
+        return isset($value->isRegularExpression) && $value->isRegularExpression ? $value->regExp : null;
+    };
+    $fallbackDot = function ($base, $key) use ($getCallable, $getRegExp) {
         if (is_string($base)) {
             if ($key === 'substr' || $key === 'slice') {
                 return function ($start, $length = null) use ($base) {
@@ -117,13 +120,30 @@ function ($base) {
                     return strtolower($base);
                 };
             }
+            if ($key === 'match') {
+                return function ($search) use ($base, $getRegExp) {
+                    if (!$getRegExp($search)) {
+                        $search = '/' . preg_quote($search) . '/';
+                    }
+
+                    return preg_match($search, $base);
+                };
+            }
             if ($key === 'split') {
-                return function ($delimiter) use ($base) {
+                return function ($delimiter) use ($base, $getRegExp) {
+                    if ($regExp = $getRegExp($delimiter)) {
+                        return preg_split($regExp, $base);
+                    }
+
                     return explode($delimiter, $base);
                 };
             }
             if ($key === 'replace') {
-                return function ($from, $to) use ($base) {
+                return function ($from, $to) use ($base, $getRegExp) {
+                    if ($regExp = $getRegExp($from)) {
+                        return preg_replace($regExp, $to, $base);
+                    }
+
                     return str_replace($from, $to, $base);
                 };
             }

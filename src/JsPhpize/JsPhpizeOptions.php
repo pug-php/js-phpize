@@ -33,6 +33,7 @@ class JsPhpizeOptions
                 new Pattern(10, 'newline', '\n'),
                 new Pattern(20, 'comment', '\/\/.*?\n|\/\*[\s\S]*?\*\/'),
                 new Pattern(30, 'string', '"(?:\\\\.|[^"\\\\])*"|\'(?:\\\\.|[^\'\\\\])*\''),
+                new Pattern(30, 'regexp', '\\/(?:\\\\.|[^\\/\\\\])*\\/[gimuy]*'),
                 new Pattern(40, 'number', '0[bB][01]+|0[oO][0-7]+|0[xX][0-9a-fA-F]+|(\d+(\.\d*)?|\.\d+)([eE]-?\d+)?'),
                 new Pattern(50, 'lambda', '=>'),
                 new Pattern(60, 'operator', array('delete', 'typeof', 'void'), true),

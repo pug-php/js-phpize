@@ -170,6 +170,13 @@ class Compiler
         if ($constant->type === 'string' && mb_substr($constant->value, 0, 1) === '"') {
             $value = str_replace('$', '\\$', $value);
         }
+        if ($constant->type === 'regexp') {
+            $value = rtrim($value, 'gimuy');
+            $value = '(object) ' . var_export(array(
+                'isRegularExpression' => true,
+                'regExp' => $value,
+            ), true);
+        }
 
         return $value;
     }
