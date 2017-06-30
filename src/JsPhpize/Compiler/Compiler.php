@@ -171,11 +171,8 @@ class Compiler
             $value = str_replace('$', '\\$', $value);
         }
         if ($constant->type === 'regexp') {
-            $value = rtrim($value, 'gimuy');
-            $value = '(object) ' . var_export(array(
-                'isRegularExpression' => true,
-                'regExp' => $value,
-            ), true);
+            $regExp = $this->engine->getHelperName('regExp');
+            $value = $this->helperWrap($regExp, array(var_export($value, true)));
         }
 
         return $value;
