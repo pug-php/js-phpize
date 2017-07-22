@@ -2,6 +2,7 @@
 
 namespace JsPhpize;
 
+use ArrayAccess;
 use JsPhpize\Lexer\Pattern;
 
 class JsPhpizeOptions
@@ -25,9 +26,9 @@ class JsPhpizeOptions
      *
      * @param array $options list of options.
      */
-    public function __construct(array $options = array())
+    public function __construct($options = array())
     {
-        $this->options = $options;
+        $this->options = is_array($options) || $options instanceof ArrayAccess ? $options : array();
         if (!isset($this->options['patterns'])) {
             $this->options['patterns'] = array(
                 new Pattern(10, 'newline', '\n'),
