@@ -24,7 +24,7 @@ class JsPhpizeOptions
     /**
      * Pass options as array or no parameters for all options on default value.
      *
-     * @param array $options list of options.
+     * @param array|ArrayAccess $options list of options.
      */
     public function __construct($options = array())
     {
