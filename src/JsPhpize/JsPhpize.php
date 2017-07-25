@@ -177,19 +177,26 @@ class JsPhpize extends JsPhpizeOptions
         extract(array_merge($this->sharedVariables, $variables));
         try {
             return include $this->stream . '://data;<?php ' . $this->compile($input, $filename);
-        } catch (\JsPhpize\Compiler\Exception $e) {
-            throw $e;
-        } catch (\JsPhpize\Lexer\Exception $e) {
-            throw $e;
-        } catch (\JsPhpize\Parser\Exception $e) {
-            throw $e;
-        } catch (\Exception $e) {
+        } catch (\JsPhpize\Compiler\Exception $exception) {
+            throw $exception;
+        } catch (\JsPhpize\Lexer\Exception $exception) {
+            throw $exception;
+        } catch (\JsPhpize\Parser\Exception $exception) {
+            throw $exception;
+        } catch (\Exception $exception) {
             $summary = $input;
             if (mb_strlen($summary) > 50) {
                 $summary = mb_substr($summary, 0, 47) . '...';
             }
 
-            throw new Exception("An error occur in [$summary]:\n" . $e->getMessage(), 2, E_ERROR, __FILE__, __LINE__, $e);
+            throw new Exception(
+                "An error occur in [$summary]:\n" . $exception->getMessage(),
+                2,
+                E_ERROR,
+                __FILE__,
+                __LINE__,
+                $exception
+            );
         }
     }
 

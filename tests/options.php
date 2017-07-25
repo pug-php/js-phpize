@@ -33,8 +33,8 @@ class OptionsTest extends \PHPUnit_Framework_TestCase
                 }
                 return a;
             ');
-        } catch (\Exception $e) {
-            $code = $e->getCode();
+        } catch (\Exception $exception) {
+            $code = $exception->getCode();
         }
         $this->assertSame(3, $code);
     }

@@ -59,8 +59,8 @@ EOD;
         try {
             $jsPhpize = new JsPhpize();
             $jsPhpize->compileFile('does/not/exists.js');
-        } catch (\Exception $e) {
-            throw new \Exception($e->getMessage(), 1);
+        } catch (\Exception $exception) {
+            throw new \Exception($exception->getMessage(), 1);
         }
     }
 
