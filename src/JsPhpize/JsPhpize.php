@@ -175,6 +175,7 @@ class JsPhpize extends JsPhpizeOptions
         }
 
         extract(array_merge($this->sharedVariables, $variables));
+
         try {
             return include $this->stream . '://data;<?php ' . $this->compile($input, $filename);
         } catch (\JsPhpize\Compiler\Exception $exception) {

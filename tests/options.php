@@ -25,6 +25,7 @@ class OptionsTest extends \PHPUnit_Framework_TestCase
             'disallow' => 'foo comment bar',
         ));
         $code = null;
+
         try {
             $jsPhpize->render('
                 var a = 3;
@@ -36,6 +37,7 @@ class OptionsTest extends \PHPUnit_Framework_TestCase
         } catch (\Exception $exception) {
             $code = $exception->getCode();
         }
+
         $this->assertSame(3, $code);
     }
 

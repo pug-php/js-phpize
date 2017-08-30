@@ -76,6 +76,7 @@ class Parser extends TokenExtractor
         $parentheses = new Parenthesis();
         $exceptionInfos = $this->exceptionInfos();
         $expectComma = false;
+
         while ($token = $this->next()) {
             if ($token->is(')')) {
                 $next = $this->get(0);
@@ -122,6 +123,7 @@ class Parser extends TokenExtractor
         $array = new HooksArray();
         $exceptionInfos = $this->exceptionInfos();
         $expectComma = false;
+
         while ($token = $this->next()) {
             if ($token->is(']')) {
                 return $array;
@@ -155,6 +157,7 @@ class Parser extends TokenExtractor
         $array = new BracketsArray();
         $exceptionInfos = $this->exceptionInfos();
         $expectComma = false;
+
         while ($token = $this->next()) {
             if ($token->is('}')) {
                 return $array;
@@ -200,8 +203,6 @@ class Parser extends TokenExtractor
                     return $this->parseFunctionCallChildren(
                         new FunctionCall($function, $arguments, $children, $applicant)
                     );
-
-                    break;
                 }
 
                 continue;

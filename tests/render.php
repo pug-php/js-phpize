@@ -27,6 +27,7 @@ class RenderTest extends \PHPUnit_Framework_TestCase
         $examples = __DIR__ . '/../examples';
         $jsPhpize = new JsPhpize();
         $expected = file_get_contents($examples . '/' . $returnFile);
+
         try {
             $result = $jsPhpize->render($examples . '/' . $jsFile);
         } catch (Throwable $error) {
