@@ -34,12 +34,9 @@ class FunctionCall extends Value
 
     public function getReadVariables()
     {
-        $variables = array();
+        $variables = $this->function->getReadVariables();
         foreach ($this->arguments as $argument) {
             $variables = array_merge($variables, $argument->getReadVariables());
-        }
-        foreach ($this->children as $child) {
-            $variables = array_merge($variables, $child->getReadVariables());
         }
 
         return $variables;

@@ -281,5 +281,15 @@ class DotHelperTest extends \PHPUnit_Framework_TestCase
             '246',
             $actual
         );
+
+        $jsPhpize = new JsPhpize();
+
+        $jsPhpize->setFlag(JsPhpize::FLAG_TRUNCATED_PARENTHESES, true);
+
+        self::assertEquals(true, $jsPhpize->hasFlag(JsPhpize::FLAG_TRUNCATED_PARENTHESES));
+
+        $jsPhpize->setFlag(JsPhpize::FLAG_TRUNCATED_PARENTHESES, false);
+
+        self::assertEquals(false, $jsPhpize->hasFlag(JsPhpize::FLAG_TRUNCATED_PARENTHESES));
     }
 }

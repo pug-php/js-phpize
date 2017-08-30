@@ -68,7 +68,7 @@ class JsPhpize extends JsPhpizeOptions
         $block = $parser->parse();
         $php = $compiler->compile($block);
 
-        if ($this->flags & self::FLAG_TRUNCATED_PARENTHESES) {
+        if ($this->hasFlag(self::FLAG_TRUNCATED_PARENTHESES)) {
             $php = preg_replace('/\)[\s;]*$/', '', $php);
         }
 
@@ -85,6 +85,14 @@ class JsPhpize extends JsPhpizeOptions
         $php = $compiler->compileDependencies($dependencies) . $start . $php . $end;
 
         return preg_replace('/\{(\s*\}\s*\{)+$/', '{', $php);
+    }
+
+    /**
+     * @return int
+     */
+    public function hasFlag($flag)
+    {
+        return $this->flags & $flag;
     }
 
     /**
