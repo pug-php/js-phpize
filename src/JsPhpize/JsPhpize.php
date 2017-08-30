@@ -78,7 +78,7 @@ class JsPhpize extends JsPhpizeOptions
 
         $dependencies = $compiler->getDependencies();
         if ($this->getOption('catchDependencies')) {
-            $this->dependencies = array_merge($this->dependencies, $dependencies);
+            $this->dependencies = array_unique(array_merge($this->dependencies, $dependencies));
             $dependencies = array();
         }
 

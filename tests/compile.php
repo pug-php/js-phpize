@@ -48,6 +48,30 @@ class CompileTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($expected, $actual);
     }
 
+    public function testDependenciesGrouping()
+    {
+        $jsPhpize = new JsPhpize(array(
+            'catchDependencies' => true,
+        ));
+        $jsPhpize->compileCode("a = 4 + 5;\n b = '9' + '3'");
+        $jsPhpize->compileCode('4 + 5');
+        $jsPhpize->compileCode('4 + 5 + 9');
+        $jsPhpize->compileCode('a.b.c');
+        $jsPhpize->compileCode("a.b();\nc = a.c");
+        $jsPhpize->compileCode('a.b');
+        $jsPhpize->compileCode('a.b');
+
+        $this->assertSame(1, mb_substr_count(
+            $jsPhpize->compileDependencies(),
+            '$GLOBALS[\'__jpv_dot\'] = function ($base) {'
+        ));
+
+        $this->assertSame(1, mb_substr_count(
+            $jsPhpize->compileDependencies(),
+            '$GLOBALS[\'__jpv_plus\'] = function ($base) {'
+        ));
+    }
+
     public function testTruncatedCode()
     {
         $jsPhpize = new JsPhpize(array(
