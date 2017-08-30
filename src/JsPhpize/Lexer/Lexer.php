@@ -100,7 +100,6 @@ class Lexer extends Scanner
     }
 
     /**
-
      * @throws Exception
      *
      * @return Token|false
