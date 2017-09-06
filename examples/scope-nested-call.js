@@ -1,12 +1,14 @@
 var method = 'foo';
-var obj = {
+var objOutside = {
     foo: function () {
         return 'bar';
     },
 };
 
 var foo = function () {
-    return obj[method]();
+    var objInside = objOutside;
+
+    return objInside[method]();
 };
 
 return foo();
