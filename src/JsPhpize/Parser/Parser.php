@@ -102,7 +102,7 @@ class Parser extends TokenExtractor
         }
 
         if ($this->engine->getOption('allowTruncatedParentheses')) {
-            $this->engine->setFlag(JsPhpize::FLAG_TRUNCATED_PARENTHESES);
+            $this->engine->setFlag(JsPhpize::FLAG_TRUNCATED_PARENTHESES, true);
 
             return $parentheses;
         }
@@ -357,6 +357,43 @@ class Parser extends TokenExtractor
         return $letVariable->value;
     }
 
+    protected function parseInstruction($block, $token, &$initNext)
+    {
+        if ($token->type === 'keyword') {
+            if ($token->isIn('var', 'const')) {
+                $initNext = true;
+
+                return true;
+            }
+
+            if ($token->value === 'let') {
+                $initNext = true;
+                $block->let($this->parseLet($token));
+
+                return true;
+            }
+        }
+
+        if ($instruction = $this->getInstructionFromToken($token)) {
+            if ($initNext && $instruction instanceof Variable) {
+                $instruction = new Assignation('=', $instruction, new Constant('constant', 'null'));
+            }
+            $initNext = false;
+            $block->addInstruction($instruction);
+
+            return true;
+        }
+
+        if ($token->is(';') || !$this->engine->getOption('strict')) {
+            $initNext = false;
+            $block->endInstruction();
+
+            return true;
+        }
+
+        return false;
+    }
+
     protected function parseInstructions($block)
     {
         $initNext = false;
@@ -366,35 +403,7 @@ class Parser extends TokenExtractor
                 break;
             }
 
-            if ($token->type === 'keyword') {
-                if ($token->isIn('var', 'const')) {
-                    $initNext = true;
-
-                    continue;
-                }
-
-                if ($token->value === 'let') {
-                    $initNext = true;
-                    $block->let($this->parseLet($token));
-
-                    continue;
-                }
-            }
-
-            if ($instruction = $this->getInstructionFromToken($token)) {
-                if ($initNext && $instruction instanceof Variable) {
-                    $instruction = new Assignation('=', $instruction, new Constant('constant', 'null'));
-                }
-                $initNext = false;
-                $block->addInstruction($instruction);
-
-                continue;
-            }
-
-            if ($token->is(';') || !$this->engine->getOption('strict')) {
-                $initNext = false;
-                $block->endInstruction();
-
+            if ($this->parseInstruction($block, $token, $initNext)) {
                 continue;
             }
 

@@ -150,7 +150,7 @@ class JsPhpizeOptions
      * @param int  $flag    flag to set
      * @param bool $enabled flag state
      */
-    public function setFlag($flag, $enabled = true)
+    public function setFlag($flag, $enabled)
     {
         if ($enabled) {
             $this->flags |= $flag;
