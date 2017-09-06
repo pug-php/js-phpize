@@ -1,6 +1,8 @@
 <?php
 
 use JsPhpize\JsPhpize;
+use JsPhpize\Nodes\FunctionCall;
+use JsPhpize\Nodes\Instruction;
 
 class BadSyntaxesTest extends \PHPUnit_Framework_TestCase
 {
@@ -92,5 +94,14 @@ class BadSyntaxesTest extends \PHPUnit_Framework_TestCase
     {
         $jsPhpize = new JsPhpize();
         $jsPhpize->render('a = true ? true :');
+    }
+
+    /**
+     * @expectedException     \JsPhpize\Parser\Exception
+     * @expectedExceptionCode 24
+     */
+    public function testBadFunctionCall()
+    {
+        new FunctionCall(new Instruction(), array(), array());
     }
 }

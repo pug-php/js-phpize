@@ -63,11 +63,6 @@ abstract class TokenExtractor extends TokenCrawler
         }
     }
 
-    protected function getEndTokenFromBlock($block)
-    {
-        return $block->multipleInstructions ? '}' : ';';
-    }
-
     protected function getInstructionFromToken($token)
     {
         if ($token->type === 'keyword') {
@@ -110,7 +105,7 @@ abstract class TokenExtractor extends TokenCrawler
     protected function getInitialValue($token)
     {
         if ($token->isFunction()) {
-            return $this->parseFunction($token);
+            return $this->parseFunction();
         }
         if ($token->is('(')) {
             return $this->parseParentheses();

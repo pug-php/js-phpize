@@ -62,15 +62,6 @@ class Parser extends TokenExtractor
         return $lambda;
     }
 
-    protected function parseValueCompletion(&$base, $token)
-    {
-        if ($token && $token->is('?')) {
-            $base = $this->parseTernary($base);
-        }
-
-        $this->appendFunctionsCalls($base);
-    }
-
     protected function parseParentheses()
     {
         $parentheses = new Parenthesis();
@@ -291,9 +282,10 @@ class Parser extends TokenExtractor
             : new Constant($token->type, $token->value);
     }
 
-    protected function parseFunction($token)
+    protected function parseFunction()
     {
         $function = new Block('function');
+        $function->enableMultipleInstructions();
         $token = $this->get(0);
         if ($token && $token->type === 'variable') {
             $this->skip();
@@ -313,7 +305,6 @@ class Parser extends TokenExtractor
 
         $this->skip();
         $this->parseBlock($function);
-        $this->skip();
 
         return $function;
     }
@@ -367,9 +358,8 @@ class Parser extends TokenExtractor
 
     protected function parseInstructions($block)
     {
-        $endToken = $this->getEndTokenFromBlock($block);
         while ($token = $this->next()) {
-            if ($token->is($endToken)) {
+            if ($token->is($block->multipleInstructions ? '}' : ';')) {
                 break;
             }
 
@@ -391,16 +381,13 @@ class Parser extends TokenExtractor
                 continue;
             }
 
-            if ($token->isIn('?', '(', '[') || $token->isOperator()) {
-                $value = $block->value;
-                $this->parseValueCompletion($value, $token);
-                $block->addInstruction($value);
-
-                continue;
-            }
 
             if ($token->is(';') || !$this->engine->getOption('strict')) {
                 $block->endInstruction();
+//                $next = $this->get(0);
+//                if ($block->type !== 'function' && $next && $next->is('}')) {
+//                    break;
+//                }
 
                 continue;
             }
@@ -412,11 +399,6 @@ class Parser extends TokenExtractor
     public function parseBlock($block)
     {
         $this->stack[] = $block;
-        $next = $this->get(0);
-        if ($next && $next->is('(') && !($block instanceof Main)) {
-            $this->skip();
-            $block->setValue($this->parseParentheses());
-        }
         if (!$block->multipleInstructions) {
             $next = $this->get(0);
             if ($next && $next->is('{')) {

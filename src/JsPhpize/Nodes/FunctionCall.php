@@ -2,10 +2,12 @@
 
 namespace JsPhpize\Nodes;
 
+use JsPhpize\Parser\Exception;
+
 class FunctionCall extends Value
 {
     /**
-     * @var Value
+     * @var Value|Block
      */
     protected $function;
 
@@ -24,8 +26,12 @@ class FunctionCall extends Value
      */
     protected $applicant;
 
-    public function __construct(Value $function, array $arguments, array $children, $applicant = null)
+    public function __construct(Node $function, array $arguments, array $children, $applicant = null)
     {
+        if (!($function instanceof Value || $function instanceof Block)) {
+            throw new Exception('Unexpected called type ' . get_class($function), 24);
+        }
+
         $this->function = $function;
         $this->arguments = $arguments;
         $this->applicant = $applicant;
