@@ -4,6 +4,7 @@ namespace JsPhpize\Parser;
 
 use JsPhpize\JsPhpize;
 use JsPhpize\Lexer\Lexer;
+use JsPhpize\Nodes\Assignation;
 use JsPhpize\Nodes\Block;
 use JsPhpize\Nodes\BracketsArray;
 use JsPhpize\Nodes\Constant;
@@ -358,6 +359,8 @@ class Parser extends TokenExtractor
 
     protected function parseInstructions($block)
     {
+        $initNext = false;
+
         while ($token = $this->next()) {
             if ($token->is($block->multipleInstructions ? '}' : ';')) {
                 break;
@@ -365,10 +368,13 @@ class Parser extends TokenExtractor
 
             if ($token->type === 'keyword') {
                 if ($token->isIn('var', 'const')) {
+                    $initNext = true;
+
                     continue;
                 }
 
                 if ($token->value === 'let') {
+                    $initNext = true;
                     $block->let($this->parseLet($token));
 
                     continue;
@@ -376,12 +382,17 @@ class Parser extends TokenExtractor
             }
 
             if ($instruction = $this->getInstructionFromToken($token)) {
+                if ($initNext && $instruction instanceof Variable) {
+                    $instruction = new Assignation('=', $instruction, new Constant('constant', 'null'));
+                }
+                $initNext = false;
                 $block->addInstruction($instruction);
 
                 continue;
             }
 
             if ($token->is(';') || !$this->engine->getOption('strict')) {
+                $initNext = false;
                 $block->endInstruction();
 
                 continue;
