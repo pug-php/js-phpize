@@ -25,11 +25,11 @@ class Pattern extends Readable
     {
         $this->priority = $priority;
         $this->type = $type;
-        $this->regex = is_array($patterns) ?
-            implode('|', array_map(function ($pattern) {
+        $this->regex = is_array($patterns)
+            ? implode('|', array_map(function ($pattern) {
                 return preg_quote($pattern, '/');
-            }, $patterns)) :
-            $patterns;
+            }, $patterns))
+            : $patterns;
         $exception = false;
         if ($notInsideAWord !== false) {
             $exception = 'a-zA-Z0-9\\\\_\\x7f-\\xff';

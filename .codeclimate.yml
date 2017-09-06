@@ -16,15 +16,8 @@ engines:
         enabled: false
       Design/EvalExpression:
         enabled: false
-      Controversial/CamelCaseMethodName:
-        enabled: true
-        exclude_paths:
-        - "src/JsPhpize/Stream"
-    exclude_fingerprints:
-    # Allow 'is' method
-    - ace61d689ad3cd8ba10c4f88c6d33768
-    # Allow eval in unit tests
-    - a766751f59d0dda7f074443addea8e6f
+    exclude_paths:
+    - "src/JsPhpize/Stream/"
 ratings:
   paths:
   - "**.php"
