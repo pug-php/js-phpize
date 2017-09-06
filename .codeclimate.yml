@@ -12,6 +12,8 @@ engines:
   phpmd:
     enabled: true
     checks:
+      Naming/ShortMethodName:
+        enabled: false
       Design/CouplingBetweenObjects:
         enabled: false
       Design/EvalExpression:
