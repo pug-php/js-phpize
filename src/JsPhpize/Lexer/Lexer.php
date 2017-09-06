@@ -111,8 +111,8 @@ class Lexer extends Scanner
         }
 
         $patterns = $this->engine->getOption('patterns');
-        usort($patterns, function (Pattern $a, Pattern $b) {
-            return $a->priority - $b->priority;
+        usort($patterns, function (Pattern $first, Pattern $second) {
+            return $first->priority - $second->priority;
         });
 
         foreach ($patterns as $pattern) {
