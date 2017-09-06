@@ -381,13 +381,8 @@ class Parser extends TokenExtractor
                 continue;
             }
 
-
             if ($token->is(';') || !$this->engine->getOption('strict')) {
                 $block->endInstruction();
-//                $next = $this->get(0);
-//                if ($block->type !== 'function' && $next && $next->is('}')) {
-//                    break;
-//                }
 
                 continue;
             }
