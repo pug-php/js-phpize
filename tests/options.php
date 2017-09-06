@@ -134,6 +134,6 @@ class OptionsTest extends \PHPUnit_Framework_TestCase
         $jsPhpize->removePatterns(function (Pattern $pattern) {
             return !in_array($pattern->type, array('number', 'operator'));
         });
-        $code = $jsPhpize->compile('1 + 1');
+        $jsPhpize->compile('1 + 1');
     }
 }
