@@ -17,6 +17,9 @@ function ($base) {
     };
     $fallbackDot = function ($base, $key) use ($getCallable, $getRegExp) {
         if (is_string($base)) {
+            if (preg_match('/^[-+]?\d+$/', strval($key))) {
+                return substr($base, intval($key), 1);
+            }
             if ($key === 'substr' || $key === 'slice') {
                 return function ($start, $length = null) use ($base) {
                     return func_num_args() === 1 ? substr($base, $start) : substr($base, $start, $length);

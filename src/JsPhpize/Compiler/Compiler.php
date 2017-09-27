@@ -250,9 +250,9 @@ class Compiler
                 return $staticCall;
             }
 
-            return 'function_exists(' . var_export($name, true) . ') ? ' .
+            return '(function_exists(' . var_export($name, true) . ') ? ' .
                 $staticCall . ' : ' .
-                $dynamicCall;
+                $dynamicCall . ')';
         }
 
         if (count($functionCall->children)) {
