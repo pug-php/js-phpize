@@ -1,8 +1,9 @@
 <?php
 
 use JsPhpize\Stream\ExpressionStream;
+use PHPUnit\Framework\TestCase;
 
-class StreamTest extends \PHPUnit_Framework_TestCase
+class StreamTest extends TestCase
 {
     /**
      * @group stream

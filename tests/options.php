@@ -2,8 +2,9 @@
 
 use JsPhpize\JsPhpize;
 use JsPhpize\Lexer\Pattern;
+use PHPUnit\Framework\TestCase;
 
-class OptionsTest extends \PHPUnit_Framework_TestCase
+class OptionsTest extends TestCase
 {
     /**
      * @group disallow

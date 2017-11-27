@@ -1,8 +1,9 @@
 <?php
 
 use JsPhpize\JsPhpize;
+use PHPUnit\Framework\TestCase;
 
-class BadKeywordSyntaxesTest extends \PHPUnit_Framework_TestCase
+class BadKeywordSyntaxesTest extends TestCase
 {
     /**
      * @expectedException     \JsPhpize\Parser\Exception

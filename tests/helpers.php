@@ -1,6 +1,7 @@
 <?php
 
 use JsPhpize\JsPhpize;
+use PHPUnit\Framework\TestCase;
 
 class MagicMethodObject
 {
@@ -59,7 +60,7 @@ class MagicGetterWithNoIsset
     }
 }
 
-class DotHelperTest extends \PHPUnit_Framework_TestCase
+class DotHelperTest extends TestCase
 {
     protected function getDotHelper()
     {

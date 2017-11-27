@@ -1,8 +1,9 @@
 <?php
 
 use JsPhpize\JsPhpize;
+use PHPUnit\Framework\TestCase;
 
-class UnexpectedTokensInParenthesesTest extends \PHPUnit_Framework_TestCase
+class UnexpectedTokensInParenthesesTest extends TestCase
 {
     /**
      * @expectedException     \JsPhpize\Parser\Exception

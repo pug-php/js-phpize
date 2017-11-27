@@ -3,8 +3,9 @@
 use JsPhpize\JsPhpize;
 use JsPhpize\Nodes\FunctionCall;
 use JsPhpize\Nodes\Instruction;
+use PHPUnit\Framework\TestCase;
 
-class BadSyntaxesTest extends \PHPUnit_Framework_TestCase
+class BadSyntaxesTest extends TestCase
 {
     /**
      * @expectedException     \JsPhpize\Parser\Exception

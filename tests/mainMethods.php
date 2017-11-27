@@ -1,8 +1,9 @@
 <?php
 
 use JsPhpize\JsPhpize;
+use PHPUnit\Framework\TestCase;
 
-class MainMethodsTest extends \PHPUnit_Framework_TestCase
+class MainMethodsTest extends TestCase
 {
     public function testCompileFile()
     {

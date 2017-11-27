@@ -2,8 +2,9 @@
 
 use JsPhpize\JsPhpize;
 use JsPhpize\Nodes\Constant;
+use PHPUnit\Framework\TestCase;
 
-class ConstantRestrictionsTest extends \PHPUnit_Framework_TestCase
+class ConstantRestrictionsTest extends TestCase
 {
     /**
      * @expectedException     \JsPhpize\Parser\Exception

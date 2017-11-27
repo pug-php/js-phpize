@@ -1,8 +1,9 @@
 <?php
 
 use JsPhpize\JsPhpize;
+use PHPUnit\Framework\TestCase;
 
-class BadSwitchSyntaxesTest extends \PHPUnit_Framework_TestCase
+class BadSwitchSyntaxesTest extends TestCase
 {
     /**
      * @expectedException     \JsPhpize\Parser\Exception

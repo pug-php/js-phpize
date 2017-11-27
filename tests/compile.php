@@ -1,8 +1,9 @@
 <?php
 
 use JsPhpize\JsPhpize;
+use PHPUnit\Framework\TestCase;
 
-class CompileTest extends \PHPUnit_Framework_TestCase
+class CompileTest extends TestCase
 {
     public function caseProvider()
     {
