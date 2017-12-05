@@ -100,6 +100,18 @@ class Lexer extends Scanner
     }
 
     /**
+     * Return a unexpected exception for a given token.
+     *
+     * @param $token
+     *
+     * @return Exception
+     */
+    public function unexpected($token, $className = '\\JsPhpize\\Lexer\\Exception')
+    {
+        return new $className('Unexpected ' . $token->type . rtrim(' ' . ($token->value ?: '')) . $this->exceptionInfos(), 8);
+    }
+
+    /**
      * @throws Exception
      *
      * @return Token|false

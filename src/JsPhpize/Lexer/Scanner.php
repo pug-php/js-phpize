@@ -6,6 +6,11 @@ use JsPhpize\JsPhpize;
 
 class Scanner
 {
+    public function scanUnexpected($matches)
+    {
+        throw $this->unexpected($this->valueToken('token', $matches));
+    }
+
     public function scanComment($matches)
     {
         return $this->valueToken('comment', $matches);

@@ -105,4 +105,14 @@ class BadSyntaxesTest extends TestCase
     {
         new FunctionCall(new Instruction(), array(), array());
     }
+
+    /**
+     * @expectedException     \JsPhpize\Lexer\Exception
+     * @expectedExceptionCode 8
+     */
+    public function testPhpCode()
+    {
+        $jsPhpize = new JsPhpize();
+        $jsPhpize->render('DateTime::createFromFormat(\'j-M-Y\', \'15-Feb-2009\')');
+    }
 }

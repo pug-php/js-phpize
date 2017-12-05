@@ -49,6 +49,6 @@ abstract class TokenCrawler
 
     protected function unexpected($token)
     {
-        return new Exception('Unexpected ' . $token->type . rtrim(' ' . ($token->value ?: '')) . $this->exceptionInfos(), 8);
+        return $this->lexer->unexpected($token, '\\JsPhpize\\Parser\\Exception');
     }
 }
