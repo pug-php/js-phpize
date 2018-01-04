@@ -57,7 +57,9 @@ class JsPhpizeOptions
                 new Pattern(100, 'operator', '[\\|\\^&%\\/\\*\\+\\-]='),
                 new Pattern(110, 'operator', '[\\[\\]\\{\\}\\(\\)\\:\\.\\/\\*~\\!\\^\\|&%\\?,;\\+\\-]'),
                 new Pattern(120, 'keyword', array('as', 'async', 'await', 'break', 'case', 'catch', 'class', 'const', 'continue', 'debugger', 'default', 'do', 'else', 'enum', 'export', 'extends', 'finally', 'for', 'from', 'function', 'get', 'if', 'implements', 'import', 'in', 'instanceof', 'interface', 'let', 'new', 'of', 'package', 'private', 'protected', 'public', 'return', 'set', 'static', 'super', 'switch', 'throw', 'try', 'var', 'while', 'with', 'yield', 'yield*'), true),
-                new Pattern(130, 'constant', 'null|undefined|Infinity|NaN|true|false|Math\.[A-Z][A-Z0-9_]*|[A-Z][A-Z0-9\\\\_\\x7f-\\xff]*|[\\\\\\x7f-\\xff_][A-Z0-9\\\\_\\x7f-\\xff]*[A-Z][A-Z0-9\\\\_\\x7f-\\xff]*', true),
+                new Pattern(130, 'constant', 'null|undefined|Infinity|NaN|true|false|Math\.[A-Z][A-Z0-9_]*' . (isset($this->options['disableConstants']) && $this->options['disableConstants']
+                    ? ''
+                    : '|[A-Z][A-Z0-9\\\\_\\x7f-\\xff]*|[\\\\\\x7f-\\xff_][A-Z0-9\\\\_\\x7f-\\xff]*[A-Z][A-Z0-9\\\\_\\x7f-\\xff]*'), true),
                 new Pattern(135, 'variable', '[a-zA-Z\\\\\\x7f-\\xff\\$_][a-zA-Z0-9\\\\_\\x7f-\\xff\\$]*', '$'),
                 new Pattern(140, 'operator', '[\\s\\S]'),
             );

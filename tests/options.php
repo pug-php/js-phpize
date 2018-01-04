@@ -137,4 +137,14 @@ class OptionsTest extends TestCase
         });
         $jsPhpize->compile('1 + 1');
     }
+
+    public function testDisableConstants()
+    {
+        $jsPhpize = new JsPhpize();
+        self::assertSame('FOO', trim($jsPhpize->compile('FOO'), " \n;"));
+        $jsPhpize = new JsPhpize(array(
+            'disableConstants' => true,
+        ));
+        self::assertSame('$FOO', trim($jsPhpize->compile('FOO'), " \n;"));
+    }
 }
