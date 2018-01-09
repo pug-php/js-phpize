@@ -37,7 +37,7 @@ function ($base) {
         }
         if ($key === 'indexOf') {
             return function ($item) use (&$base) {
-                $search = array_search($base, $item);
+                $search = array_search($item, $base);
 
                 return $search === false ? -1 : $search;
             };
