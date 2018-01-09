@@ -13,6 +13,7 @@ In the root directory of your project, open a terminal and enter:
 composer require js-phpize/js-phpize
 ```
 
+## Usage
 Use compile to get PHP equivalent code to JavaScript input:
 ```php
 use JsPhpize\JsPhpize;
@@ -49,3 +50,11 @@ echo $value;
 This will display ```hello```.
 
 This library intend to is intended to allow js-like in PHP contexts (such as in template engines).
+
+See the [Phug documentation](https://www.phug-lang.com/#js-style-expressions)
+to see an implementation example as Pug expressions PHP converter.
+
+And also check [examples](https://github.com/pug-php/js-phpize/tree/master/examples)
+to see more examples (**.js** files are input examples **js-phpize** can handle
+and either **.return** show you what the engine will return for this code,
+or **.php** show you how it's compiled into PHP).
