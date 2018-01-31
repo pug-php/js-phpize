@@ -34,6 +34,11 @@ class JsPhpizeOptions
     protected $flags = 0;
 
     /**
+     * @var array
+     */
+    protected $patternsCache = array();
+
+    /**
      * Pass options as array or no parameters for all options on default value.
      *
      * @param array|ArrayAccess $options list of options.
@@ -75,6 +80,8 @@ class JsPhpizeOptions
      */
     public function addPattern(Pattern $pattern)
     {
+        $this->clearPatternsCache();
+
         $this->options['patterns'][] = $pattern;
 
         return $this;
@@ -89,7 +96,38 @@ class JsPhpizeOptions
      */
     public function removePatterns($removeFunction)
     {
+        $this->clearPatternsCache();
+
         $this->options['patterns'] = array_filter($this->options['patterns'], $removeFunction);
+
+        return $this;
+    }
+
+    /**
+     * Return cached and ordered patterns list.
+     *
+     * @return array
+     */
+    public function getPatterns()
+    {
+        if (!$this->patternsCache) {
+            $this->patternsCache = $this->getOption('patterns');
+            usort($this->patternsCache, function (Pattern $first, Pattern $second) {
+                return $first->priority - $second->priority;
+            });
+        }
+
+        return $this->patternsCache;
+    }
+
+    /**
+     * Clear the patterns cache.
+     *
+     * @return $this
+     */
+    public function clearPatternsCache()
+    {
+        $this->patternsCache = null;
 
         return $this;
     }
