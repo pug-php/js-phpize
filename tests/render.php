@@ -26,7 +26,11 @@ class RenderTest extends TestCase
     public function testJsPhpizeGeneration($returnFile, $jsFile)
     {
         $examples = __DIR__ . '/../examples';
-        $jsPhpize = new JsPhpize();
+        $jsPhpize = new JsPhpize([
+            'helpers' => [
+                'dot' => 'dotWithArrayPrototype',
+            ],
+        ]);
         $expected = file_get_contents($examples . '/' . $returnFile);
 
         try {
