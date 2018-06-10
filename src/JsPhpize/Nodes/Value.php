@@ -13,12 +13,12 @@ abstract class Value extends Node
     /**
      * @var array
      */
-    protected $before = array();
+    protected $before = [];
 
     /**
      * @var array
      */
-    protected $after = array();
+    protected $after = [];
 
     public function getBefore()
     {

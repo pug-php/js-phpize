@@ -27,9 +27,9 @@ class MagicMethodObject
 
 class ArrayAccessObject implements \ArrayAccess
 {
-    protected $data = array(
+    protected $data = [
         'foo' => 'bar',
-    );
+    ];
 
     public function offsetGet($name)
     {
@@ -71,74 +71,74 @@ class DotHelperTest extends TestCase
     {
         $dotHelper = $this->getDotHelper();
 
-        $this->assertSame(42, $dotHelper(array(
+        $this->assertSame(42, $dotHelper([
                 'foo' => 42,
-            ), 'foo'));
-        $this->assertSame('biz', $dotHelper(array(
-                'foo' => array(
+            ], 'foo'));
+        $this->assertSame('biz', $dotHelper([
+                'foo' => [
                     'bar' => 'biz',
-                ),
-            ), 'foo', 'bar'));
-        $this->assertSame(null, $dotHelper(array(
-                'foo' => array(
-                ),
-            ), 'foo', 'bar'));
-        $this->assertSame(null, $dotHelper(array(
-                'foo' => array(
-                ),
-            ), 'biz', 'bar'));
+                ],
+            ], 'foo', 'bar'));
+        $this->assertSame(null, $dotHelper([
+                'foo' => [
+                ],
+            ], 'foo', 'bar'));
+        $this->assertSame(null, $dotHelper([
+                'foo' => [
+                ],
+            ], 'biz', 'bar'));
     }
 
     public function testObjectMember()
     {
         $dotHelper = $this->getDotHelper();
 
-        $this->assertSame(42, $dotHelper((object) array(
+        $this->assertSame(42, $dotHelper((object) [
                 'foo' => 42,
-            ), 'foo'));
-        $this->assertSame('biz', $dotHelper((object) array(
-                'foo' => (object) array(
+            ], 'foo'));
+        $this->assertSame('biz', $dotHelper((object) [
+                'foo' => (object) [
                     'bar' => 'biz',
-                ),
-            ), 'foo', 'bar'));
-        $this->assertSame(null, $dotHelper((object) array(
-                'foo' => (object) array(
-                ),
-            ), 'foo', 'bar'));
-        $this->assertSame(null, $dotHelper((object) array(
-                'foo' => (object) array(
-                ),
-            ), 'biz', 'bar'));
+                ],
+            ], 'foo', 'bar'));
+        $this->assertSame(null, $dotHelper((object) [
+                'foo' => (object) [
+                ],
+            ], 'foo', 'bar'));
+        $this->assertSame(null, $dotHelper((object) [
+                'foo' => (object) [
+                ],
+            ], 'biz', 'bar'));
     }
 
     public function testMixedObjectMemberAndArayValue()
     {
         $dotHelper = $this->getDotHelper();
 
-        $this->assertSame('biz', $dotHelper(array(
-                'foo' => (object) array(
+        $this->assertSame('biz', $dotHelper([
+                'foo' => (object) [
                     'bar' => 'biz',
-                ),
-            ), 'foo', 'bar'));
-        $this->assertSame('biz', $dotHelper((object) array(
-                'foo' => array(
+                ],
+            ], 'foo', 'bar'));
+        $this->assertSame('biz', $dotHelper((object) [
+                'foo' => [
                     'bar' => 'biz',
-                ),
-            ), 'foo', 'bar'));
-        $this->assertSame(42, $dotHelper((object) array(
-                'foo' => array(
-                    'bar' => (object) array(
+                ],
+            ], 'foo', 'bar'));
+        $this->assertSame(42, $dotHelper((object) [
+                'foo' => [
+                    'bar' => (object) [
                         'biz' => 42,
-                    ),
-                ),
-            ), 'foo', 'bar', 'biz'));
-        $this->assertSame(42, $dotHelper(array(
-                'foo' => (object) array(
-                    'bar' => array(
+                    ],
+                ],
+            ], 'foo', 'bar', 'biz'));
+        $this->assertSame(42, $dotHelper([
+                'foo' => (object) [
+                    'bar' => [
                         'biz' => 42,
-                    ),
-                ),
-            ), 'foo', 'bar', 'biz'));
+                    ],
+                ],
+            ], 'foo', 'bar', 'biz'));
     }
 
     public function testMagicMethod()
@@ -150,16 +150,16 @@ class DotHelperTest extends TestCase
         $this->assertSame('biz', call_user_func($dotHelper($object, 'bar')));
         $this->assertSame(null, call_user_func($dotHelper($object, 'biz')));
 
-        $jsPhpize = new JsPhpize(array(
+        $jsPhpize = new JsPhpize([
             'returnLastStatement' => true,
-        ));
-        $hello = $jsPhpize->render('__page.seo.title', array(
-            '__page' => array(
-                'seo' => array(
+        ]);
+        $hello = $jsPhpize->render('__page.seo.title', [
+            '__page' => [
+                'seo' => [
                     'title' => 'Hello',
-                ),
-            ),
-        ));
+                ],
+            ],
+        ]);
 
         $this->assertSame('Hello', $hello);
     }
@@ -182,74 +182,74 @@ class DotHelperTest extends TestCase
         
             return $base;
         }';
-        $jsPhpize = new JsPhpize(array(
-            'helpers' => array(
+        $jsPhpize = new JsPhpize([
+            'helpers' => [
                 'plus' => $plusHelper,
-            ),
+            ],
             'returnLastStatement' => true,
-        ));
+        ]);
 
         $this->assertEquals(18, $jsPhpize->render('3 + 6'));
 
-        $jsPhpize = new JsPhpize(array(
-            'helpers' => array(
+        $jsPhpize = new JsPhpize([
+            'helpers' => [
                 'dot' => 'plus',
-            ),
+            ],
             'returnLastStatement' => true,
-        ));
+        ]);
 
-        $this->assertEquals('xb', $jsPhpize->render('a.b', array(
+        $this->assertEquals('xb', $jsPhpize->render('a.b', [
             'a' => 'x',
-        )));
+        ]));
     }
 
     public function testDotObjectHelper()
     {
-        $jsPhpize = new JsPhpize(array(
-            'helpers' => array(
+        $jsPhpize = new JsPhpize([
+            'helpers' => [
                 'dot' => 'dotObject',
-            ),
+            ],
             'returnLastStatement' => true,
-        ));
+        ]);
 
-        $this->assertEquals('hello', $jsPhpize->render('a.hello', array(
+        $this->assertEquals('hello', $jsPhpize->render('a.hello', [
             'a' => new MagicGetterWithNoIsset(),
-        )));
+        ]));
     }
 
     public function testHelperFile()
     {
-        $jsPhpize = new JsPhpize(array(
-            'helpers' => array(
+        $jsPhpize = new JsPhpize([
+            'helpers' => [
                 'plus' => __DIR__ . '/Plus.h',
-            ),
+            ],
             'returnLastStatement' => true,
-        ));
+        ]);
 
         $this->assertEquals(6, $jsPhpize->render('13 + 7'));
     }
 
     public function testDotHelperWithArrayPrototype()
     {
-        $jsPhpize = new JsPhpize(array(
-            'helpers' => array(
+        $jsPhpize = new JsPhpize([
+            'helpers' => [
                 'dot' => 'dotWithArrayPrototype',
-            ),
+            ],
             'returnLastStatement' => true,
-        ));
+        ]);
 
         $this->assertSame(
             '1,3',
             implode(',', $jsPhpize->render('a = [1,2,3]; a.filter(function (i) { return i % 2; })'))
         );
 
-        $jsPhpize = new JsPhpize(array(
-            'helpers' => array(
+        $jsPhpize = new JsPhpize([
+            'helpers' => [
                 'dot' => 'dotWithArrayPrototype',
-            ),
-        ));
+            ],
+        ]);
 
-        $items = array(1, 2, 3);
+        $items = [1, 2, 3];
         ob_start();
         eval($jsPhpize->compile('items.forEach(function (item) { echo(item); })'));
         $actual = ob_get_contents();
@@ -260,15 +260,15 @@ class DotHelperTest extends TestCase
             $actual
         );
 
-        $jsPhpize = new JsPhpize(array(
-            'helpers' => array(
+        $jsPhpize = new JsPhpize([
+            'helpers' => [
                 'dot' => 'dotWithArrayPrototype',
-            ),
+            ],
             'allowTruncatedParentheses' => true,
-        ));
+        ]);
 
         ob_start();
-        $items = array(2, 4, 6);
+        $items = [2, 4, 6];
         eval(
             $jsPhpize->compile('items.forEach(function (item) {') .
             ' ?><?php echo ' . $jsPhpize->compile('item') . ' ?><?php ' .

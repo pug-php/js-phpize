@@ -11,9 +11,9 @@ class OptionsTest extends TestCase
      */
     public function testDisallow()
     {
-        $jsPhpize = new JsPhpize(array(
+        $jsPhpize = new JsPhpize([
             'disallow' => 'foo bar',
-        ));
+        ]);
         $this->assertSame(6, $jsPhpize->render('
             var a = 3;
             for (i = 0; i < 3; i++) {
@@ -22,9 +22,9 @@ class OptionsTest extends TestCase
             return a;
         '));
 
-        $jsPhpize = new JsPhpize(array(
+        $jsPhpize = new JsPhpize([
             'disallow' => 'foo comment bar',
-        ));
+        ]);
         $code = null;
 
         try {
@@ -48,9 +48,9 @@ class OptionsTest extends TestCase
      */
     public function testConstPrefixRestriction()
     {
-        $jsPhpize = new JsPhpize(array(
+        $jsPhpize = new JsPhpize([
             'constPrefix' => 'FOO',
-        ));
+        ]);
         $jsPhpize->render('
             var a = FOOBAR;
         ');
@@ -62,9 +62,9 @@ class OptionsTest extends TestCase
      */
     public function testVarPrefixRestriction()
     {
-        $jsPhpize = new JsPhpize(array(
+        $jsPhpize = new JsPhpize([
             'varPrefix' => 'test',
-        ));
+        ]);
         $jsPhpize->render('
             var a = test_zz;
         ');
@@ -75,18 +75,18 @@ class OptionsTest extends TestCase
      */
     public function testReturnLastStatement()
     {
-        $jsPhpize = new JsPhpize(array(
+        $jsPhpize = new JsPhpize([
             'returnLastStatement' => true,
-        ));
+        ]);
         $eleven = $jsPhpize->render('
             var a = 8;
             a + 3;
         ');
         $this->assertSame(11, $eleven);
 
-        $jsPhpize = new JsPhpize(array(
+        $jsPhpize = new JsPhpize([
             'returnLastStatement' => false,
-        ));
+        ]);
         $defaultReturn = $jsPhpize->render('
             var a = 8;
             a + 3;
@@ -113,9 +113,9 @@ class OptionsTest extends TestCase
     public function testPatterns()
     {
         include_once __DIR__ . '/TestToken.php';
-        $jsPhpize = new JsPhpize(array(
+        $jsPhpize = new JsPhpize([
             'tokenClass' => 'TestToken',
-        ));
+        ]);
         $jsPhpize->addPattern(new Pattern(0, 'operator', '@'));
         $code = $jsPhpize->compile('1 @ 8');
         $this->assertSame('1 @ 8;', trim($code));
@@ -129,11 +129,11 @@ class OptionsTest extends TestCase
     public function testPatternsException()
     {
         include_once __DIR__ . '/TestToken.php';
-        $jsPhpize = new JsPhpize(array(
+        $jsPhpize = new JsPhpize([
             'tokenClass' => 'TestToken',
-        ));
+        ]);
         $jsPhpize->removePatterns(function (Pattern $pattern) {
-            return !in_array($pattern->type, array('number', 'operator'));
+            return !in_array($pattern->type, ['number', 'operator']);
         });
         $jsPhpize->compile('1 + 1');
     }
@@ -142,9 +142,9 @@ class OptionsTest extends TestCase
     {
         $jsPhpize = new JsPhpize();
         self::assertSame('FOO', trim($jsPhpize->compile('FOO'), " \n;"));
-        $jsPhpize = new JsPhpize(array(
+        $jsPhpize = new JsPhpize([
             'disableConstants' => true,
-        ));
+        ]);
         self::assertSame('$FOO', trim($jsPhpize->compile('FOO'), " \n;"));
     }
 }

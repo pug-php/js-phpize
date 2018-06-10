@@ -7,20 +7,20 @@ class ArrayTest extends TestCase
 {
     public function caseProvider()
     {
-        return array(
-            array(
+        return [
+            [
                 1,
                 'var a = []; return a.push(4);',
-            ),
-            array(
+            ],
+            [
                 2,
                 'var a = []; a.push(4); return a.push(4);',
-            ),
-            array(
-                array(4),
+            ],
+            [
+                [4],
                 'var a = []; a.push(4); return a;',
-            ),
-        );
+            ],
+        ];
     }
 
     /**
@@ -29,11 +29,11 @@ class ArrayTest extends TestCase
      */
     public function testArrayResult($expected, $code)
     {
-        $jsPhpize = new JsPhpize(array(
-            'helpers' => array(
+        $jsPhpize = new JsPhpize([
+            'helpers' => [
                 'dot' => 'dotWithArrayPrototype',
-            ),
-        ));
+            ],
+        ]);
         $actual = $jsPhpize->render($code);
 
         $this->assertSame($expected, $actual);

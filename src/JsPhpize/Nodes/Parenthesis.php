@@ -16,7 +16,7 @@ class Parenthesis extends Value
 
     public function __construct()
     {
-        $this->nodes = array();
+        $this->nodes = [];
     }
 
     public function addNodes($nodes)
@@ -39,7 +39,7 @@ class Parenthesis extends Value
 
     public function getReadVariables()
     {
-        $variables = array();
+        $variables = [];
         foreach ($this->nodes as $node) {
             $variables = array_merge($variables, $node->getReadVariables());
         }

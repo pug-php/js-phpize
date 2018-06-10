@@ -52,7 +52,7 @@ class Compiler
     /**
      * @var array
      */
-    protected $helpers = array();
+    protected $helpers = [];
 
     public function __construct(JsPhpize $engine)
     {
@@ -131,12 +131,12 @@ class Compiler
             $set = $this->engine->getHelperName('set');
 
             while ($lastChild = $assignation->leftHand->popChild()) {
-                $rightHand = $this->helperWrap($set, array(
+                $rightHand = $this->helperWrap($set, [
                     $this->visitNode($assignation->leftHand, $indent),
                     $this->visitNode($lastChild, $indent),
                     var_export($assignation->operator, true),
                     $rightHand,
-                ));
+                ]);
             }
         }
 
@@ -170,7 +170,7 @@ class Compiler
 
     protected function visitBracketsArray(BracketsArray $array, $indent)
     {
-        $visitNode = array($this, 'visitNode');
+        $visitNode = [$this, 'visitNode'];
 
         return $this->arrayWrap(implode(', ', array_map(
             function ($pair) use ($visitNode, $indent) {
@@ -192,7 +192,7 @@ class Compiler
         }
         if ($constant->type === 'regexp') {
             $regExp = $this->engine->getHelperName('regExp');
-            $value = $this->helperWrap($regExp, array(var_export($value, true)));
+            $value = $this->helperWrap($regExp, [var_export($value, true)]);
         }
 
         return $value;
@@ -203,7 +203,7 @@ class Compiler
         $leftHand = $this->visitNode($dyiade->leftHand, $indent);
         $rightHand = $this->visitNode($dyiade->rightHand, $indent);
         if ($dyiade->operator === '+') {
-            $arguments = array($leftHand, $rightHand);
+            $arguments = [$leftHand, $rightHand];
             while (
                 ($dyiade = $dyiade->rightHand) instanceof Dyiade &&
                 $dyiade->operator === '+'
@@ -223,7 +223,7 @@ class Compiler
 
     protected function mapNodesArray($array, $indent, $pattern = null)
     {
-        $visitNode = array($this, 'visitNode');
+        $visitNode = [$this, 'visitNode'];
 
         return array_map(function ($value) use ($visitNode, $indent, $pattern) {
             $value = $visitNode($value, $indent);
@@ -253,7 +253,7 @@ class Compiler
             $name = $function->name;
             $staticCall = $name . '(' . $arguments . ')';
 
-            $functions = str_replace(array("\n", "\t", "\r", ' '), '', static::STATIC_CALL_FUNCTIONS);
+            $functions = str_replace(["\n", "\t", "\r", ' '], '', static::STATIC_CALL_FUNCTIONS);
             if ($applicant === 'new' || in_array($name, explode(',', $functions))) {
                 return $staticCall;
             }
@@ -273,7 +273,7 @@ class Compiler
 
     protected function visitInstruction(Instruction $group, $indent)
     {
-        $visitNode = array($this, 'visitNode');
+        $visitNode = [$this, 'visitNode'];
         $isReturnPrepended = $group->isReturnPrepended();
 
         return implode('', array_map(function ($instruction) use ($visitNode, $indent, $isReturnPrepended) {

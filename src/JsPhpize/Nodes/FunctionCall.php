@@ -31,12 +31,13 @@ class FunctionCall extends DynamicValue
     /**
      * FunctionCall constructor.
      *
-     * @throws Exception
      *
      * @param Node        $function
      * @param array       $arguments
      * @param array       $children
      * @param null|string $applicant
+     *
+     * @throws Exception
      */
     public function __construct(Node $function, array $arguments, array $children, $applicant = null)
     {

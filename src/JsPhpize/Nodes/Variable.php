@@ -43,6 +43,6 @@ class Variable extends DynamicValue implements Assignable
 
     public function getReadVariables()
     {
-        return $this->mergeVariables(array($this->name), $this->children);
+        return $this->mergeVariables([$this->name], $this->children);
     }
 }
