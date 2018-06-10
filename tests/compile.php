@@ -7,12 +7,12 @@ class CompileTest extends TestCase
 {
     public function caseProvider()
     {
-        $cases = array();
+        $cases = [];
 
         $examples = __DIR__ . '/../examples';
         foreach (scandir($examples) as $file) {
             if (substr($file, -4) === '.php') {
-                $cases[] = array($file, substr($file, 0, -4) . '.js');
+                $cases[] = [$file, substr($file, 0, -4) . '.js'];
             }
         }
 
@@ -38,12 +38,12 @@ class CompileTest extends TestCase
 
     public function testCompileWithoutDependencies()
     {
-        $jsPhpize = new JsPhpize(array(
+        $jsPhpize = new JsPhpize([
             'catchDependencies' => true,
-        ));
+        ]);
         $result = $jsPhpize->compileCode('4 + 5');
 
-        $expected = str_replace("\r", '', trim("call_user_func(\$GLOBALS['__jpv_plus'], 4, 5);"));
+        $expected = str_replace("\r", '', trim("\$GLOBALS['__jpv_plus'](4, 5);"));
         $actual = str_replace("\r", '', trim($result));
 
         $this->assertSame($expected, $actual);
@@ -51,9 +51,9 @@ class CompileTest extends TestCase
 
     public function testDependenciesGrouping()
     {
-        $jsPhpize = new JsPhpize(array(
+        $jsPhpize = new JsPhpize([
             'catchDependencies' => true,
-        ));
+        ]);
         $jsPhpize->compileCode("a = 4 + 5;\n b = '9' + '3'");
         $jsPhpize->compileCode('4 + 5');
         $jsPhpize->compileCode('4 + 5 + 9');
@@ -75,9 +75,9 @@ class CompileTest extends TestCase
 
     public function testTruncatedCode()
     {
-        $jsPhpize = new JsPhpize(array(
+        $jsPhpize = new JsPhpize([
             'catchDependencies' => true,
-        ));
+        ]);
         $result = $jsPhpize->compileCode('} else {');
 
         $expected = str_replace("\r", '', trim('} else {'));
@@ -95,9 +95,9 @@ class CompileTest extends TestCase
 
     public function testCompileDollar()
     {
-        $jsPhpize = new JsPhpize(array(
+        $jsPhpize = new JsPhpize([
             'ignoreDollarVariable' => true,
-        ));
+        ]);
 
         $actual = trim($jsPhpize->compile('$item'));
 
@@ -125,11 +125,11 @@ class CompileTest extends TestCase
     public function testCompilerException()
     {
         $jsPhpize = new JsPhpize();
-        $jsPhpize->render('a()', array(
+        $jsPhpize->render('a()', [
             'a' => function () {
                 throw new \JsPhpize\Compiler\Exception('custom', 1111111);
             },
-        ));
+        ]);
     }
 
     /**
@@ -149,10 +149,10 @@ class CompileTest extends TestCase
              * comment
              */
             a();
-        ', array(
+        ', [
             'a' => function () {
                 throw new \Exception('custom', 123456);
             },
-        ));
+        ]);
     }
 }

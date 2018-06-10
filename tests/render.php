@@ -7,12 +7,12 @@ class RenderTest extends TestCase
 {
     public function caseProvider()
     {
-        $cases = array();
+        $cases = [];
 
         $examples = __DIR__ . '/../examples';
         foreach (scandir($examples) as $file) {
             if (substr($file, -7) === '.return') {
-                $cases[] = array($file, substr($file, 0, -7) . '.js');
+                $cases[] = [$file, substr($file, 0, -7) . '.js'];
             }
         }
 
@@ -26,11 +26,11 @@ class RenderTest extends TestCase
     public function testJsPhpizeGeneration($returnFile, $jsFile)
     {
         $examples = __DIR__ . '/../examples';
-        $jsPhpize = new JsPhpize(array(
-            'helpers' => array(
+        $jsPhpize = new JsPhpize([
+            'helpers' => [
                 'dot' => 'dotWithArrayPrototype',
-            ),
-        ));
+            ],
+        ]);
         $expected = file_get_contents($examples . '/' . $returnFile);
 
         try {
