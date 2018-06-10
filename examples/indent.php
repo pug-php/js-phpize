@@ -1,7 +1,7 @@
 for ($i = 9; $i; $i--) {
-  if (call_user_func((function ($tiny) {
+  if ((function ($tiny) {
     return $tiny < 3;
-  }), $i)) {
+  })($i)) {
     continue;
   }
   break;

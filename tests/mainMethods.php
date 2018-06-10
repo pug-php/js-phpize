@@ -10,11 +10,13 @@ class MainMethodsTest extends TestCase
         $jsPhpize = new JsPhpize();
         $actual = $jsPhpize->compileFile(__DIR__ . '/../examples/basic.js');
         $expected = '$GLOBALS[\'__jpv_dot\'] = ' . file_get_contents(__DIR__ . '/../src/JsPhpize/Compiler/Helpers/Dot.h') . ';';
+        $expected .= '$GLOBALS[\'__jpv_dot_with_ref\'] = ' . file_get_contents(__DIR__ . '/../src/JsPhpize/Compiler/Helpers/Dot.ref.h') . ';';
         $expected .= '$GLOBALS[\'__jpv_plus\'] = ' . file_get_contents(__DIR__ . '/../src/JsPhpize/Compiler/Helpers/Plus.h') . ';';
+        $expected .= '$GLOBALS[\'__jpv_plus_with_ref\'] = $GLOBALS[\'__jpv_plus\'];';
         $expected .= <<<'EOD'
 $foo = array( 'bar' => array( "baz" => "hello" ) );
 $biz = 'bar';
-return call_user_func($GLOBALS['__jpv_plus'], call_user_func($GLOBALS['__jpv_dot'], $foo, 'bar', "baz"), ' ', call_user_func($GLOBALS['__jpv_dot'], $foo, $biz, 'baz'), " ", call_user_func($GLOBALS['__jpv_dot'], $foo, 'bar', 'baz'));
+return $GLOBALS['__jpv_plus']($GLOBALS['__jpv_dot_with_ref']($foo, 'bar', "baz"), ' ', $GLOBALS['__jpv_dot_with_ref']($foo, $biz, 'baz'), " ", $GLOBALS['__jpv_dot_with_ref']($foo, 'bar', 'baz'));
 EOD;
         $actual = str_replace(';', ";\n", preg_replace('/\s/', '', $actual));
         $expected = str_replace(';', ";\n", preg_replace('/\s/', '', $expected));
@@ -28,7 +30,7 @@ EOD;
         $expected = <<<'EOD'
 $foo = array( 'bar' => array( "baz" => "hello" ) );
 $biz = 'bar';
-return call_user_func($GLOBALS['__jpv_plus'], call_user_func($GLOBALS['__jpv_dot'], $foo, 'bar', "baz"), ' ', call_user_func($GLOBALS['__jpv_dot'], $foo, $biz, 'baz'), " ", call_user_func($GLOBALS['__jpv_dot'], $foo, 'bar', 'baz'));
+return $GLOBALS['__jpv_plus']($GLOBALS['__jpv_dot_with_ref']($foo, 'bar', "baz"), ' ', $GLOBALS['__jpv_dot_with_ref']($foo, $biz, 'baz'), " ", $GLOBALS['__jpv_dot_with_ref']($foo, 'bar', 'baz'));
 EOD;
         $actual = preg_replace('/\s/', '', $actual);
         $expected = preg_replace('/\s/', '', $expected);
@@ -37,7 +39,9 @@ EOD;
         $actual = $jsPhpizeCatchDeps->compileDependencies();
         $jsPhpizeCatchDeps->flushDependencies();
         $expected = '$GLOBALS[\'__jpv_dot\'] = ' . file_get_contents(__DIR__ . '/../src/JsPhpize/Compiler/Helpers/Dot.h') . ';';
+        $expected .= '$GLOBALS[\'__jpv_dot_with_ref\'] = ' . file_get_contents(__DIR__ . '/../src/JsPhpize/Compiler/Helpers/Dot.ref.h') . ';';
         $expected .= '$GLOBALS[\'__jpv_plus\'] = ' . file_get_contents(__DIR__ . '/../src/JsPhpize/Compiler/Helpers/Plus.h') . ';';
+        $expected .= '$GLOBALS[\'__jpv_plus_with_ref\'] = $GLOBALS[\'__jpv_plus\'];';
 
         $actual = preg_replace('/\s/', '', $actual);
         $expected = preg_replace('/\s/', '', $expected);
@@ -46,6 +50,7 @@ EOD;
         $jsPhpizeCatchDeps->compileFile(__DIR__ . '/../examples/calcul.js');
         $actual = $jsPhpizeCatchDeps->compileDependencies();
         $expected = '$GLOBALS[\'__jpv_plus\'] = ' . file_get_contents(__DIR__ . '/../src/JsPhpize/Compiler/Helpers/Plus.h') . ';';
+        $expected .= '$GLOBALS[\'__jpv_plus_with_ref\'] = $GLOBALS[\'__jpv_plus\'];';
         $actual = preg_replace('/\s/', '', $actual);
         $expected = preg_replace('/\s/', '', $expected);
         $this->assertSame($expected, $actual);
@@ -110,9 +115,10 @@ EOD;
         $actual = $jsPhpize->compileCode('calcul.js');
         chdir($dir);
         $expected = '$GLOBALS[\'foodot\'] = ' . file_get_contents(__DIR__ . '/../src/JsPhpize/Compiler/Helpers/Dot.h') . ';';
+        $expected .= '$GLOBALS[\'foodot_with_ref\'] = ' . file_get_contents(__DIR__ . '/../src/JsPhpize/Compiler/Helpers/Dot.ref.h') . ';';
 
         $expected .= <<<'EOD'
-call_user_func($GLOBALS['foodot'], $calcul, 'js');
+$GLOBALS['foodot_with_ref']($calcul, 'js');
 EOD;
         $actual = preg_replace('/\s/', '', $actual);
         $expected = preg_replace('/\s/', '', $expected);

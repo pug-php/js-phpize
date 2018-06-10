@@ -8,6 +8,7 @@ use JsPhpize\Nodes\Block;
 use JsPhpize\Nodes\BracketsArray;
 use JsPhpize\Nodes\Constant;
 use JsPhpize\Nodes\Dyiade;
+use JsPhpize\Nodes\DynamicValue;
 use JsPhpize\Nodes\FunctionCall;
 use JsPhpize\Nodes\HooksArray;
 use JsPhpize\Nodes\Instruction;
@@ -65,11 +66,12 @@ class Compiler
     {
         $this->helpers[$helper] = true;
 
-        return 'call_user_func(' .
-            '$GLOBALS[\'' . $this->varPrefix . $helper . '\']' .
-            implode('', array_map(function ($argument) {
-                return ', ' . $argument;
-            }, $arguments)) .
+        if (isset($arguments[0]) && preg_match('/^\$.*[^)]$/', $arguments[0])) {
+            $helper .= '_with_ref';
+        }
+
+        return '$GLOBALS[\'' . $this->varPrefix . $helper . '\'](' .
+            implode(', ', $arguments) .
         ')';
     }
 
@@ -97,6 +99,16 @@ class Compiler
                 : $name;
 
             $php .= '$GLOBALS[\'' . $this->varPrefix . $name . '\'] = ' .
+                trim($code) .
+                ";\n";
+
+            $refFile = preg_replace('/\.h$/', '.ref.h', $file);
+
+            $code = $refFile !== $file && file_exists($refFile)
+                ? file_get_contents($refFile)
+                : '$GLOBALS[\'' . $this->varPrefix . $name . '\']';
+
+            $php .= '$GLOBALS[\'' . $this->varPrefix . $name . '_with_ref\'] = ' .
                 trim($code) .
                 ";\n";
         }
@@ -164,9 +176,9 @@ class Compiler
             function ($pair) use ($visitNode, $indent) {
                 list($key, $value) = $pair;
 
-                return call_user_func($visitNode, $key, $indent) .
+                return $visitNode($key, $indent) .
                     ' => ' .
-                    call_user_func($visitNode, $value, $indent);
+                    $visitNode($value, $indent);
             },
             $array->data
         )));
@@ -214,7 +226,7 @@ class Compiler
         $visitNode = array($this, 'visitNode');
 
         return array_map(function ($value) use ($visitNode, $indent, $pattern) {
-            $value = call_user_func($visitNode, $value, $indent);
+            $value = $visitNode($value, $indent);
 
             if ($pattern) {
                 $value = sprintf($pattern, $value);
@@ -235,10 +247,7 @@ class Compiler
         $arguments = $functionCall->arguments;
         $applicant = $functionCall->applicant;
         $arguments = $this->visitNodesArray($arguments, $indent, ', ');
-        $dynamicCall = 'call_user_func(' .
-            $this->visitNode($function, $indent) .
-            ($arguments === '' ? '' : ', ' . $arguments) .
-        ')';
+        $dynamicCall = $this->visitNode($function, $indent) . '(' . $arguments . ')';
 
         if ($function instanceof Variable && count($function->children) === 0) {
             $name = $function->name;
@@ -254,14 +263,7 @@ class Compiler
                 $dynamicCall . ')';
         }
 
-        if (count($functionCall->children)) {
-            $arguments = $this->mapNodesArray($functionCall->children, $indent);
-            array_unshift($arguments, $dynamicCall);
-            $dot = $this->engine->getHelperName('dot');
-            $dynamicCall = $this->helperWrap($dot, $arguments);
-        }
-
-        return $dynamicCall;
+        return $this->handleVariableChildren($functionCall, $indent, $dynamicCall);
     }
 
     protected function visitHooksArray(HooksArray $array, $indent)
@@ -275,7 +277,7 @@ class Compiler
         $isReturnPrepended = $group->isReturnPrepended();
 
         return implode('', array_map(function ($instruction) use ($visitNode, $indent, $isReturnPrepended) {
-            $value = call_user_func($visitNode, $instruction, $indent);
+            $value = $visitNode($instruction, $indent);
 
             return $indent .
                 ($instruction instanceof Block && $instruction->handleInstructions()
@@ -316,13 +318,8 @@ class Compiler
             ' : ' . $this->visitNode($ternary->falseValue, $indent);
     }
 
-    protected function visitVariable(Variable $variable, $indent)
+    protected function handleVariableChildren(DynamicValue $variable, $indent, $php)
     {
-        $name = $variable->name;
-        if ($variable->scope) {
-            $name = '__let_' . spl_object_hash($variable->scope) . $name;
-        }
-        $php = '$' . $name;
         if (count($variable->children)) {
             $arguments = $this->mapNodesArray($variable->children, $indent);
             array_unshift($arguments, $php);
@@ -331,6 +328,16 @@ class Compiler
         }
 
         return $php;
+    }
+
+    protected function visitVariable(Variable $variable, $indent)
+    {
+        $name = $variable->name;
+        if ($variable->scope) {
+            $name = '__let_' . spl_object_hash($variable->scope) . $name;
+        }
+
+        return $this->handleVariableChildren($variable, $indent, '$' . $name);
     }
 
     public function compile(Block $block, $indent = '')

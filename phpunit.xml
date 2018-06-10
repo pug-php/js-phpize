@@ -25,6 +25,9 @@
         <testsuite name="helpers">
             <file>tests/helpers.php</file>
         </testsuite>
+        <testsuite name="array">
+            <file>tests/array.php</file>
+        </testsuite>
         <testsuite name="badSyntaxes">
             <file>tests/badSyntaxes.php</file>
             <file>tests/badSwitchSyntaxes.php</file>

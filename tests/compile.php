@@ -43,7 +43,7 @@ class CompileTest extends TestCase
         ));
         $result = $jsPhpize->compileCode('4 + 5');
 
-        $expected = str_replace("\r", '', trim("call_user_func(\$GLOBALS['__jpv_plus'], 4, 5);"));
+        $expected = str_replace("\r", '', trim("\$GLOBALS['__jpv_plus'](4, 5);"));
         $actual = str_replace("\r", '', trim($result));
 
         $this->assertSame($expected, $actual);
