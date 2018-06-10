@@ -2,6 +2,12 @@
 
 namespace JsPhpize\Nodes;
 
+/**
+ * Class Parenthesis.
+ *
+ * @property-read array  $nodes     parenthesis items
+ * @property-read string $separator string separator used between parenthesis items
+ */
 class Parenthesis extends Value
 {
     /**

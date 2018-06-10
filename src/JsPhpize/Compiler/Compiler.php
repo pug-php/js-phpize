@@ -20,6 +20,8 @@ use JsPhpize\Nodes\Variable;
 
 class Compiler
 {
+    use DependenciesTrait;
+
     /**
      * @const string
      */
@@ -35,85 +37,20 @@ class Compiler
     protected $engine;
 
     /**
-     * @var string
-     */
-    protected $varPrefix;
-
-    /**
-     * @var string
-     */
-    protected $constPrefix;
-
-    /**
      * @var bool
      */
     protected $arrayShortSyntax;
 
-    /**
-     * @var array
-     */
-    protected $helpers = [];
-
     public function __construct(JsPhpize $engine)
     {
         $this->engine = $engine;
-        $this->varPrefix = $engine->getVarPrefix();
-        $this->constPrefix = $engine->getConstPrefix();
+        $this->setPrefixes($engine->getVarPrefix(), $engine->getConstPrefix());
         $this->arrayShortSyntax = $engine->getOption('arrayShortSyntax', false);
-    }
-
-    protected function helperWrap($helper, $arguments)
-    {
-        $this->helpers[$helper] = true;
-
-        if (isset($arguments[0]) && preg_match('/^\$.*[^)]$/', $arguments[0])) {
-            $helper .= '_with_ref';
-        }
-
-        return '$GLOBALS[\'' . $this->varPrefix . $helper . '\'](' .
-            implode(', ', $arguments) .
-        ')';
     }
 
     protected function arrayWrap($arrayBody)
     {
         return sprintf($this->arrayShortSyntax ? '[ %s ]' : 'array( %s )', $arrayBody);
-    }
-
-    public function getDependencies()
-    {
-        return array_keys($this->helpers);
-    }
-
-    public function compileDependencies($dependencies)
-    {
-        $php = '';
-
-        foreach ($dependencies as $name) {
-            $file = preg_match('/^[a-z0-9_-]+$/i', $name)
-                ? __DIR__ . '/Helpers/' . ucfirst($name) . '.h'
-                : $name;
-
-            $code = file_exists($file)
-                ? file_get_contents($file)
-                : $name;
-
-            $php .= '$GLOBALS[\'' . $this->varPrefix . $name . '\'] = ' .
-                trim($code) .
-                ";\n";
-
-            $refFile = preg_replace('/\.h$/', '.ref.h', $file);
-
-            $code = $refFile !== $file && file_exists($refFile)
-                ? file_get_contents($refFile)
-                : '$GLOBALS[\'' . $this->varPrefix . $name . '\']';
-
-            $php .= '$GLOBALS[\'' . $this->varPrefix . $name . '_with_ref\'] = ' .
-                trim($code) .
-                ";\n";
-        }
-
-        return $php;
     }
 
     protected function visitAssignation(Assignation $assignation, $indent)

@@ -4,6 +4,12 @@ namespace JsPhpize\Nodes;
 
 use JsPhpize\Parser\Exception;
 
+/**
+ * Class Constant.
+ *
+ * @property-read string $value raw value
+ * @property-read string $type  constant type
+ */
 class Constant extends Value implements Assignable
 {
     /**
@@ -16,6 +22,14 @@ class Constant extends Value implements Assignable
      */
     protected $value;
 
+    /**
+     * Constant constructor.
+     *
+     * @param $type
+     * @param $value
+     *
+     * @throws Exception
+     */
     public function __construct($type, $value)
     {
         if (!in_array($type, ['constant', 'number', 'string', 'regexp'])) {

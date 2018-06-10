@@ -2,6 +2,12 @@
 
 namespace JsPhpize\Nodes;
 
+/**
+ * Class Instruction.
+ *
+ * @property-read array $instructions block body (list of instructions)
+ * @property-read bool  $appendReturn true if it should return the last instruction
+ */
 class Instruction extends Node
 {
     /**

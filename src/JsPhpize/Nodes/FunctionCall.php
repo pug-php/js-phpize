@@ -31,7 +31,6 @@ class FunctionCall extends DynamicValue
     /**
      * FunctionCall constructor.
      *
-     *
      * @param Node        $function
      * @param array       $arguments
      * @param array       $children

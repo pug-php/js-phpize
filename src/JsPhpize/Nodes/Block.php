@@ -2,6 +2,16 @@
 
 namespace JsPhpize\Nodes;
 
+/**
+ * Class Constant.
+ *
+ * @property-read Node   $value                block parenthesis or inline content
+ * @property-read array  $instructions         block body (list of instructions)
+ * @property-read string $type                 block type
+ * @property-read bool   $inInstruction        true if the block is in an Instruction instance
+ * @property-read bool   $multipleInstructions true if the block contains more than one instruction
+ * @property-read array  $letVariables         true if the block contains more than one instruction
+ */
 class Block extends Node
 {
     /**
