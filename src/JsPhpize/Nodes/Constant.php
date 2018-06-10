@@ -18,7 +18,7 @@ class Constant extends Value implements Assignable
 
     public function __construct($type, $value)
     {
-        if (!in_array($type, array('constant', 'number', 'string', 'regexp'))) {
+        if (!in_array($type, ['constant', 'number', 'string', 'regexp'])) {
             throw new Exception("The given type [$type] is not a valid constant type.", 23);
         }
         $this->type = $type;
@@ -30,7 +30,7 @@ class Constant extends Value implements Assignable
         if ($this->type !== 'constant') {
             return "{$this->type} is not assignable.";
         }
-        if (in_array($this->value, array('NAN', 'INF'))) {
+        if (in_array($this->value, ['NAN', 'INF'])) {
             return "{$this->value} is not assignable.";
         }
         if (mb_substr($this->value, 0, 2) === 'M_') {

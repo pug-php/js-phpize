@@ -23,9 +23,9 @@ EOD;
         $this->assertSame($expected, $actual);
         $this->assertSame('', $jsPhpize->compileDependencies());
 
-        $jsPhpizeCatchDeps = new JsPhpize(array(
+        $jsPhpizeCatchDeps = new JsPhpize([
             'catchDependencies' => true,
-        ));
+        ]);
         $actual = $jsPhpizeCatchDeps->compileFile(__DIR__ . '/../examples/basic.js');
         $expected = <<<'EOD'
 $foo = array( 'bar' => array( "baz" => "hello" ) );
@@ -73,11 +73,11 @@ EOD;
     public function testCompileConcat()
     {
         $jsPhpize = new JsPhpize();
-        $actual = $jsPhpize->render('return "group[" + group.id + "]"', array(
-            'group' => (object) array(
+        $actual = $jsPhpize->render('return "group[" + group.id + "]"', [
+            'group' => (object) [
                 'id' => 4,
-            ),
-        ));
+            ],
+        ]);
         $expected = 'group[4]';
 
         $this->assertSame($expected, $actual);
@@ -89,11 +89,11 @@ EOD;
     public function testConcatenation()
     {
         $jsPhpize = new JsPhpize();
-        $actual = $jsPhpize->render("return 'a' + a.i", array(
-            'a' => array(
+        $actual = $jsPhpize->render("return 'a' + a.i", [
+            'a' => [
                 'i' => 'b',
-            ),
-        ));
+            ],
+        ]);
         $expected = 'ab';
 
         $this->assertSame($expected, $actual);
@@ -101,9 +101,9 @@ EOD;
 
     public function testCompileSource()
     {
-        $jsPhpize = new JsPhpize(array(
+        $jsPhpize = new JsPhpize([
             'varPrefix' => 'foo',
-        ));
+        ]);
         $actual = $jsPhpize->compileCode('b = 8');
         $expected = '$b = 8;';
         $actual = preg_replace('/\s/', '', $actual);
@@ -128,9 +128,9 @@ EOD;
     public function testRender()
     {
         $jsPhpize = new JsPhpize();
-        $actual = $jsPhpize->render('return b;', array(
+        $actual = $jsPhpize->render('return b;', [
             'b' => 42,
-        ));
+        ]);
         $expected = 42;
         $this->assertSame($expected, $actual);
 
@@ -139,9 +139,9 @@ EOD;
         $expected = null;
         $this->assertSame($expected, $actual);
 
-        $jsPhpize->share('b', array(31));
+        $jsPhpize->share('b', [31]);
         $actual = $jsPhpize->render('return b;');
-        $expected = array(31);
+        $expected = [31];
         $this->assertSame($expected, $actual);
 
         $jsPhpize->resetSharedVariables();

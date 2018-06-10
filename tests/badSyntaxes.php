@@ -103,7 +103,7 @@ class BadSyntaxesTest extends TestCase
      */
     public function testBadFunctionCall()
     {
-        new FunctionCall(new Instruction(), array(), array());
+        new FunctionCall(new Instruction(), [], []);
     }
 
     /**

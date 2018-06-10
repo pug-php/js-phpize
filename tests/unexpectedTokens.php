@@ -91,9 +91,9 @@ class UnexpectedTokensTest extends TestCase
      */
     public function testUnexpectedInBlock()
     {
-        $jsPhpize = new JsPhpize(array(
+        $jsPhpize = new JsPhpize([
             'strict' => true,
-        ));
+        ]);
         $jsPhpize->render('a = true; )');
     }
 }

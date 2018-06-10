@@ -32,12 +32,12 @@ class Block extends Node
     /**
      * @var array
      */
-    protected $letVariables = array();
+    protected $letVariables = [];
 
     public function __construct($type)
     {
         $this->type = $type;
-        $this->instructions = array();
+        $this->instructions = [];
         $this->inInstruction = false;
     }
 
@@ -51,7 +51,7 @@ class Block extends Node
         $scope = $this;
 
         return array_map(function ($name) use ($scope) {
-            $variable = new Variable($name, array());
+            $variable = new Variable($name, []);
             $variable->setScope($scope);
 
             return $variable;
@@ -65,7 +65,7 @@ class Block extends Node
 
     public function handleInstructions()
     {
-        return $this->needParenthesis() || in_array($this->type, array(
+        return $this->needParenthesis() || in_array($this->type, [
             'main',
             'else',
             'try',
@@ -74,19 +74,19 @@ class Block extends Node
             'interface',
             'class',
             'switch',
-        ));
+        ]);
     }
 
     public function needParenthesis()
     {
-        return in_array($this->type, array(
+        return in_array($this->type, [
             'if',
             'elseif',
             'catch',
             'for',
             'while',
             'function',
-        ));
+        ]);
     }
 
     public function addInstructions($instructions)
@@ -135,7 +135,7 @@ class Block extends Node
         }
         $variables = array_unique($variables);
         if ($this->type === 'function') {
-            $nodes = isset($this->value, $this->value->nodes) ? $this->value->nodes : array();
+            $nodes = isset($this->value, $this->value->nodes) ? $this->value->nodes : [];
             if (count($nodes)) {
                 $nodes = array_map(function ($node) {
                     return $node instanceof Variable ? $node->name : null;
