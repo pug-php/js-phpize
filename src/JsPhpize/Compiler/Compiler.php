@@ -139,20 +139,23 @@ class Compiler
     {
         $leftHand = $this->visitNode($dyiade->leftHand, $indent);
         $rightHand = $this->visitNode($dyiade->rightHand, $indent);
-        if ($dyiade->operator === '+') {
-            $arguments = [$leftHand, $rightHand];
-            while (
-                ($dyiade = $dyiade->rightHand) instanceof Dyiade &&
-                $dyiade->operator === '+'
-            ) {
-                array_pop($arguments);
-                $arguments[] = $this->visitNode($dyiade->leftHand, $indent);
-                $arguments[] = $this->visitNode($dyiade->rightHand, $indent);
-            }
+        switch ($dyiade->operator) {
+            case '||':
+                return $this->helperWrap($this->engine->getHelperName('or'), [$leftHand, $rightHand]);
+            case '&&':
+                return $this->helperWrap($this->engine->getHelperName('and'), [$leftHand, $rightHand]);
+            case '+':
+                $arguments = [$leftHand, $rightHand];
+                while (
+                    ($dyiade = $dyiade->rightHand) instanceof Dyiade &&
+                    $dyiade->operator === '+'
+                ) {
+                    array_pop($arguments);
+                    $arguments[] = $this->visitNode($dyiade->leftHand, $indent);
+                    $arguments[] = $this->visitNode($dyiade->rightHand, $indent);
+                }
 
-            $plus = $this->engine->getHelperName('plus');
-
-            return $this->helperWrap($plus, $arguments);
+                return $this->helperWrap($this->engine->getHelperName('plus'), $arguments);
         }
 
         return $leftHand . ' ' . $dyiade->operator . ' ' . $rightHand;
