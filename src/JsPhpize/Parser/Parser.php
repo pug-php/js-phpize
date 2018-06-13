@@ -278,6 +278,31 @@ class Parser extends TokenExtractor
 
     protected function parseValue($token)
     {
+        if ($token->type === 'constant' && $token->value === 'JSON' && ($next = $this->get(0)) && $next->is('.')) {
+            $method = $this->get(1);
+            if ($method->type === 'variable') {
+                $function = null;
+                switch ($method->value) {
+                    case 'stringify':
+                        $function = 'json_encode';
+                        break;
+                    case 'parse':
+                        $function = 'json_decode';
+                        break;
+                }
+                if ($function) {
+                    $this->skip(2);
+                    if (($next = $this->get(0)) && $next->is('(')) {
+                        $this->skip();
+
+                        return $this->parseFunctionCallChildren(new Variable($function, []));
+                    }
+
+                    return new Constant('string', var_export($function, true));
+                }
+            }
+        }
+
         return $token->type === 'variable'
             ? $this->parseVariable($token->value)
             : new Constant($token->type, $token->value);
