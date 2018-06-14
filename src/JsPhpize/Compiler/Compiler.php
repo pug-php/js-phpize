@@ -135,15 +135,40 @@ class Compiler
         return $value;
     }
 
+    protected function compileLazyDyiade($helperName, $leftHand, $rightHand)
+    {
+        $variables = array_map(function ($token) {
+            return $token[1];
+        }, array_filter(token_get_all('<?php ' . $rightHand), function ($token) {
+            return is_array($token) && $token[0] === T_VARIABLE && !in_array($token[1], [
+                '$GLOBALS',
+                '$_SERVER',
+                '$_GET',
+                '$_POST',
+                '$_FILES',
+                '$_COOKIE',
+                '$_SESSION',
+                '$_REQUEST',
+                '$_ENV',
+            ]);
+        }));
+        $use = count($variables) ? ' use (&' . implode(', &', $variables) . ')' : '';
+
+        return $this->helperWrap($this->engine->getHelperName($helperName), [
+            $leftHand,
+            "function ()$use { return $rightHand; }",
+        ]);
+    }
+
     protected function visitDyiade(Dyiade $dyiade, $indent)
     {
         $leftHand = $this->visitNode($dyiade->leftHand, $indent);
         $rightHand = $this->visitNode($dyiade->rightHand, $indent);
         switch ($dyiade->operator) {
             case '||':
-                return $this->helperWrap($this->engine->getHelperName('or'), [$leftHand, $rightHand]);
+                return $this->compileLazyDyiade('or', $leftHand, $rightHand);
             case '&&':
-                return $this->helperWrap($this->engine->getHelperName('and'), [$leftHand, $rightHand]);
+                return $this->compileLazyDyiade('and', $leftHand, $rightHand);
             case '+':
                 $arguments = [$leftHand, $rightHand];
                 while (

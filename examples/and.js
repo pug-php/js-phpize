@@ -8,4 +8,6 @@ a = [
     '' || 'aa'
 ];
 
+a.push(6) || a.push(7);
+
 return JSON.stringify(a.map(JSON.stringify).join(','));

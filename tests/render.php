@@ -37,6 +37,7 @@ class RenderTest extends TestCase
             $result = $jsPhpize->render($examples . '/' . $jsFile);
         } catch (Throwable $error) {
             $contents = $jsPhpize->compile($examples . '/' . $jsFile);
+            file_put_contents('debug.php', $contents);
             $message = "\n" . get_class($error) . ' in ' . $jsFile . ' line ' . $error->getLine() .
                 "\n" . $error->getMessage() . "\n";
             foreach (explode("\n", $contents) as $index => $line) {
