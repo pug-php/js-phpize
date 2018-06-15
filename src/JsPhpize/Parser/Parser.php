@@ -11,7 +11,6 @@ use JsPhpize\Nodes\Constant;
 use JsPhpize\Nodes\FunctionCall;
 use JsPhpize\Nodes\HooksArray;
 use JsPhpize\Nodes\Main;
-use JsPhpize\Nodes\Node;
 use JsPhpize\Nodes\Parenthesis;
 use JsPhpize\Nodes\Ternary;
 use JsPhpize\Nodes\Value;
@@ -253,7 +252,7 @@ class Parser extends TokenExtractor
         return $variable;
     }
 
-    protected function parseTernary(Node $condition)
+    protected function parseTernary(Value $condition)
     {
         $trueValue = $this->expectValue($this->next());
         $next = $this->next();
@@ -276,8 +275,49 @@ class Parser extends TokenExtractor
         return new Ternary($condition, $trueValue, $falseValue);
     }
 
+    protected function jsonMethodToPhpFunction($method)
+    {
+        $function = null;
+        switch ($method) {
+            case 'stringify':
+                $function = 'json_encode';
+                break;
+            case 'parse':
+                $function = 'json_decode';
+                break;
+        }
+
+        return $function;
+    }
+
+    protected function parseJsonMethod($method)
+    {
+        if ($method->type === 'variable' && ($function = $this->jsonMethodToPhpFunction($method->value))) {
+            $this->skip(2);
+            if (($next = $this->get(0)) && $next->is('(')) {
+                $this->skip();
+
+                return $this->parseFunctionCallChildren($this->parseVariable($function));
+            }
+
+            return new Constant('string', var_export($function, true));
+        }
+
+        return false;
+    }
+
     protected function parseValue($token)
     {
+        if (
+            $token->type === 'constant' &&
+            $token->value === 'JSON' &&
+            ($next = $this->get(0)) &&
+            $next->is('.') &&
+            ($method = $this->parseJsonMethod($this->get(1))) !== false
+        ) {
+            return $method;
+        }
+
         return $token->type === 'variable'
             ? $this->parseVariable($token->value)
             : new Constant($token->type, $token->value);

@@ -155,4 +155,15 @@ class CompileTest extends TestCase
             },
         ]);
     }
+
+    public function testJsonInvalidMethod()
+    {
+        $jsPhpize = new JsPhpize();
+        $code = $jsPhpize->compile('JSON.doesNotExists()');
+
+        $this->assertSame(
+            "JSON;\n(function_exists('doesNotExists') ? doesNotExists() : \$doesNotExists());",
+            trim($code)
+        );
+    }
 }

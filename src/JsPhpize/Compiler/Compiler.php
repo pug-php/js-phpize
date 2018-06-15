@@ -20,7 +20,7 @@ use JsPhpize\Nodes\Variable;
 
 class Compiler
 {
-    use DependenciesTrait;
+    use DyiadeTrait;
 
     /**
      * @const string
@@ -139,20 +139,24 @@ class Compiler
     {
         $leftHand = $this->visitNode($dyiade->leftHand, $indent);
         $rightHand = $this->visitNode($dyiade->rightHand, $indent);
-        if ($dyiade->operator === '+') {
-            $arguments = [$leftHand, $rightHand];
-            while (
-                ($dyiade = $dyiade->rightHand) instanceof Dyiade &&
-                $dyiade->operator === '+'
-            ) {
-                array_pop($arguments);
-                $arguments[] = $this->visitNode($dyiade->leftHand, $indent);
-                $arguments[] = $this->visitNode($dyiade->rightHand, $indent);
-            }
+        switch ($dyiade->operator) {
+            case '||':
+                return $this->compileLazyDyiade($this->engine->getHelperName('or'), $leftHand, $rightHand);
+            case '&&':
+                return $this->compileLazyDyiade($this->engine->getHelperName('and'), $leftHand, $rightHand);
+            case '+':
+                $arguments = [$leftHand, $rightHand];
+                while (
+                    ($dyiade = $dyiade->rightHand) instanceof Dyiade &&
+                    $dyiade->operator === '+'
+                ) {
+                    /* @var Dyiade $dyiade */
+                    array_pop($arguments);
+                    $arguments[] = $this->visitNode($dyiade->leftHand, $indent);
+                    $arguments[] = $this->visitNode($dyiade->rightHand, $indent);
+                }
 
-            $plus = $this->engine->getHelperName('plus');
-
-            return $this->helperWrap($plus, $arguments);
+                return $this->helperWrap($this->engine->getHelperName('plus'), $arguments);
         }
 
         return $leftHand . ' ' . $dyiade->operator . ' ' . $rightHand;
@@ -195,7 +199,7 @@ class Compiler
                 return $staticCall;
             }
 
-            return '(function_exists(' . var_export($name, true) . ') ? ' .
+            $dynamicCall = '(function_exists(' . var_export($name, true) . ') ? ' .
                 $staticCall . ' : ' .
                 $dynamicCall . ')';
         }
@@ -255,10 +259,10 @@ class Compiler
             ' : ' . $this->visitNode($ternary->falseValue, $indent);
     }
 
-    protected function handleVariableChildren(DynamicValue $variable, $indent, $php)
+    protected function handleVariableChildren(DynamicValue $dynamicValue, $indent, $php)
     {
-        if (count($variable->children)) {
-            $arguments = $this->mapNodesArray($variable->children, $indent);
+        if (count($dynamicValue->children)) {
+            $arguments = $this->mapNodesArray($dynamicValue->children, $indent);
             array_unshift($arguments, $php);
             $dot = $this->engine->getHelperName('dot');
             $php = $this->helperWrap($dot, $arguments);
