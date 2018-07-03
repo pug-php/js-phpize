@@ -34,7 +34,7 @@ class JsPhpize extends JsPhpizeOptions
     protected $sharedVariables = [];
 
     /**
-     * Compile file or code (detect if $input is an exisisting file, else use it as content).
+     * Compile file or code (detect if $input is an existing file, else use it as content).
      *
      * @param string $input    file or content
      * @param string $filename if specified, input is used as content and filename as its name
