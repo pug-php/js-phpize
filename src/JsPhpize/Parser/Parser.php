@@ -360,7 +360,15 @@ class Parser extends TokenExtractor
             case 'return':
             case 'continue':
             case 'break':
-                $this->handleOptionalValue($keyword, $this->get(0), $name);
+                $expects = [
+                    'new' => 'Class name',
+                    'clone' => 'Object',
+                ];
+                $value = $this->get(0);
+                if (isset($expects[$name]) && !$value) {
+                    throw new Exception($expects[$name] . " expected after '" . $name . "'", 25);
+                }
+                $this->handleOptionalValue($keyword, $value, $name);
                 break;
             case 'case':
                 $value = $this->expectValue($this->next());

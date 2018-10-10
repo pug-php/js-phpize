@@ -107,6 +107,17 @@ class BadSyntaxesTest extends TestCase
     }
 
     /**
+     * @expectedException        \JsPhpize\Parser\Exception
+     * @expectedExceptionCode    25
+     * @expectedExceptionMessage Class name expected after 'new'
+     */
+    public function testNewWithNothingCall()
+    {
+        $jsPhpize = new JsPhpize();
+        $jsPhpize->compile('new');
+    }
+
+    /**
      * @expectedException     \JsPhpize\Lexer\Exception
      * @expectedExceptionCode 8
      */

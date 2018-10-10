@@ -86,7 +86,7 @@ abstract class TokenExtractor extends TokenCrawler
 
     protected function handleOptionalValue($keyword, $afterKeyword, $applicant)
     {
-        if (!$afterKeyword->is(';')) {
+        if ($afterKeyword && !$afterKeyword->is(';')) {
             $value = $this->expectValue($this->next(), $keyword, $applicant);
             $keyword->setValue($value);
         }
