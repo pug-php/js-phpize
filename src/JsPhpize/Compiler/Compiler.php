@@ -84,7 +84,6 @@ class Compiler
 
     protected function getBlockHead(Block $block, $indent)
     {
-
         if ($block->type === 'for' && $block->value instanceof Parenthesis && $block->value->separator === 'in' && count($block->value->nodes) >= 2) {
             return 'foreach (' .
                 $this->visitNode($block->value->nodes[1], $indent) .
