@@ -62,7 +62,7 @@ class Parser extends TokenExtractor
         return $lambda;
     }
 
-    protected function parseParentheses()
+    protected function parseParentheses($allowedSeparators = [',', ';'])
     {
         $parentheses = new Parenthesis();
         $exceptionInfos = $this->exceptionInfos();
@@ -81,7 +81,14 @@ class Parser extends TokenExtractor
             }
 
             if ($expectComma) {
-                if ($token->isIn(',', ';')) {
+                if ($token->is('in') && in_array('in', $allowedSeparators)) {
+                    $parentheses->setSeparator('in');
+                    $expectComma = false;
+
+                    continue;
+                }
+
+                if ($token->isIn(',', ';') && in_array($token->type, $allowedSeparators)) {
                     $expectComma = false;
 
                     continue;
@@ -94,6 +101,10 @@ class Parser extends TokenExtractor
                 $expectComma = true;
                 $parentheses->addNode($value);
 
+                continue;
+            }
+
+            if ($token->is('var')) {
                 continue;
             }
 

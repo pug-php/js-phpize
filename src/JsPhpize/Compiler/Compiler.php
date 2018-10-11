@@ -82,12 +82,25 @@ class Compiler
             ' ' . $rightHand;
     }
 
-    protected function visitBlock(Block $block, $indent)
+    protected function getBlockHead(Block $block, $indent)
     {
-        $head = $block->type . ($block->value
+
+        if ($block->type === 'for' && $block->value instanceof Parenthesis && $block->value->separator === 'in' && count($block->value->nodes) >= 2) {
+            return 'foreach (' .
+                $this->visitNode($block->value->nodes[1], $indent) .
+                ' as ' . $this->visitNode($block->value->nodes[0], $indent) .
+                ' => $__current_value)';
+        }
+
+        return $block->type . ($block->value
             ? ' ' . $this->visitNode($block->value, $indent)
             : ''
         );
+    }
+
+    protected function visitBlock(Block $block, $indent)
+    {
+        $head = $this->getBlockHead($block, $indent);
 
         if (!$block->handleInstructions()) {
             return $head;

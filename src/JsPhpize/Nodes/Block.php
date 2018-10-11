@@ -125,7 +125,7 @@ class Block extends Node
 
     public function setValue(Node $value)
     {
-        if ($this->type === 'for' && $value instanceof Parenthesis) {
+        if ($this->type === 'for' && $value instanceof Parenthesis && $value->separator !== 'in') {
             $value->setSeparator(';');
         }
 

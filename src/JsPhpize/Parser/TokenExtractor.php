@@ -96,7 +96,7 @@ abstract class TokenExtractor extends TokenCrawler
     {
         if ($afterKeyword && $afterKeyword->is('(')) {
             $this->skip();
-            $keyword->setValue($this->parseParentheses());
+            $keyword->setValue($this->parseParentheses($keyword->type === 'for' ? [';', 'in'] : [',', ';']));
         } elseif ($keyword->needParenthesis()) {
             throw new Exception("'" . $keyword->type . "' block need parentheses.", 17);
         }
