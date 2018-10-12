@@ -25,7 +25,8 @@ trait DyiadeTrait
                     '$_ENV',
                 ]);
         }));
-        $use = count($variables) ? ' use (&' . implode(', &', $variables) . ')' : '';
+        $variables = array_map('strval', $variables);
+        $use = count($variables) ? ' use (&' . implode(', &', array_unique($variables)) . ')' : '';
 
         return $this->helperWrap($helper, [
             $leftHand,
