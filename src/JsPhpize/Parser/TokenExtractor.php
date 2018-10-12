@@ -176,8 +176,8 @@ abstract class TokenExtractor extends TokenCrawler
                     $nextValue = new Constant('constant', $nextValue->name);
                 }
 
-                $value = $nextValue instanceof Constant && $nextValue->value === 'Array'
-                    ? new FunctionCall(new Variable('is_array', []), [$value], [])
+                $value = $nextValue instanceof Constant && in_array($nextValue->value, ['Array', 'Object', 'String'])
+                    ? new FunctionCall(new Variable('is_' . strtolower($nextValue->value), []), [$value], [])
                     : new Dyiade('instanceof', $value, $nextValue);
 
                 continue;
