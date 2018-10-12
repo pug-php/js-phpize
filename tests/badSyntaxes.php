@@ -118,6 +118,17 @@ class BadSyntaxesTest extends TestCase
     }
 
     /**
+     * @expectedException        \JsPhpize\Parser\Exception
+     * @expectedExceptionCode    25
+     * @expectedExceptionMessage Object expected after 'clone'
+     */
+    public function testCloneWithNothingCall()
+    {
+        $jsPhpize = new JsPhpize();
+        $jsPhpize->compile('clone');
+    }
+
+    /**
      * @expectedException     \JsPhpize\Lexer\Exception
      * @expectedExceptionCode 8
      */

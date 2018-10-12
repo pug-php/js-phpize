@@ -366,6 +366,9 @@ class Parser extends TokenExtractor
         $name = $token->value;
         $keyword = new Block($name);
         switch ($name) {
+            case 'typeof':
+                exit('ici');
+                break;
             case 'new':
             case 'clone':
             case 'return':

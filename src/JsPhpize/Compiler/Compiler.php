@@ -29,7 +29,8 @@ class Compiler
         callable,case,catch,class,clone,const,continue,declare,default,die,do,echo,else,elseif,empty,enddeclare,
         endfor,endforeach,endif,endswitch,endwhile,eval,exit,extends,final,for,foreach,function,global,goto,if,
         implements,include,include_once,instanceof,insteadof,interface,isset,list,namespace,new,or,print,private,
-        protected,public,require,require_once,return,static,switch,throw,trait,try,unset,use,var,while,xor';
+        protected,public,require,require_once,return,static,switch,throw,trait,try,typeof,unset,use,var,while,
+        xor';
 
     /**
      * @var JsPhpize
@@ -106,7 +107,7 @@ class Compiler
         }
 
         if ($block->type === 'function' && count($readVariables = $block->getReadVariables())) {
-            $head .= ' use (&$' . implode(', &$', $readVariables) . ')';
+            $head .= ' use (&$' . implode(', &$', array_unique($readVariables)) . ')';
         }
 
         $letVariables = $this->visitNodesArray($block->getLetVariables(), $indent, '', $indent . "unset(%s);\n");

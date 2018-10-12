@@ -6,6 +6,8 @@ use JsPhpize\Lexer\Token;
 use JsPhpize\Nodes\Assignation;
 use JsPhpize\Nodes\Constant;
 use JsPhpize\Nodes\Dyiade;
+use JsPhpize\Nodes\FunctionCall;
+use JsPhpize\Nodes\Variable;
 
 abstract class TokenExtractor extends TokenCrawler
 {
@@ -102,6 +104,25 @@ abstract class TokenExtractor extends TokenCrawler
         }
     }
 
+    protected function handleLeftOperator($value, $token)
+    {
+        if ($token->type === 'typeof') {
+            if ($value instanceof Dyiade) {
+                return new Dyiade(
+                    $value->operator,
+                    new FunctionCall(new Variable('gettype', []), [$value->leftHand], []),
+                    $value->rightHand,
+                    $value->before,
+                    $value->after
+                );
+            }
+
+            return new FunctionCall(new Variable('gettype', []), [$value], []);
+        }
+
+        return $value->prepend($token->type);
+    }
+
     protected function getInitialValue($token)
     {
         if ($token->isFunction()) {
@@ -117,10 +138,7 @@ abstract class TokenExtractor extends TokenCrawler
             return $this->parseBracketsArray();
         }
         if ($token->isLeftHandOperator()) {
-            $value = $this->expectValue($this->next(), $token);
-            $value->prepend($token->type);
-
-            return $value;
+            return $this->handleLeftOperator($this->expectValue($this->next(), $token), $token);
         }
         if ($token->isValue()) {
             return $this->parseValue($token);
@@ -144,6 +162,20 @@ abstract class TokenExtractor extends TokenCrawler
             if ($token->is('(')) {
                 $this->skip();
                 $value = $this->parseFunctionCallChildren($value, $applicant);
+
+                continue;
+            }
+
+            if ($token->is('instanceof')) {
+                $this->skip();
+                $nextValue = $this->expectValue($this->next(), $previousToken);
+                if ($nextValue instanceof Variable) {
+                    $nextValue = new Constant('constant', $nextValue->name);
+                }
+
+                $value = $nextValue instanceof Constant && $nextValue->value === 'Array'
+                    ? new FunctionCall(new Variable('is_array', []), [$value], [])
+                    : new Dyiade('instanceof', $value, $nextValue);
 
                 continue;
             }
