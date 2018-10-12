@@ -107,6 +107,7 @@ class Compiler
         }
 
         if ($block->type === 'function' && count($readVariables = $block->getReadVariables())) {
+            $readVariables = array_map('strval', $readVariables);
             $head .= ' use (&$' . implode(', &$', array_unique($readVariables)) . ')';
         }
 
@@ -287,6 +288,9 @@ class Compiler
     protected function visitVariable(Variable $variable, $indent)
     {
         $name = $variable->name;
+        if ($name === 'RegExp') {
+            $this->requireHelper('regExpClass');
+        }
         if ($variable->scope) {
             $name = '__let_' . spl_object_hash($variable->scope) . $name;
         }

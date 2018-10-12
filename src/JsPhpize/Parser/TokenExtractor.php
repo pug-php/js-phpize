@@ -143,6 +143,9 @@ abstract class TokenExtractor extends TokenCrawler
         if ($token->isValue()) {
             return $this->parseValue($token);
         }
+        if ($token->isIn(['new', 'clone'])) {
+            return $this->parseKeyword($token);
+        }
     }
 
     protected function appendFunctionsCalls(&$value, $previousToken = null, $applicant = null)
