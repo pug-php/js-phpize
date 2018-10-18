@@ -147,4 +147,26 @@ class OptionsTest extends TestCase
         ]);
         self::assertSame('$FOO', trim($jsPhpize->compile('FOO'), " \n;"));
     }
+
+    /**
+     * @throws \JsPhpize\Compiler\Exception
+     * @throws \JsPhpize\Lexer\Exception
+     * @throws \JsPhpize\Parser\Exception
+     */
+    public function testBooleanLogicalOperators()
+    {
+        $jsPhpize = new JsPhpize();
+        $this->assertSame(4, $jsPhpize->render('return 7 && 4'));
+        $this->assertSame(7, $jsPhpize->render('return 7 || 4'));
+        $this->assertSame(null, $jsPhpize->render('return null && false'));
+        $this->assertSame(null, $jsPhpize->render('return 0 || null'));
+
+        $jsPhpize = new JsPhpize([
+            'booleanLogicalOperators' => true,
+        ]);
+        $this->assertSame(true, $jsPhpize->render('return 7 && 4'));
+        $this->assertSame(true, $jsPhpize->render('return 7 || 4'));
+        $this->assertSame(false, $jsPhpize->render('return null && false'));
+        $this->assertSame(false, $jsPhpize->render('return 0 || null'));
+    }
 }

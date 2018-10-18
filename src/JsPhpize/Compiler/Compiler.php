@@ -155,8 +155,16 @@ class Compiler
         $rightHand = $this->visitNode($dyiade->rightHand, $indent);
         switch ($dyiade->operator) {
             case '||':
+                if ($this->engine->getOption('booleanLogicalOperators')) {
+                    break;
+                }
+
                 return $this->compileLazyDyiade($this->engine->getHelperName('or'), $leftHand, $rightHand);
             case '&&':
+                if ($this->engine->getOption('booleanLogicalOperators')) {
+                    break;
+                }
+
                 return $this->compileLazyDyiade($this->engine->getHelperName('and'), $leftHand, $rightHand);
             case '+':
                 $arguments = [$leftHand, $rightHand];
