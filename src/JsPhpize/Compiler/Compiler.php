@@ -296,8 +296,8 @@ class Compiler
     protected function visitVariable(Variable $variable, $indent)
     {
         $name = $variable->name;
-        if ($name === 'RegExp') {
-            $this->requireHelper('regExpClass');
+        if (in_array($name, ['Math', 'RegExp'])) {
+            $this->requireHelper(lcfirst($name) . 'Class');
         }
         if ($variable->scope) {
             $name = '__let_' . spl_object_hash($variable->scope) . $name;
