@@ -20,6 +20,15 @@ engines:
         enabled: false
     exclude_paths:
     - "src/JsPhpize/Stream/"
+plugins:
+  phpcodesniffer:
+    enabled: true
+  phpmd:
+    enabled: true
+  SonarPHP:
+    enabled: true
+  phan:
+    enabled: true
 ratings:
   paths:
   - "**.php"
