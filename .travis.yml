@@ -15,13 +15,8 @@ php:
   - 7.2
   - 7.3
 
-before_install:
-  - echo "hhvm.php7.all=1" >> /tmp/hhvm.php.ini
-  - phpenv config-add /tmp/hhvm.php.ini
-
 before_script:
   - travis_retry composer self-update
-  - if [[ `php -v | grep -c "HipHop"` > 0 ]]; then composer require phpunit/phpunit:^5.0 --no-update; fi;
   - travis_retry composer install --no-interaction --prefer-source --dev
 
 script:
