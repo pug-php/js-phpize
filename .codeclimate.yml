@@ -1,5 +1,6 @@
 ---
-engines:
+version: "2"
+plugins:
   duplication:
     enabled: true
     exclude_paths:
@@ -18,17 +19,11 @@ engines:
         enabled: false
       Design/EvalExpression:
         enabled: false
-    exclude_paths:
+    exclude_patterns:
     - "src/JsPhpize/Stream/"
-plugins:
   phpcodesniffer:
-    enabled: true
-  phpmd:
     enabled: true
   SonarPHP:
     enabled: true
   phan:
     enabled: true
-ratings:
-  paths:
-  - "**.php"
