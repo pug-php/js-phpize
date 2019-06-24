@@ -104,7 +104,12 @@ class Parser extends TokenExtractor
                 continue;
             }
 
-            if ($token->is('var')) {
+            if ($token->type === 'keyword' && $token->valueIn(['var', 'const', 'let'])) {
+                // @TODO handle let scope here
+                // if ($token->value === 'let') {
+                //     $this->letForNextBlock = $this->parseLet();
+                // }
+
                 continue;
             }
 
@@ -367,7 +372,7 @@ class Parser extends TokenExtractor
         $keyword = new Block($name);
         switch ($name) {
             case 'typeof':
-                exit('ici');
+                throw new Exception('typeof keyword not supported', 26);
                 break;
             case 'new':
             case 'clone':
@@ -430,7 +435,7 @@ class Parser extends TokenExtractor
 
             if ($token->value === 'let') {
                 $initNext = true;
-                $block->let($this->parseLet($token));
+                $block->let($this->parseLet());
 
                 return true;
             }
@@ -473,6 +478,10 @@ class Parser extends TokenExtractor
         }
     }
 
+    /**
+     * @param Block $block
+     * @throws \JsPhpize\Lexer\Exception
+     */
     public function parseBlock($block)
     {
         $this->stack[] = $block;
