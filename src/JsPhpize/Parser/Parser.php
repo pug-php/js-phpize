@@ -480,6 +480,7 @@ class Parser extends TokenExtractor
 
     /**
      * @param Block $block
+     *
      * @throws \JsPhpize\Lexer\Exception
      */
     public function parseBlock($block)
