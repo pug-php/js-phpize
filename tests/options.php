@@ -169,4 +169,30 @@ class OptionsTest extends TestCase
         $this->assertSame(false, $jsPhpize->render('return null && false'));
         $this->assertSame(false, $jsPhpize->render('return 0 || null'));
     }
+
+    /**
+     * @throws \JsPhpize\Compiler\Exception
+     * @throws \JsPhpize\Lexer\Exception
+     * @throws \JsPhpize\Parser\Exception
+     */
+    public function testFunctionNamespace()
+    {
+        include_once __DIR__ . '/functionInNamespace.php';
+
+        $jsPhpize = new JsPhpize();
+        $message = null;
+
+        try {
+            $jsPhpize->render('return fooBar()');
+        } catch (\JsPhpize\Compiler\Exception $exception) {
+            $message = $exception->getMessage();
+        }
+
+        $this->assertRegExp('/Undefined variable: fooBar/', $message);
+
+        $jsPhpize = new JsPhpize([
+            'functionsNamespace' => 'myNameSpace',
+        ]);
+        $this->assertSame('Hello', $jsPhpize->render('return fooBar()'));
+    }
 }

@@ -224,6 +224,14 @@ class Compiler
             $dynamicCall = '(function_exists(' . var_export($name, true) . ') ? ' .
                 $staticCall . ' : ' .
                 $dynamicCall . ')';
+
+            $functionNamespace = $this->engine->getOption('functionsNamespace');
+
+            if ($functionNamespace) {
+                $dynamicCall = '(function_exists(' . var_export($functionNamespace . '\\' . $name, true) . ') ? ' .
+                    '\\' . $functionNamespace . '\\' . $staticCall . ' : ' .
+                    $dynamicCall . ')';
+            }
         }
 
         return $this->handleVariableChildren($functionCall, $indent, $dynamicCall);
