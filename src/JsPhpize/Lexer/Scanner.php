@@ -3,7 +3,6 @@
 namespace JsPhpize\Lexer;
 
 use JsPhpize\JsPhpize;
-use JsPhpize\Nodes\Constant;
 
 class Scanner
 {
