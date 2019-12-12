@@ -9,6 +9,7 @@
     <testsuites>
         <testsuite name="render">
             <file>tests/render.php</file>
+            <file>tests/handleLet.php</file>
         </testsuite>
         <testsuite name="compile">
             <file>tests/compile.php</file>
@@ -28,7 +29,7 @@
         <testsuite name="array">
             <file>tests/array.php</file>
         </testsuite>
-        <testsuite name="badSyntaxes">
+        <testsuite name="errors">
             <file>tests/badSyntaxes.php</file>
             <file>tests/badSwitchSyntaxes.php</file>
             <file>tests/badKeywordSyntaxes.php</file>

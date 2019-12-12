@@ -56,6 +56,11 @@ class Block extends Node
         $this->letVariables[] = $variable;
     }
 
+    public function letAfter()
+    {
+
+    }
+
     public function getLetVariables()
     {
         $scope = $this;
@@ -107,6 +112,7 @@ class Block extends Node
                 $this->inInstruction = true;
                 $this->instructions[] = new Instruction();
             }
+
             foreach ($instructions as $instruction) {
                 $this->instructions[count($this->instructions) - 1]->add($instruction);
             }
@@ -140,16 +146,21 @@ class Block extends Node
     public function getReadVariables()
     {
         $variables = $this->value->getReadVariables();
+
         foreach ($this->instructions as $instruction) {
             $variables = array_merge($variables, $instruction->getReadVariables());
         }
+
         $variables = array_unique($variables);
+
         if ($this->type === 'function') {
             $nodes = isset($this->value, $this->value->nodes) ? $this->value->nodes : [];
+
             if (count($nodes)) {
                 $nodes = array_map(function ($node) {
                     return $node instanceof Variable ? $node->name : null;
                 }, $nodes);
+
                 $variables = array_filter($variables, function ($variable) use ($nodes) {
                     return !in_array($variable, $nodes);
                 });
