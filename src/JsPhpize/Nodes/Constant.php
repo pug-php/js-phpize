@@ -35,6 +35,7 @@ class Constant extends Value implements Assignable
         if (!in_array($type, ['constant', 'number', 'string', 'regexp'])) {
             throw new Exception("The given type [$type] is not a valid constant type.", 23);
         }
+
         $this->type = $type;
         $this->value = $value;
     }
@@ -44,9 +45,11 @@ class Constant extends Value implements Assignable
         if ($this->type !== 'constant') {
             return "{$this->type} is not assignable.";
         }
+
         if (in_array($this->value, ['NAN', 'INF'])) {
             return "{$this->value} is not assignable.";
         }
+
         if (mb_substr($this->value, 0, 2) === 'M_') {
             return "'M_' prefix is reserved to mathematical constants.";
         }

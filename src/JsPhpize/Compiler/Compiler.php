@@ -138,9 +138,11 @@ class Compiler
     protected function visitConstant(Constant $constant)
     {
         $value = $constant->value;
+
         if ($constant->type === 'string' && mb_substr($constant->value, 0, 1) === '"') {
             $value = str_replace('$', '\\$', $value);
         }
+
         if ($constant->type === 'regexp') {
             $regExp = $this->engine->getHelperName('regExp');
             $value = $this->helperWrap($regExp, [var_export($value, true)]);
@@ -217,6 +219,7 @@ class Compiler
             $staticCall = $name . '(' . $arguments . ')';
 
             $functions = str_replace(["\n", "\t", "\r", ' '], '', static::STATIC_CALL_FUNCTIONS);
+
             if ($applicant === 'new' || in_array($name, explode(',', $functions))) {
                 return $staticCall;
             }

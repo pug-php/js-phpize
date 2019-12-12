@@ -3,6 +3,7 @@
 namespace JsPhpize\Lexer;
 
 use JsPhpize\JsPhpize;
+use JsPhpize\Nodes\Constant;
 
 class Scanner
 {
@@ -63,7 +64,16 @@ class Scanner
 
     public function scanString($matches)
     {
-        return $this->valueToken('string', $matches);
+        /** @var Constant $stringToken */
+        $stringToken = $this->valueToken('string', $matches);
+        $delimiter = substr($stringToken->value, 0, 1);
+
+        if ($delimiter === '`') {
+            var_dump($stringToken->value);
+            exit;
+        }
+
+        return $stringToken;
     }
 
     public function scanOperator($matches)

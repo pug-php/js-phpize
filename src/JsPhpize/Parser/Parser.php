@@ -310,6 +310,7 @@ class Parser extends TokenExtractor
     {
         if ($method->type === 'variable' && ($function = $this->jsonMethodToPhpFunction($method->value))) {
             $this->skip(2);
+
             if (($next = $this->get(0)) && $next->is('(')) {
                 $this->skip();
 
@@ -370,6 +371,7 @@ class Parser extends TokenExtractor
     {
         $name = $token->value;
         $keyword = new Block($name);
+
         switch ($name) {
             case 'typeof':
                 throw new Exception('typeof keyword not supported', 26);
@@ -384,9 +386,11 @@ class Parser extends TokenExtractor
                     'clone' => 'Object',
                 ];
                 $value = $this->get(0);
+
                 if (isset($expects[$name]) && !$value) {
                     throw new Exception($expects[$name] . " expected after '" . $name . "'", 25);
                 }
+
                 $this->handleOptionalValue($keyword, $value, $name);
                 break;
             case 'case':
@@ -407,6 +411,7 @@ class Parser extends TokenExtractor
     protected function parseKeyword($token)
     {
         $keyword = $this->parseKeywordStatement($token);
+
         if ($keyword->handleInstructions()) {
             $this->parseBlock($keyword);
         }
@@ -417,6 +422,7 @@ class Parser extends TokenExtractor
     protected function parseLet()
     {
         $letVariable = $this->get(0);
+
         if ($letVariable->type !== 'variable') {
             throw $this->unexpected($letVariable);
         }
@@ -486,15 +492,19 @@ class Parser extends TokenExtractor
     public function parseBlock($block)
     {
         $this->stack[] = $block;
+
         if (!$block->multipleInstructions) {
             $next = $this->get(0);
+
             if ($next && $next->is('{')) {
                 $block->enableMultipleInstructions();
             }
+
             if ($block->multipleInstructions) {
                 $this->skip();
             }
         }
+
         $this->parseInstructions($block);
         array_pop($this->stack);
     }
