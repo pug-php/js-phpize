@@ -10,10 +10,8 @@ class RenderTest extends TestCase
         $cases = [];
 
         $examples = __DIR__ . '/../examples';
+
         foreach (scandir($examples) as $file) {
-            if ($file !== 'interpolation.return') {
-                continue;
-            }
             if (substr($file, -7) === '.return') {
                 $cases[] = [$file, substr($file, 0, -7) . '.js'];
             }
@@ -23,7 +21,6 @@ class RenderTest extends TestCase
     }
 
     /**
-     * @group i
      * @group examples
      * @dataProvider caseProvider
      */
@@ -43,6 +40,7 @@ class RenderTest extends TestCase
             $contents = $jsPhpize->compile($examples . '/' . $jsFile);
             $message = "\n" . get_class($error) . ' in ' . $jsFile . ' line ' . $error->getLine() .
                 "\n" . $error->getMessage() . "\n";
+
             foreach (explode("\n", $contents) as $index => $line) {
                 $number = $index + 1;
                 $message .= ($number === $error->getLine() ? '>' : ' ') .

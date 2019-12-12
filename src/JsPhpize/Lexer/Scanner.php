@@ -64,16 +64,7 @@ class Scanner
 
     public function scanString($matches)
     {
-        /** @var Constant $stringToken */
-        $stringToken = $this->valueToken('string', $matches);
-        $delimiter = substr($stringToken->value, 0, 1);
-
-        if ($delimiter === '`') {
-            var_dump($stringToken->value);
-            exit;
-        }
-
-        return $stringToken;
+        return $this->valueToken('string', $matches);
     }
 
     public function scanOperator($matches)

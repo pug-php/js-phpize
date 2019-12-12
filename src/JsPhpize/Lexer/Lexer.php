@@ -61,6 +61,11 @@ class Lexer extends Scanner
             ' near from ' . trim($this->consumed);
     }
 
+    public function rest()
+    {
+        return $this->input;
+    }
+
     protected function consume($consumed)
     {
         $consumed = is_int($consumed) ? mb_substr($this->input, 0, $consumed) : $consumed;
