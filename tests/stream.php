@@ -20,5 +20,6 @@ class StreamTest extends TestCase
         $this->assertTrue(is_array($stream->url_stat('foo', 0)));
         $this->assertSame('r', $stream->stream_read(2));
         $this->assertTrue($stream->stream_eof());
+        $this->assertTrue($stream->stream_set_option(1, 2, 3));
     }
 }

@@ -21,6 +21,7 @@ use JsPhpize\Nodes\Variable;
 class Compiler
 {
     use DyiadeTrait;
+    use InterpolationTrait;
 
     /**
      * @const string
@@ -42,9 +43,15 @@ class Compiler
      */
     protected $arrayShortSyntax;
 
-    public function __construct(JsPhpize $engine)
+    /**
+     * @var string
+     */
+    protected $filename;
+
+    public function __construct(JsPhpize $engine, $filename = null)
     {
         $this->engine = $engine;
+        $this->filename = $filename;
         $this->setPrefixes($engine->getVarPrefix(), $engine->getConstPrefix());
         $this->arrayShortSyntax = $engine->getOption('arrayShortSyntax', false);
     }
@@ -138,12 +145,25 @@ class Compiler
     protected function visitConstant(Constant $constant)
     {
         $value = $constant->value;
-        if ($constant->type === 'string' && mb_substr($constant->value, 0, 1) === '"') {
-            $value = str_replace('$', '\\$', $value);
+
+        if ($constant->type === 'string') {
+            if (substr($value, 0, 1) === '`') {
+                return implode(
+                    ' . ',
+                    iterator_to_array($this->readInterpolation(substr($value, 1, -1)))
+                );
+            }
+
+            if (mb_substr($constant->value, 0, 1) === '"') {
+                return str_replace('$', '\\$', $value);
+            }
         }
+
         if ($constant->type === 'regexp') {
-            $regExp = $this->engine->getHelperName('regExp');
-            $value = $this->helperWrap($regExp, [var_export($value, true)]);
+            return $this->helperWrap(
+                $this->engine->getHelperName('regExp'),
+                [var_export($value, true)]
+            );
         }
 
         return $value;
@@ -217,6 +237,7 @@ class Compiler
             $staticCall = $name . '(' . $arguments . ')';
 
             $functions = str_replace(["\n", "\t", "\r", ' '], '', static::STATIC_CALL_FUNCTIONS);
+
             if ($applicant === 'new' || in_array($name, explode(',', $functions))) {
                 return $staticCall;
             }
@@ -270,6 +291,7 @@ class Compiler
             get_class($node)
         );
         $php = method_exists($this, $method) ? $this->$method($node, $indent) : '';
+
         if ($node instanceof Value) {
             $php = $node->getBefore() . $php . $node->getAfter();
         }

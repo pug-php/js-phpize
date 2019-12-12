@@ -18,6 +18,7 @@ abstract class TokenExtractor extends TokenCrawler
         if ($typeAndValue->isValid()) {
             list($type, $value) = $typeAndValue->get();
             $token = $this->next();
+
             if (!$token) {
                 throw new Exception('Missing value after ' . $value . $this->exceptionInfos(), 12);
             }
