@@ -2,6 +2,7 @@
 
 namespace JsPhpize\Lexer;
 
+use Generator;
 use JsPhpize\JsPhpize;
 
 class Lexer extends Scanner
@@ -35,6 +36,11 @@ class Lexer extends Scanner
      * @var string
      */
     protected $consumed = '';
+
+    /**
+     * @var Generator
+     */
+    protected $tokenGenerator = null;
 
     public function __construct(JsPhpize $engine, $input, $filename)
     {
@@ -95,7 +101,7 @@ class Lexer extends Scanner
         return $this->token($type, trim($matches[0]));
     }
 
-    protected function scan($pattern, $method)
+    public function scan($pattern, $method)
     {
         if (preg_match('/^\s*(' . $pattern . ')/', $this->input, $matches)) {
             return $this->{'scan' . ucfirst($method)}($matches);
@@ -127,8 +133,14 @@ class Lexer extends Scanner
             return false;
         }
 
+        if ($token = $this->pullFromCurrentTokenGenerator()) {
+            return $token;
+        }
+
         foreach ($this->engine->getPatterns() as $pattern) {
-            if ($token = $this->scan($pattern->regex, $pattern->type)) {
+            $this->tokenGenerator = $pattern->lexWith($this);
+
+            if ($token = $this->pullFromCurrentTokenGenerator()) {
                 if (in_array($pattern->type, $this->disallow)) {
                     throw new Exception($pattern->type . ' is disallowed.', 3);
                 }
@@ -138,5 +150,21 @@ class Lexer extends Scanner
         }
 
         throw new Exception('Unknow pattern found at: ' . mb_substr($this->input, 0, 100), 12);
+    }
+
+    protected function pullFromCurrentTokenGenerator()
+    {
+        $token = null;
+
+        if ($this->tokenGenerator) {
+            $this->tokenGenerator->next();
+            $token = $this->tokenGenerator->current();
+
+            if (!$this->tokenGenerator->valid()) {
+                $this->tokenGenerator = null;
+            }
+        }
+
+        return $token;
     }
 }
