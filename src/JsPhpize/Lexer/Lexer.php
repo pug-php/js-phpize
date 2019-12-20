@@ -72,6 +72,11 @@ class Lexer extends Scanner
         return $this->input;
     }
 
+    public function consumeStringToken($string)
+    {
+        return $this->valueToken('string', [$string]);
+    }
+
     protected function consume($consumed)
     {
         $consumed = is_int($consumed) ? mb_substr($this->input, 0, $consumed) : $consumed;
