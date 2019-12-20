@@ -4,6 +4,7 @@ namespace JsPhpize\Lexer;
 
 use Generator;
 use JsPhpize\JsPhpize;
+use JsPhpize\Parser\Parser;
 
 class Lexer extends Scanner
 {
@@ -75,6 +76,16 @@ class Lexer extends Scanner
     public function consumeStringToken($string)
     {
         return $this->valueToken('string', [$string]);
+    }
+
+    public function getNextParseLength($input = null)
+    {
+        $input = $input ?? $this->input;
+        $length = mb_strlen($input);
+        $parser = new Parser(clone $this->engine, $input, $this->filename);
+        $parser->parse();
+
+        return $length - mb_strlen($parser->rest());
     }
 
     protected function consume($consumed)

@@ -1,3 +1,5 @@
 name = 'Bob';
 
-return `Hello ${name}, \${not} can you ${(function (verb) { return verb; })(`tell`)}?`;
+return `Hello ${name}, \${not} can you $${(function (verb) {
+    return verb;
+})(`tell`)} how $ is written?`;
