@@ -2,8 +2,6 @@
 
 namespace JsPhpize\Lexer;
 
-use JsPhpize\Parser\Exception;
-
 class StringLexer
 {
     /**
@@ -54,7 +52,7 @@ class StringLexer
         }
 
         if (!preg_match('/^(\\\\.|\\$(?!{)|[^`$])*`/U', $this->input, $match)) {
-            throw new Exception('Unterminated ` string after ' . $this->string);
+            throw new Exception('Unterminated ` string after ' . $this->string, 27);
         }
 
         return $this->string . $match[0];

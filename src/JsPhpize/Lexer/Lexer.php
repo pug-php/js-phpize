@@ -88,7 +88,7 @@ class Lexer extends Scanner
         return $length - mb_strlen($parser->rest());
     }
 
-    protected function consume($consumed)
+    public function consume($consumed)
     {
         $consumed = is_int($consumed) ? mb_substr($this->input, 0, $consumed) : $consumed;
         $this->consumed = mb_strlen(trim($consumed)) > 1 ? $consumed : $this->consumed . $consumed;

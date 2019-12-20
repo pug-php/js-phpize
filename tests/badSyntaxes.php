@@ -137,4 +137,15 @@ class BadSyntaxesTest extends TestCase
         $jsPhpize = new JsPhpize();
         $jsPhpize->render('DateTime::createFromFormat(\'j-M-Y\', \'15-Feb-2009\')');
     }
+
+    /**
+     * @expectedException        \JsPhpize\Lexer\Exception
+     * @expectedExceptionCode    27
+     * @expectedExceptionMessage Unterminated ` string after `foo ${`bar`}
+     */
+    public function testUnterminatedString()
+    {
+        $jsPhpize = new JsPhpize();
+        $jsPhpize->render('`foo ${`bar`}');
+    }
 }

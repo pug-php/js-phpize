@@ -123,6 +123,18 @@ class OptionsTest extends TestCase
 
     /**
      * @group patterns
+     */
+    public function testCustomPattern()
+    {
+        include_once __DIR__ . '/CustomPattern.php';
+        $jsPhpize = new JsPhpize();
+        $jsPhpize->addPattern(new CustomPattern());
+        $code = $jsPhpize->compile('foo(@)');
+        $this->assertSame('(function_exists(\'foo\') ? foo("@1", "@2") : $foo("@1", "@2"));', trim($code));
+    }
+
+    /**
+     * @group patterns
      * @expectedException     \JsPhpize\Lexer\Exception
      * @expectedExceptionCode 12
      */
