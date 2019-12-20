@@ -9,7 +9,7 @@ trait InterpolationTrait
     protected function readInterpolation($value)
     {
         while (strlen($value)) {
-            preg_match('/^(.*)(?:(\\\\|\\${).*)?$/U', $value, $match);
+            preg_match('/^([\s\S]*)(?:(\\\\|\\${)[\s\S]*)?$/U', $value, $match);
 
             yield var_export($match[1], true);
 
