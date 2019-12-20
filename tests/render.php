@@ -24,7 +24,6 @@ class RenderTest extends TestCase
     }
 
     /**
-     * @group i
      * @group examples
      * @dataProvider caseProvider
      */

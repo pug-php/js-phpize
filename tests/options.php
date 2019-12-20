@@ -1,7 +1,7 @@
 <?php
 
 use JsPhpize\JsPhpize;
-use JsPhpize\Lexer\Patterns;
+use JsPhpize\Lexer\Pattern;
 use PHPUnit\Framework\TestCase;
 
 class OptionsTest extends TestCase
