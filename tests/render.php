@@ -12,9 +12,6 @@ class RenderTest extends TestCase
         $examples = __DIR__ . '/../examples';
 
         foreach (scandir($examples) as $file) {
-            if ($file !== 'interpolation.return') {
-                continue;
-            }
             if (substr($file, -7) === '.return') {
                 $cases[] = [$file, substr($file, 0, -7) . '.js'];
             }
