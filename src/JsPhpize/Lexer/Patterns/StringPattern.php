@@ -18,9 +18,6 @@ class StringPattern extends Pattern
         $rest = $lexer->rest();
 
         if (preg_match('/^\s*`/', $rest, $match)) {
-            var_dump($rest);
-            exit;
-            $rest = substr($rest, strlen($match[0]));
         }
 
         return parent::lexWith($lexer);

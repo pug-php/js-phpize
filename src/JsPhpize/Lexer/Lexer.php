@@ -157,8 +157,8 @@ class Lexer extends Scanner
         $token = null;
 
         if ($this->tokenGenerator) {
-            $this->tokenGenerator->next();
             $token = $this->tokenGenerator->current();
+            $this->tokenGenerator->next();
 
             if (!$this->tokenGenerator->valid()) {
                 $this->tokenGenerator = null;
