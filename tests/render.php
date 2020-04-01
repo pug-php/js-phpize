@@ -91,14 +91,19 @@ class RenderTest extends TestCase
     {
         $jsPhpize = new JsPhpize();
         $result = $jsPhpize->renderCode('return obj.prop', [
-            'obj' => new class {
-                public function __call($name, $args) {
+            'obj' => new class() {
+                public function __call($name, $args)
+                {
                     return 'foo';
                 }
-                public function __isset($name) {
+
+                public function __isset($name)
+                {
                     return $name === 'prop';
                 }
-                public function __get($name) {
+
+                public function __get($name)
+                {
                     return $name === 'prop' ? null : 'else';
                 }
             },

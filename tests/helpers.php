@@ -72,21 +72,21 @@ class DotHelperTest extends TestCase
         $dotHelper = $this->getDotHelper();
 
         $this->assertSame(42, $dotHelper([
-                'foo' => 42,
-            ], 'foo'));
+            'foo' => 42,
+        ], 'foo'));
         $this->assertSame('biz', $dotHelper([
-                'foo' => [
-                    'bar' => 'biz',
-                ],
-            ], 'foo', 'bar'));
+            'foo' => [
+                'bar' => 'biz',
+            ],
+        ], 'foo', 'bar'));
         $this->assertSame(null, $dotHelper([
-                'foo' => [
-                ],
-            ], 'foo', 'bar'));
+            'foo' => [
+            ],
+        ], 'foo', 'bar'));
         $this->assertSame(null, $dotHelper([
-                'foo' => [
-                ],
-            ], 'biz', 'bar'));
+            'foo' => [
+            ],
+        ], 'biz', 'bar'));
     }
 
     public function testObjectMember()
@@ -94,21 +94,21 @@ class DotHelperTest extends TestCase
         $dotHelper = $this->getDotHelper();
 
         $this->assertSame(42, $dotHelper((object) [
-                'foo' => 42,
-            ], 'foo'));
+            'foo' => 42,
+        ], 'foo'));
         $this->assertSame('biz', $dotHelper((object) [
-                'foo' => (object) [
-                    'bar' => 'biz',
-                ],
-            ], 'foo', 'bar'));
+            'foo' => (object) [
+                'bar' => 'biz',
+            ],
+        ], 'foo', 'bar'));
         $this->assertSame(null, $dotHelper((object) [
-                'foo' => (object) [
-                ],
-            ], 'foo', 'bar'));
+            'foo' => (object) [
+            ],
+        ], 'foo', 'bar'));
         $this->assertSame(null, $dotHelper((object) [
-                'foo' => (object) [
-                ],
-            ], 'biz', 'bar'));
+            'foo' => (object) [
+            ],
+        ], 'biz', 'bar'));
     }
 
     public function testMixedObjectMemberAndArayValue()
@@ -116,29 +116,29 @@ class DotHelperTest extends TestCase
         $dotHelper = $this->getDotHelper();
 
         $this->assertSame('biz', $dotHelper([
-                'foo' => (object) [
-                    'bar' => 'biz',
-                ],
-            ], 'foo', 'bar'));
+            'foo' => (object) [
+                'bar' => 'biz',
+            ],
+        ], 'foo', 'bar'));
         $this->assertSame('biz', $dotHelper((object) [
-                'foo' => [
-                    'bar' => 'biz',
-                ],
-            ], 'foo', 'bar'));
+            'foo' => [
+                'bar' => 'biz',
+            ],
+        ], 'foo', 'bar'));
         $this->assertSame(42, $dotHelper((object) [
-                'foo' => [
-                    'bar' => (object) [
-                        'biz' => 42,
-                    ],
+            'foo' => [
+                'bar' => (object) [
+                    'biz' => 42,
                 ],
-            ], 'foo', 'bar', 'biz'));
+            ],
+        ], 'foo', 'bar', 'biz'));
         $this->assertSame(42, $dotHelper([
-                'foo' => (object) [
-                    'bar' => [
-                        'biz' => 42,
-                    ],
+            'foo' => (object) [
+                'bar' => [
+                    'biz' => 42,
                 ],
-            ], 'foo', 'bar', 'biz'));
+            ],
+        ], 'foo', 'bar', 'biz'));
     }
 
     public function testMagicMethod()

@@ -99,7 +99,8 @@ class Compiler
                 ' => $__current_value)';
         }
 
-        return $block->type . ($block->value
+        return $block->type . (
+            $block->value
             ? ' ' . $this->visitNode($block->value, $indent)
             : ''
         );
@@ -272,9 +273,11 @@ class Compiler
             $value = $visitNode($instruction, $indent);
 
             return $indent .
-                ($instruction instanceof Block && $instruction->handleInstructions()
+                (
+                    $instruction instanceof Block && $instruction->handleInstructions()
                     ? $value
-                    : ($isReturnPrepended && !preg_match('/^\s*return(?![a-zA-Z0-9_])/', $value)
+                    : (
+                        $isReturnPrepended && !preg_match('/^\s*return(?![a-zA-Z0-9_])/', $value)
                         ? ' return '
                         : ''
                     ) . $value . ';'
