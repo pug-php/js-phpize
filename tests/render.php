@@ -83,4 +83,27 @@ class RenderTest extends TestCase
 
         $this->assertSame($expected, $actual);
     }
+
+    /**
+     * @group i
+     */
+    public function testPropStringCast()
+    {
+        $jsPhpize = new JsPhpize();
+        $result = $jsPhpize->renderCode('return obj.prop', [
+            'obj' => new class {
+                public function __call($name, $args) {
+                    return 'foo';
+                }
+                public function __isset($name) {
+                    return $name === 'prop';
+                }
+                public function __get($name) {
+                    return $name === 'prop' ? null : 'else';
+                }
+            },
+        ]);
+
+        $this->assertSame('', $result);
+    }
 }
