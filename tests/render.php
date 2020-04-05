@@ -83,4 +83,43 @@ class RenderTest extends TestCase
 
         $this->assertSame($expected, $actual);
     }
+
+    public function testPropStringCast()
+    {
+        $data = [
+            'obj' => new class() {
+                public function __call($name, $args)
+                {
+                    return 'foo';
+                }
+
+                public function __get($name)
+                {
+                    if ($name === 'objectData') {
+                        return (object) ['foo' => 'o-bar'];
+                    }
+
+                    if ($name === 'arrayData') {
+                        return ['foo' => 'a-bar'];
+                    }
+
+                    return $name === 'prop' ? null : 'else';
+                }
+            },
+        ];
+
+        $jsPhpize = new JsPhpize();
+
+        $result = $jsPhpize->renderCode('return obj.prop', $data);
+        $this->assertSame('', (string) $result);
+
+        $result = $jsPhpize->renderCode('return obj.other', $data);
+        $this->assertSame('else', (string) $result);
+
+        $result = $jsPhpize->renderCode('return obj.objectData.foo', $data);
+        $this->assertSame('o-bar', (string) $result);
+
+        $result = $jsPhpize->renderCode('return obj.arrayData.foo', $data);
+        $this->assertSame('a-bar', (string) $result);
+    }
 }
