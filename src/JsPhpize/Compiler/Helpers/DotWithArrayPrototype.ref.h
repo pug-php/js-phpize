@@ -92,7 +92,7 @@ function (&$base) {
         }
     };
     $getRegExp = function ($value) {
-        return is_object($value) && isset($value->isRegularExpression) && $value->isRegularExpression ? $value->regExp : null;
+        return is_object($value) && isset($value->isRegularExpression) && $value->isRegularExpression ? $value->regExp . $value->flags : null;
     };
     $fallbackDot = function (&$base, $key) use ($getCallable, $getRegExp) {
         if (is_string($base)) {
