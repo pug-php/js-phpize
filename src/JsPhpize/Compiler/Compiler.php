@@ -335,8 +335,11 @@ class Compiler
         if ($variable->scope) {
             $name = '__let_' . spl_object_hash($variable->scope) . $name;
         }
+        if (!$this->engine->getOption('ignoreDollarVariable') || mb_substr($name, 0, 1) !== '$') {
+            $name = '$' . $name;
+        }
 
-        return $this->handleVariableChildren($variable, $indent, '$' . $name);
+        return $this->handleVariableChildren($variable, $indent, $name);
     }
 
     public function compile(Block $block, $indent = '')

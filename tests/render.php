@@ -122,4 +122,16 @@ class RenderTest extends TestCase
         $result = $jsPhpize->renderCode('return obj.arrayData.foo', $data);
         $this->assertSame('a-bar', (string) $result);
     }
+
+    public function testDollarVariablePrefix()
+    {
+        $jsPhpize = new JsPhpize([
+            'ignoreDollarVariable' => true,
+        ]);
+        $code = 'return isset($variable) && $variable !== false';
+
+        $this->assertFalse($jsPhpize->renderCode($code));
+        $this->assertTrue($jsPhpize->renderCode($code, ['variable' => 1]));
+        $this->assertFalse($jsPhpize->renderCode($code, ['variable' => false]));
+    }
 }
