@@ -133,5 +133,20 @@ class RenderTest extends TestCase
         $this->assertFalse($jsPhpize->renderCode($code));
         $this->assertTrue($jsPhpize->renderCode($code, ['variable' => 1]));
         $this->assertFalse($jsPhpize->renderCode($code, ['variable' => false]));
+
+        $code = 'return $foo && isset($bar[$foo])';
+
+        $this->assertFalse($jsPhpize->renderCode($code, ['foo' => 'a']));
+        $this->assertTrue($jsPhpize->renderCode($code, ['foo' => 'a', 'bar' => ['a' => 'x']]));
+
+        $code = 'return $foo && isset($bar.foo)';
+
+        $this->assertFalse($jsPhpize->renderCode($code, ['foo' => 'a']));
+        $this->assertTrue($jsPhpize->renderCode($code, ['foo' => 'a', 'bar' => (object) ['foo' => 'x']]));
+
+        $code = 'return $foo && isset($bar["foo"])';
+
+        $this->assertFalse($jsPhpize->renderCode($code, ['foo' => 'a']));
+        $this->assertTrue($jsPhpize->renderCode($code, ['foo' => 'a', 'bar' => ['foo' => 'x']]));
     }
 }

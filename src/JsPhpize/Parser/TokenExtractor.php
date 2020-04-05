@@ -41,7 +41,7 @@ abstract class TokenExtractor extends TokenCrawler
             $token = $this->next();
 
             if ($token && $token->isValidMember()) {
-                return new Constant('string', var_export($token->value, true));
+                return new Constant('string', var_export($token->value, true), true);
             }
 
             throw $this->unexpected($token);

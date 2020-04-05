@@ -205,12 +205,12 @@ class Compiler
         return $leftHand . ' ' . $dyiade->operator . ' ' . $rightHand;
     }
 
-    protected function mapNodesArray($array, $indent, $pattern = null)
+    protected function mapNodesArray($array, $indent, $pattern = null, $dotDisabled = false)
     {
         $visitNode = [$this, 'visitNode'];
 
-        return array_map(function ($value) use ($visitNode, $indent, $pattern) {
-            $value = $visitNode($value, $indent);
+        return array_map(function ($value) use ($visitNode, $indent, $pattern, $dotDisabled) {
+            $value = $visitNode($value, $indent, $dotDisabled);
 
             if ($pattern) {
                 $value = sprintf($pattern, $value);
@@ -220,9 +220,9 @@ class Compiler
         }, $array);
     }
 
-    protected function visitNodesArray($array, $indent, $glue = '', $pattern = null)
+    protected function visitNodesArray($array, $indent, $glue = '', $pattern = null, $dotDisabled = false)
     {
-        return implode($glue, $this->mapNodesArray($array, $indent, $pattern));
+        return implode($glue, $this->mapNodesArray($array, $indent, $pattern, $dotDisabled));
     }
 
     protected function visitFunctionCall(FunctionCall $functionCall, $indent)
@@ -230,7 +230,7 @@ class Compiler
         $function = $functionCall->function;
         $arguments = $functionCall->arguments;
         $applicant = $functionCall->applicant;
-        $arguments = $this->visitNodesArray($arguments, $indent, ', ');
+        $arguments = $this->visitNodesArray($arguments, $indent, ', ', null, $function instanceof Variable && $function->name === 'isset');
         $dynamicCall = $this->visitNode($function, $indent) . '(' . $arguments . ')';
 
         if ($function instanceof Variable && count($function->children) === 0) {
@@ -286,14 +286,14 @@ class Compiler
         }, $group->instructions));
     }
 
-    public function visitNode(Node $node, $indent)
+    public function visitNode(Node $node, $indent, $dotDisabled = false)
     {
         $method = preg_replace(
             '/^(.+\\\\)?([^\\\\]+)$/',
             'visit$2',
             get_class($node)
         );
-        $php = method_exists($this, $method) ? $this->$method($node, $indent) : '';
+        $php = method_exists($this, $method) ? $this->$method($node, $indent, $dotDisabled) : '';
 
         if ($node instanceof Value) {
             $php = $node->getBefore() . $php . $node->getAfter();
@@ -314,19 +314,33 @@ class Compiler
             ' : ' . $this->visitNode($ternary->falseValue, $indent);
     }
 
-    protected function handleVariableChildren(DynamicValue $dynamicValue, $indent, $php)
+    protected function handleVariableChildren(DynamicValue $dynamicValue, $indent, $php, $dotDisabled = false)
     {
-        if (count($dynamicValue->children)) {
-            $arguments = $this->mapNodesArray($dynamicValue->children, $indent);
+        $children = $dynamicValue->children;
+
+        if (count($children)) {
+            $arguments = $this->mapNodesArray($children, $indent, null, $dotDisabled);
             array_unshift($arguments, $php);
             $dot = $this->engine->getHelperName('dot');
+
+            if ($dotDisabled) {
+                $lastChild = end($children);
+                $dotChild = $lastChild instanceof Constant && $lastChild->dotChild;
+                $lastChild = array_pop($arguments);
+            }
+
             $php = $this->helperWrap($dot, $arguments);
+
+            if ($dotDisabled) {
+                $pattern = $dotChild ? '%s->{%s}' : '%s[%s]';
+                $php = sprintf($pattern, $php, $lastChild);
+            }
         }
 
         return $php;
     }
 
-    protected function visitVariable(Variable $variable, $indent)
+    protected function visitVariable(Variable $variable, $indent, $dotDisabled = false)
     {
         $name = $variable->name;
         if (in_array($name, ['Math', 'RegExp'])) {
@@ -339,7 +353,7 @@ class Compiler
             $name = '$' . $name;
         }
 
-        return $this->handleVariableChildren($variable, $indent, $name);
+        return $this->handleVariableChildren($variable, $indent, $name, $dotDisabled);
     }
 
     public function compile(Block $block, $indent = '')
