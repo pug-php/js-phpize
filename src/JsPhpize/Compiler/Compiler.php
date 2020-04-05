@@ -20,6 +20,8 @@ use JsPhpize\Nodes\Variable;
 
 class Compiler
 {
+    const DOT_DISABLED = 1;
+
     use DyiadeTrait;
     use InterpolationTrait;
 
@@ -205,12 +207,12 @@ class Compiler
         return $leftHand . ' ' . $dyiade->operator . ' ' . $rightHand;
     }
 
-    protected function mapNodesArray($array, $indent, $pattern = null, $dotDisabled = false)
+    protected function mapNodesArray($array, $indent, $pattern = null, $options = 0)
     {
         $visitNode = [$this, 'visitNode'];
 
-        return array_map(function ($value) use ($visitNode, $indent, $pattern, $dotDisabled) {
-            $value = $visitNode($value, $indent, $dotDisabled);
+        return array_map(function ($value) use ($visitNode, $indent, $pattern, $options) {
+            $value = $visitNode($value, $indent, $options);
 
             if ($pattern) {
                 $value = sprintf($pattern, $value);
@@ -220,9 +222,9 @@ class Compiler
         }, $array);
     }
 
-    protected function visitNodesArray($array, $indent, $glue = '', $pattern = null, $dotDisabled = false)
+    protected function visitNodesArray($array, $indent, $glue = '', $pattern = null, $options = 0)
     {
-        return implode($glue, $this->mapNodesArray($array, $indent, $pattern, $dotDisabled));
+        return implode($glue, $this->mapNodesArray($array, $indent, $pattern, $options));
     }
 
     protected function visitFunctionCall(FunctionCall $functionCall, $indent)
@@ -230,7 +232,13 @@ class Compiler
         $function = $functionCall->function;
         $arguments = $functionCall->arguments;
         $applicant = $functionCall->applicant;
-        $arguments = $this->visitNodesArray($arguments, $indent, ', ', null, $function instanceof Variable && $function->name === 'isset');
+        $arguments = $this->visitNodesArray(
+            $arguments,
+            $indent,
+            ', ',
+            null,
+            $function instanceof Variable && $function->name === 'isset' ? static::DOT_DISABLED : 0
+        );
         $dynamicCall = $this->visitNode($function, $indent) . '(' . $arguments . ')';
 
         if ($function instanceof Variable && count($function->children) === 0) {
@@ -286,14 +294,14 @@ class Compiler
         }, $group->instructions));
     }
 
-    public function visitNode(Node $node, $indent, $dotDisabled = false)
+    public function visitNode(Node $node, $indent, $options = 0)
     {
         $method = preg_replace(
             '/^(.+\\\\)?([^\\\\]+)$/',
             'visit$2',
             get_class($node)
         );
-        $php = method_exists($this, $method) ? $this->$method($node, $indent, $dotDisabled) : '';
+        $php = method_exists($this, $method) ? $this->$method($node, $indent, $options) : '';
 
         if ($node instanceof Value) {
             $php = $node->getBefore() . $php . $node->getAfter();
@@ -314,33 +322,41 @@ class Compiler
             ' : ' . $this->visitNode($ternary->falseValue, $indent);
     }
 
-    protected function handleVariableChildren(DynamicValue $dynamicValue, $indent, $php, $dotDisabled = false)
+    protected function handleVariableChildren(DynamicValue $dynamicValue, $indent, $php, $options = 0)
     {
         $children = $dynamicValue->children;
 
         if (count($children)) {
-            $arguments = $this->mapNodesArray($children, $indent, null, $dotDisabled);
-            array_unshift($arguments, $php);
-            $dot = $this->engine->getHelperName('dot');
-
-            if ($dotDisabled) {
-                $lastChild = end($children);
-                $dotChild = $lastChild instanceof Constant && $lastChild->dotChild;
-                $lastChild = array_pop($arguments);
-            }
-
-            $php = $this->helperWrap($dot, $arguments);
-
-            if ($dotDisabled) {
-                $pattern = $dotChild ? '%s->{%s}' : '%s[%s]';
-                $php = sprintf($pattern, $php, $lastChild);
-            }
+            return $this->wrapVariableChildren($children, $indent, $php, $options);
         }
 
         return $php;
     }
 
-    protected function visitVariable(Variable $variable, $indent, $dotDisabled = false)
+    protected function wrapVariableChildren($children, $indent, $php, $options)
+    {
+        $arguments = $this->mapNodesArray($children, $indent);
+        array_unshift($arguments, $php);
+        $dot = $this->engine->getHelperName('dot');
+        $dotDisabled = $options & static::DOT_DISABLED;
+
+        if ($dotDisabled) {
+            $lastChild = end($children);
+            $dotChild = $lastChild instanceof Constant && $lastChild->dotChild;
+            $lastChild = array_pop($arguments);
+        }
+
+        $php = $this->helperWrap($dot, $arguments);
+
+        if ($dotDisabled) {
+            $pattern = $dotChild ? '%s->{%s}' : '%s[%s]';
+            $php = sprintf($pattern, $php, $lastChild);
+        }
+
+        return $php;
+    }
+
+    protected function visitVariable(Variable $variable, $indent, $options = 0)
     {
         $name = $variable->name;
         if (in_array($name, ['Math', 'RegExp'])) {
@@ -353,7 +369,7 @@ class Compiler
             $name = '$' . $name;
         }
 
-        return $this->handleVariableChildren($variable, $indent, $name, $dotDisabled);
+        return $this->handleVariableChildren($variable, $indent, $name, $options);
     }
 
     public function compile(Block $block, $indent = '')
