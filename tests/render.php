@@ -112,15 +112,19 @@ class RenderTest extends TestCase
 
         $result = $jsPhpize->renderCode('return obj.prop', $data);
         $this->assertSame('', (string) $result);
+        $this->assertFalse($result->__toBoolean());
 
         $result = $jsPhpize->renderCode('return obj.other', $data);
         $this->assertSame('else', (string) $result);
+        $this->assertTrue($result->__toBoolean());
 
         $result = $jsPhpize->renderCode('return obj.objectData.foo', $data);
         $this->assertSame('o-bar', (string) $result);
+        $this->assertTrue($result->__toBoolean());
 
         $result = $jsPhpize->renderCode('return obj.arrayData.foo', $data);
         $this->assertSame('a-bar', (string) $result);
+        $this->assertTrue($result->__toBoolean());
     }
 
     public function testDollarVariablePrefix()

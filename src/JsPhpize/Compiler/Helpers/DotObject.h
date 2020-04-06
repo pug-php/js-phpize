@@ -161,6 +161,17 @@ if (!class_exists('JsPhpizeDotCarrier')) {
             return (string) $this->getValue();
         }
 
+        public function __toBoolean()
+        {
+            $value = $this->getValue();
+
+            if (method_exists($value, '__toBoolean')) {
+                return $value->__toBoolean();
+            }
+
+            return !!$value;
+        }
+
         public function __invoke(...$arguments)
         {
             return call_user_func_array($this->getCallable(), $arguments);
