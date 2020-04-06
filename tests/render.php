@@ -83,4 +83,70 @@ class RenderTest extends TestCase
 
         $this->assertSame($expected, $actual);
     }
+
+    public function testPropStringCast()
+    {
+        $data = [
+            'obj' => new class() {
+                public function __call($name, $args)
+                {
+                    return 'foo';
+                }
+
+                public function __get($name)
+                {
+                    if ($name === 'objectData') {
+                        return (object) ['foo' => 'o-bar'];
+                    }
+
+                    if ($name === 'arrayData') {
+                        return ['foo' => 'a-bar'];
+                    }
+
+                    return $name === 'prop' ? null : 'else';
+                }
+            },
+        ];
+
+        $jsPhpize = new JsPhpize();
+
+        $result = $jsPhpize->renderCode('return obj.prop', $data);
+        $this->assertSame('', (string) $result);
+
+        $result = $jsPhpize->renderCode('return obj.other', $data);
+        $this->assertSame('else', (string) $result);
+
+        $result = $jsPhpize->renderCode('return obj.objectData.foo', $data);
+        $this->assertSame('o-bar', (string) $result);
+
+        $result = $jsPhpize->renderCode('return obj.arrayData.foo', $data);
+        $this->assertSame('a-bar', (string) $result);
+    }
+
+    public function testDollarVariablePrefix()
+    {
+        $jsPhpize = new JsPhpize([
+            'ignoreDollarVariable' => true,
+        ]);
+        $code = 'return isset($variable) && $variable !== false';
+
+        $this->assertFalse($jsPhpize->renderCode($code));
+        $this->assertTrue($jsPhpize->renderCode($code, ['variable' => 1]));
+        $this->assertFalse($jsPhpize->renderCode($code, ['variable' => false]));
+
+        $code = 'return $foo && isset($bar[$foo])';
+
+        $this->assertFalse($jsPhpize->renderCode($code, ['foo' => 'a']));
+        $this->assertTrue($jsPhpize->renderCode($code, ['foo' => 'a', 'bar' => ['a' => 'x']]));
+
+        $code = 'return $foo && isset($bar.foo)';
+
+        $this->assertFalse($jsPhpize->renderCode($code, ['foo' => 'a']));
+        $this->assertTrue($jsPhpize->renderCode($code, ['foo' => 'a', 'bar' => (object) ['foo' => 'x']]));
+
+        $code = 'return $foo && isset($bar["foo"])';
+
+        $this->assertFalse($jsPhpize->renderCode($code, ['foo' => 'a']));
+        $this->assertTrue($jsPhpize->renderCode($code, ['foo' => 'a', 'bar' => ['foo' => 'x']]));
+    }
 }
