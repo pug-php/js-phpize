@@ -102,7 +102,7 @@ function (&$base) {
 };
 
 if (!class_exists('JsPhpizeDotCarrier')) {
-    class JsPhpizeDotCarrier extends ArrayObject
+    class JsPhpizeDotCarrier extends \ArrayObject
     {
         public function getValue()
         {
