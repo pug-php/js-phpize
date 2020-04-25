@@ -183,7 +183,7 @@ function (&$base) {
     return $result;
 };
 
-if (!class_exists('JsPhpizeDotCarrier')) {
+if (!class_exists(JsPhpizeDotCarrier::class)) {
     class JsPhpizeDotCarrier extends \ArrayObject
     {
         public function getValue()
