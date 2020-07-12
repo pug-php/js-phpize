@@ -153,4 +153,20 @@ class RenderTest extends TestCase
         $this->assertFalse($jsPhpize->renderCode($code, ['foo' => 'a']));
         $this->assertTrue($jsPhpize->renderCode($code, ['foo' => 'a', 'bar' => ['foo' => 'x']]));
     }
+
+    public function testClassDeclarationNesting()
+    {
+        $jsPhpize = new JsPhpize();
+        $code = 'class Main { public function run() {' .
+            '$foo = ["bar" => "hello"];' .
+            $jsPhpize->compile('return foo.bar') .
+            '}} $main = new Main; echo $main->run();';
+
+        ob_start();
+        eval($code);
+        $output = ob_get_contents();
+        ob_end_clean();
+
+        $this->assertSame('hello', $output);
+    }
 }
