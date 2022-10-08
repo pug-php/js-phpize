@@ -43,6 +43,11 @@ class Lexer extends Scanner
      */
     protected $tokenGenerator = null;
 
+    /**
+     * @var string[]
+     */
+    protected $disallow = [];
+
     public function __construct(JsPhpize $engine, $input, $filename)
     {
         $this->engine = $engine;
