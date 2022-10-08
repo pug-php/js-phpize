@@ -127,6 +127,21 @@ class RenderTest extends TestCase
         $this->assertTrue($result->__toBoolean());
     }
 
+    public function testTernary()
+    {
+        $jsPhpize = new JsPhpize();
+
+        $result = $jsPhpize->renderCode('return val === 42 ? {"answer": "42"} : {"ko": "failed"}', [
+            'val' => 42,
+        ]);
+        $this->assertSame(['answer' => '42'], $result);
+
+        $result = $jsPhpize->renderCode('return val === 42 ? {"answer": "42"} : {"ko": "failed"}', [
+            'val' => 1,
+        ]);
+        $this->assertSame(['ko' => 'failed'], $result);
+    }
+
     public function testDollarVariablePrefix()
     {
         $jsPhpize = new JsPhpize([
