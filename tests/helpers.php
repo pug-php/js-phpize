@@ -31,21 +31,25 @@ class ArrayAccessObject implements \ArrayAccess
         'foo' => 'bar',
     ];
 
+    #[\ReturnTypeWillChange]
     public function offsetGet($name)
     {
         return $this->data[$name];
     }
 
+    #[\ReturnTypeWillChange]
     public function offsetExists($name)
     {
         return isset($this->data[$name]);
     }
 
+    #[\ReturnTypeWillChange]
     public function offsetSet($name, $value)
     {
         $this->data[$name] = $value;
     }
 
+    #[\ReturnTypeWillChange]
     public function offsetUnset($name)
     {
         unset($this->data[$name]);

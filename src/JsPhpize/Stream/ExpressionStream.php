@@ -2,11 +2,26 @@
 
 namespace JsPhpize\Stream;
 
+use Attribute;
+
+// @codeCoverageIgnoreStart
+if (\PHP_VERSION >= 8 && \PHP_VERSION < 8.2 && !class_exists('AllowDynamicProperties')) {
+    #[Attribute(Attribute::TARGET_CLASS)]
+    final class AllowDynamicProperties
+    {
+        public function __construct()
+        {
+        }
+    }
+}
+// @codeCoverageIgnoreEnd
+
 /**
  * Creates a wrapper in order to allow the Zend PhpRenderer
  * to include the compiled file.
  * Class JsPhpize\Stream\ExrpressionStream.
  */
+#[\AllowDynamicProperties]
 class ExpressionStream
 {
     /**
