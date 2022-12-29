@@ -73,7 +73,7 @@ function (&$base) {
                 {
                     $value = $this->getValue();
 
-                    if (method_exists($value, '__toBoolean')) {
+                    if (is_object($value) && method_exists($value, '__toBoolean')) {
                         return $value->__toBoolean();
                     }
 

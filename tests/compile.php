@@ -118,12 +118,13 @@ class CompileTest extends TestCase
         $this->assertSame($template . ';', $actual);
     }
 
-    /**
-     * @expectedException     \JsPhpize\Compiler\Exception
-     * @expectedExceptionCode 1111111
-     */
     public function testCompilerException()
     {
+        self::expectExceptionObject(new \JsPhpize\Compiler\Exception(
+            'custom',
+            1111111
+        ));
+
         $jsPhpize = new JsPhpize();
         $jsPhpize->render('a()', [
             'a' => function () {
@@ -132,13 +133,18 @@ class CompileTest extends TestCase
         ]);
     }
 
-    /**
-     * @expectedException           \JsPhpize\Compiler\Exception
-     * @expectedExceptionCode       2
-     * @expectedExceptionCodeRegExp /An error occur in \[foo = 9/
-     */
     public function testCompilerWrappedException()
     {
+        self::expectException('JsPhpize\Compiler\Exception');
+
+        if (method_exists($this, 'assertMatchesRegularExpression')) {
+            self::expectExceptionMessageMatches(
+                '/An error occur in \[\s*foo = 9;\s*\/\* here/'
+            );
+        }
+
+        self::expectExceptionCode(2);
+
         $jsPhpize = new JsPhpize();
         $jsPhpize->render('
             foo = 9;

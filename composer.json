@@ -14,8 +14,7 @@
     "ext-mbstring": "*"
   },
   "require-dev": {
-    "phpunit/phpunit": "^6.0 || ^7.0",
-    "codeclimate/php-test-reporter": "dev-master"
+    "phpunit/phpunit": "^6.5.14 || ^7.5.20 || ^8.5.31 || ^9.5.27"
   },
   "minimum-stability": "stable",
   "autoload": {

@@ -6,44 +6,45 @@ use PHPUnit\Framework\TestCase;
 
 class ConstantRestrictionsTest extends TestCase
 {
-    /**
-     * @expectedException     \JsPhpize\Parser\Exception
-     * @expectedExceptionCode 23
-     */
     public function testBadConstantType()
     {
+        self::expectExceptionObject(new \JsPhpize\Parser\Exception(
+            'The given type [operator] is not a valid constant type.',
+            23
+        ));
+
         new Constant('operator', '+');
     }
 
-    /**
-     * @expectedException              \JsPhpize\Parser\Exception
-     * @expectedExceptionCode          9
-     * @expectedExceptionMessageRegExp /string is not assignable/
-     */
     public function testAssignationToString()
     {
+        self::expectExceptionObject(new \JsPhpize\Parser\Exception(
+            'string is not assignable',
+            9
+        ));
+
         $jsPhpize = new JsPhpize();
         $jsPhpize->render('"foo" = "bar"');
     }
 
-    /**
-     * @expectedException              \JsPhpize\Parser\Exception
-     * @expectedExceptionCode          9
-     * @expectedExceptionMessageRegExp /NAN is not assignable/
-     */
     public function testAssignationToNaN()
     {
+        self::expectExceptionObject(new \JsPhpize\Parser\Exception(
+            'NAN is not assignable',
+            9
+        ));
+
         $jsPhpize = new JsPhpize();
         $jsPhpize->render('NaN = "bar"');
     }
 
-    /**
-     * @expectedException              \JsPhpize\Parser\Exception
-     * @expectedExceptionCode          9
-     * @expectedExceptionMessageRegExp /'M_' prefix is reserved to mathematical constants/
-     */
     public function testAssignationToMathConstant()
     {
+        self::expectExceptionObject(new \JsPhpize\Parser\Exception(
+            "'M_' prefix is reserved to mathematical constants",
+            9
+        ));
+
         $jsPhpize = new JsPhpize();
         $jsPhpize->render('M_FOO = "bar"');
     }

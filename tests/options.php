@@ -42,12 +42,13 @@ class OptionsTest extends TestCase
         $this->assertSame(3, $code);
     }
 
-    /**
-     * @expectedException     \JsPhpize\Lexer\Exception
-     * @expectedExceptionCode 1
-     */
     public function testConstPrefixRestriction()
     {
+        self::expectExceptionObject(new \JsPhpize\Lexer\Exception(
+            'Constants cannot start with FOO, this prefix is reserved for JsPhpize on line 1 near from var a =',
+            1
+        ));
+
         $jsPhpize = new JsPhpize([
             'constPrefix' => 'FOO',
         ]);
@@ -56,12 +57,13 @@ class OptionsTest extends TestCase
         ');
     }
 
-    /**
-     * @expectedException     \JsPhpize\Lexer\Exception
-     * @expectedExceptionCode 4
-     */
     public function testVarPrefixRestriction()
     {
+        self::expectExceptionObject(new \JsPhpize\Lexer\Exception(
+            'Variables cannot start with test, this prefix is reserved for JsPhpize on line 1 near from var a =',
+            4
+        ));
+
         $jsPhpize = new JsPhpize([
             'varPrefix' => 'test',
         ]);
@@ -135,11 +137,14 @@ class OptionsTest extends TestCase
 
     /**
      * @group patterns
-     * @expectedException     \JsPhpize\Lexer\Exception
-     * @expectedExceptionCode 12
      */
     public function testPatternsException()
     {
+        self::expectExceptionObject(new \JsPhpize\Lexer\Exception(
+            'Unknow pattern found at: 1 + 1',
+            12
+        ));
+
         include_once __DIR__ . '/TestToken.php';
         $jsPhpize = new JsPhpize([
             'tokenClass' => 'TestToken',
@@ -200,7 +205,11 @@ class OptionsTest extends TestCase
             $message = $exception->getMessage();
         }
 
-        $this->assertRegExp('/Undefined variable: fooBar/', $message);
+        if (method_exists($this, 'assertMatchesRegularExpression')) {
+            $this->assertMatchesRegularExpression('/Undefined variable(: | \$)fooBar/', $message);
+        } else {
+            $this->assertSame(1, preg_match('/Undefined variable(: | \$)fooBar/', $message));
+        }
 
         $jsPhpize = new JsPhpize([
             'functionsNamespace' => 'myNameSpace',

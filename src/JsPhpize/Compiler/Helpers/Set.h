@@ -5,7 +5,7 @@ function ($base, $key, $operator, $value) {
                 $base[$key] = $value;
                 break;
             }
-            if (method_exists($base, $method = "set" . ucfirst($key))) {
+            if (is_object($base) && method_exists($base, $method = "set" . ucfirst($key))) {
                 $base->$method($value);
                 break;
             }

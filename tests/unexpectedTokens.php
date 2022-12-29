@@ -5,92 +5,101 @@ use PHPUnit\Framework\TestCase;
 
 class UnexpectedTokensTest extends TestCase
 {
-    /**
-     * @expectedException     \JsPhpize\Parser\Exception
-     * @expectedExceptionCode 8
-     */
     public function testBadDotUsage()
     {
+        self::expectExceptionObject(new \JsPhpize\Parser\Exception(
+            'Unexpected ( on line 1 near from a.(',
+            8
+        ));
+
         $jsPhpize = new JsPhpize();
         $jsPhpize->render('a.()');
     }
 
-    /**
-     * @expectedException     \JsPhpize\Parser\Exception
-     * @expectedExceptionCode 8
-     */
     public function testBadHookClose()
     {
+        self::expectExceptionObject(new \JsPhpize\Parser\Exception(
+            'Unexpected ) on line 1 near from a[4)',
+            8
+        ));
+
         $jsPhpize = new JsPhpize();
         $jsPhpize->render('a[4)');
     }
 
-    /**
-     * @expectedException     \JsPhpize\Parser\Exception
-     * @expectedExceptionCode 8
-     */
     public function testLonelyIncrement()
     {
+        self::expectExceptionObject(new \JsPhpize\Parser\Exception(
+            'Unexpected ++ on line 1 near from ++',
+            8
+        ));
+
         $jsPhpize = new JsPhpize();
         $jsPhpize->render('++');
     }
 
-    /**
-     * @expectedException     \JsPhpize\Parser\Exception
-     * @expectedExceptionCode 8
-     */
     public function testFunctionWithoutParentheses()
     {
+        self::expectExceptionObject(new \JsPhpize\Parser\Exception(
+            'Unexpected { on line 1 near from function {',
+            8
+        ));
+
         $jsPhpize = new JsPhpize();
         $jsPhpize->render('myFunction = function {}');
     }
 
-    /**
-     * @expectedException     \JsPhpize\Parser\Exception
-     * @expectedExceptionCode 8
-     */
     public function testFunctionWithoutBody()
     {
+        self::expectExceptionObject(new \JsPhpize\Parser\Exception(
+            'Unexpected ; on line 1 near from function ();',
+            8
+        ));
+
         $jsPhpize = new JsPhpize();
         $jsPhpize->render('myFunction = function ();');
     }
 
-    /**
-     * @expectedException     \JsPhpize\Parser\Exception
-     * @expectedExceptionCode 8
-     */
     public function testBracketAfterVariable()
     {
+        self::expectExceptionObject(new \JsPhpize\Parser\Exception(
+            'Unexpected { on line 1 near from myVar{',
+            8
+        ));
+
         $jsPhpize = new JsPhpize();
         $jsPhpize->render('myVar{}');
     }
 
-    /**
-     * @expectedException     \JsPhpize\Parser\Exception
-     * @expectedExceptionCode 8
-     */
-    public function testExpecteNoLeftMember()
+    public function testExpectNoLeftMember()
     {
+        self::expectExceptionObject(new \JsPhpize\Parser\Exception(
+            'Unexpected ! on line 1 near from myVar!',
+            8
+        ));
+
         $jsPhpize = new JsPhpize();
         $jsPhpize->render('myVar!');
     }
 
-    /**
-     * @expectedException     \JsPhpize\Parser\Exception
-     * @expectedExceptionCode 8
-     */
     public function testBadLet()
     {
+        self::expectExceptionObject(new \JsPhpize\Parser\Exception(
+            'Unexpected constant false on line 1 near from false',
+            8
+        ));
+
         $jsPhpize = new JsPhpize();
         $jsPhpize->render('let false');
     }
 
-    /**
-     * @expectedException     \JsPhpize\Parser\Exception
-     * @expectedExceptionCode 8
-     */
     public function testUnexpectedInBlock()
     {
+        self::expectExceptionObject(new \JsPhpize\Parser\Exception(
+            'Unexpected ) on line 1 near from true; )',
+            8
+        ));
+
         $jsPhpize = new JsPhpize([
             'strict' => true,
         ]);
