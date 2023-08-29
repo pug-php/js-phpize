@@ -44,7 +44,7 @@ isset($Math) ? $Math : ($Math = [
         return unpack('f', pack('f', $value))[1];
     },
     'fscale' => function ($value, $inLow, $inHigh, $outLow, $outHigh) {
-        if (in_array(NAN, [$value, $inLow, $inHigh, $outLow, $outHigh])) {
+        if (in_array(NAN, [$value, $inLow, $inHigh, $outLow, $outHigh], true)) {
             return NAN;
         }
         return unpack('f', pack('f', (
@@ -108,7 +108,7 @@ isset($Math) ? $Math : ($Math = [
     },
     'round' => 'round',
     'scale' => function ($value, $inLow, $inHigh, $outLow, $outHigh) {
-        if (in_array(NAN, [$value, $inLow, $inHigh, $outLow, $outHigh])) {
+        if (in_array(NAN, [$value, $inLow, $inHigh, $outLow, $outHigh], true)) {
             return NAN;
         }
         if ($value === INF || $value === -INF) {

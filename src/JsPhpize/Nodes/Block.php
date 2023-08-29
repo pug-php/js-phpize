@@ -70,7 +70,7 @@ class Block extends Node
 
     public function isLet($variable)
     {
-        return in_array($variable, $this->letVariables);
+        return in_array($variable, $this->letVariables, true);
     }
 
     public function handleInstructions()
@@ -84,7 +84,7 @@ class Block extends Node
             'interface',
             'class',
             'switch',
-        ]);
+        ], true);
     }
 
     public function needParenthesis()
@@ -96,7 +96,7 @@ class Block extends Node
             'for',
             'while',
             'function',
-        ]);
+        ], true);
     }
 
     public function addInstructions($instructions)

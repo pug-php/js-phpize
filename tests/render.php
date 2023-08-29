@@ -22,6 +22,7 @@ class RenderTest extends TestCase
 
     /**
      * @group examples
+     *
      * @dataProvider caseProvider
      */
     public function testJsPhpizeGeneration($returnFile, $jsFile)

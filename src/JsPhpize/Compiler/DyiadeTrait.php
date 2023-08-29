@@ -23,7 +23,7 @@ trait DyiadeTrait
                     '$_SESSION',
                     '$_REQUEST',
                     '$_ENV',
-                ]);
+                ], true);
         }));
         $variables = array_map('strval', $variables);
         $use = count($variables) ? ' use (&' . implode(', &', array_unique($variables)) . ')' : '';

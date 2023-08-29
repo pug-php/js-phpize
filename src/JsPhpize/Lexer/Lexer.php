@@ -162,7 +162,7 @@ class Lexer extends Scanner
             $this->tokenGenerator = $pattern->lexWith($this);
 
             if ($token = $this->pullFromCurrentTokenGenerator()) {
-                if (in_array($pattern->type, $this->disallow)) {
+                if (in_array($pattern->type, $this->disallow, true)) {
                     throw new Exception($pattern->type . ' is disallowed.', 3);
                 }
 

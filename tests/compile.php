@@ -21,6 +21,7 @@ class CompileTest extends TestCase
 
     /**
      * @group examples
+     *
      * @dataProvider caseProvider
      */
     public function testJsPhpizeGeneration($phpFile, $jsFile)

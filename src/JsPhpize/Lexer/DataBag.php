@@ -18,17 +18,17 @@ class DataBag
 
     public function is($value)
     {
-        return in_array($value, [$this->type, $this->value]);
+        return in_array($value, [$this->type, $this->value], true);
     }
 
     public function typeIn($values)
     {
-        return in_array($this->type, $values);
+        return in_array($this->type, $values, true);
     }
 
     public function valueIn($values)
     {
-        return in_array($this->value, $values);
+        return in_array($this->value, $values, true);
     }
 
     public function __get($key)

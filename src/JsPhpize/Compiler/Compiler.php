@@ -256,7 +256,7 @@ class Compiler
 
             $functions = str_replace(["\n", "\t", "\r", ' '], '', static::STATIC_CALL_FUNCTIONS);
 
-            if ($applicant === 'new' || in_array($name, explode(',', $functions))) {
+            if ($applicant === 'new' || in_array($name, explode(',', $functions), true)) {
                 return $staticCall;
             }
 
@@ -368,7 +368,7 @@ class Compiler
     protected function visitVariable(Variable $variable, $indent, $options = 0)
     {
         $name = $variable->name;
-        if (in_array($name, ['Math', 'RegExp'])) {
+        if (in_array($name, ['Math', 'RegExp'], true)) {
             $this->requireHelper(lcfirst($name) . 'Class');
         }
         if ($variable->scope) {
