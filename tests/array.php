@@ -25,6 +25,7 @@ class ArrayTest extends TestCase
 
     /**
      * @group array
+     *
      * @dataProvider caseProvider
      */
     public function testArrayResult($expected, $code)

@@ -68,7 +68,7 @@ class Token extends DataBag
 
     public function expectNoLeftMember()
     {
-        return in_array($this->type, ['!', '~']) || $this->isVarOperator();
+        return in_array($this->type, ['!', '~'], true) || $this->isVarOperator();
     }
 
     public function isFunction()

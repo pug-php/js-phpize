@@ -150,7 +150,7 @@ class OptionsTest extends TestCase
             'tokenClass' => 'TestToken',
         ]);
         $jsPhpize->removePatterns(function (Pattern $pattern) {
-            return !in_array($pattern->type, ['number', 'operator']);
+            return !in_array($pattern->type, ['number', 'operator'], true);
         });
         $jsPhpize->compile('1 + 1');
     }

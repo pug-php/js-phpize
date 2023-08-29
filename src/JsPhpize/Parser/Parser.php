@@ -89,14 +89,14 @@ class Parser extends TokenExtractor
             }
 
             if ($expectComma) {
-                if ($token->is('in') && in_array('in', $allowedSeparators)) {
+                if ($token->is('in') && in_array('in', $allowedSeparators, true)) {
                     $parentheses->setSeparator('in');
                     $expectComma = false;
 
                     continue;
                 }
 
-                if ($token->isIn(',', ';') && in_array($token->type, $allowedSeparators)) {
+                if ($token->isIn(',', ';') && in_array($token->type, $allowedSeparators, true)) {
                     $expectComma = false;
 
                     continue;
