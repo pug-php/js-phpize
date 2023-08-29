@@ -191,14 +191,23 @@ class Compiler
                 return $this->compileLazyDyiade($this->engine->getHelperName('and'), $leftHand, $rightHand);
             case '+':
                 $arguments = [$leftHand, $rightHand];
-                while (
-                    ($dyiade = $dyiade->rightHand) instanceof Dyiade &&
-                    $dyiade->operator === '+'
-                ) {
-                    /* @var Dyiade $dyiade */
+                $innerRightHand = $dyiade->rightHand;
+
+                if ($innerRightHand instanceof Dyiade && $innerRightHand->operator === '+') {
+                    $last = $dyiade;
                     array_pop($arguments);
-                    $arguments[] = $this->visitNode($dyiade->leftHand, $indent);
-                    $arguments[] = $this->visitNode($dyiade->rightHand, $indent);
+
+                    while (
+                        ($dyiade = $dyiade->rightHand) instanceof Dyiade &&
+                        $dyiade->operator === '+'
+                    ) {
+                        $last = $dyiade;
+                        $arguments[] = $this->visitNode($dyiade->leftHand, $indent);
+                    }
+
+                    if ($last instanceof Dyiade && $last->operator === '+') {
+                        $arguments[] = $this->visitNode($last->rightHand, $indent);
+                    }
                 }
 
                 return $this->helperWrap($this->engine->getHelperName('plus'), $arguments);

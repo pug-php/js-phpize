@@ -56,12 +56,13 @@ EOD;
         $this->assertSame($expected, $actual);
     }
 
-    /**
-     * @expectedException              \Exception
-     * @expectedExceptionMessageRegExp /No such file/
-     */
     public function testCompileFileMissing()
     {
+        self::expectExceptionObject(new \Exception(
+            'No such file',
+            1
+        ));
+
         try {
             $jsPhpize = new JsPhpize();
             $jsPhpize->compileFile('does/not/exists.js');
@@ -134,7 +135,7 @@ EOD;
         $expected = 42;
         $this->assertSame($expected, $actual);
 
-        error_reporting(E_ALL ^ E_NOTICE);
+        error_reporting(E_ALL ^ (PHP_VERSION < 8 ? E_NOTICE : E_WARNING));
         $actual = $jsPhpize->render('return b;');
         $expected = null;
         $this->assertSame($expected, $actual);

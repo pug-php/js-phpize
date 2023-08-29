@@ -7,144 +7,155 @@ use PHPUnit\Framework\TestCase;
 
 class BadSyntaxesTest extends TestCase
 {
-    /**
-     * @expectedException     \JsPhpize\Parser\Exception
-     * @expectedExceptionCode 5
-     */
     public function testNoParenthesesClose()
     {
+        self::expectExceptionObject(new \JsPhpize\Parser\Exception(
+            'Missing ) to match  on line 1 near from if (',
+            5
+        ));
+
         $jsPhpize = new JsPhpize();
         $jsPhpize->render('if ( {}');
     }
 
-    /**
-     * @expectedException     \JsPhpize\Parser\Exception
-     * @expectedExceptionCode 6
-     */
     public function testNoHookClose()
     {
+        self::expectExceptionObject(new \JsPhpize\Parser\Exception(
+            'Missing ] to match  on line 1 near from a = [',
+            6
+        ));
+
         $jsPhpize = new JsPhpize();
         $jsPhpize->render('a = [1,');
     }
 
-    /**
-     * @expectedException     \JsPhpize\Parser\Exception
-     * @expectedExceptionCode 12
-     */
     public function testBracketMissingAfterKey()
     {
+        self::expectExceptionObject(new \JsPhpize\Parser\Exception(
+            "Missing value after 'a' on line 1 near from {a",
+            12
+        ));
+
         $jsPhpize = new JsPhpize();
         $jsPhpize->render('{a');
     }
 
-    /**
-     * @expectedException     \JsPhpize\Parser\Exception
-     * @expectedExceptionCode 7
-     */
     public function testNoBracketClose()
     {
+        self::expectExceptionObject(new \JsPhpize\Parser\Exception(
+            'Missing } to match  on line 1 near from a = {',
+            7
+        ));
+
         $jsPhpize = new JsPhpize();
         $jsPhpize->render('a = {a: "b",');
     }
 
-    /**
-     * @expectedException     \JsPhpize\Parser\Exception
-     * @expectedExceptionCode 20
-     */
     public function testValueExpected()
     {
+        self::expectExceptionObject(new \JsPhpize\Parser\Exception(
+            'Value expected after  on line 1 near from a =',
+            20
+        ));
+
         $jsPhpize = new JsPhpize();
         $jsPhpize->render('a =');
     }
 
-    /**
-     * @expectedException     \JsPhpize\Parser\Exception
-     * @expectedExceptionCode 13
-     */
     public function testBadHookUsage()
     {
+        self::expectExceptionObject(new \JsPhpize\Parser\Exception(
+            'Missing ] to match  on line 1 near from a[',
+            13
+        ));
+
         $jsPhpize = new JsPhpize();
         $jsPhpize->render('a[4');
     }
 
-    /**
-     * @expectedException     \JsPhpize\Parser\Exception
-     * @expectedExceptionCode 14
-     */
     public function testTernaryMissClosedAfterQuestionMark()
     {
+        self::expectExceptionObject(new \JsPhpize\Parser\Exception(
+            "Ternary expression not properly closed after '?'  on line 1 near from true",
+            14
+        ));
+
         $jsPhpize = new JsPhpize();
         $jsPhpize->render('a = true ? true');
     }
 
-    /**
-     * @expectedException     \JsPhpize\Parser\Exception
-     * @expectedExceptionCode 15
-     */
     public function testTernaryExpectColon()
     {
+        self::expectExceptionObject(new \JsPhpize\Parser\Exception(
+            "':' expected but if given  on line 1 near from if",
+            15
+        ));
+
         $jsPhpize = new JsPhpize();
         $jsPhpize->render('a = true ? (true) if');
     }
 
-    /**
-     * @expectedException     \JsPhpize\Parser\Exception
-     * @expectedExceptionCode 16
-     */
     public function testTernaryMissingFalseValue()
     {
+        self::expectExceptionObject(new \JsPhpize\Parser\Exception(
+            "Ternary expression not properly closed after ':'  on line 1 near from true :",
+            16
+        ));
+
         $jsPhpize = new JsPhpize();
         $jsPhpize->render('a = true ? true :');
     }
 
-    /**
-     * @expectedException     \JsPhpize\Parser\Exception
-     * @expectedExceptionCode 24
-     */
     public function testBadFunctionCall()
     {
+        self::expectExceptionObject(new \JsPhpize\Parser\Exception(
+            'Unexpected called type JsPhpize\Nodes\Instruction',
+            24
+        ));
+
         new FunctionCall(new Instruction(), [], []);
     }
 
-    /**
-     * @expectedException        \JsPhpize\Parser\Exception
-     * @expectedExceptionCode    25
-     * @expectedExceptionMessage Class name expected after 'new'
-     */
     public function testNewWithNothingCall()
     {
+        self::expectExceptionObject(new \JsPhpize\Parser\Exception(
+            "Class name expected after 'new'",
+            25
+        ));
+
         $jsPhpize = new JsPhpize();
         $jsPhpize->compile('new');
     }
 
-    /**
-     * @expectedException        \JsPhpize\Parser\Exception
-     * @expectedExceptionCode    25
-     * @expectedExceptionMessage Object expected after 'clone'
-     */
     public function testCloneWithNothingCall()
     {
+        self::expectExceptionObject(new \JsPhpize\Parser\Exception(
+            "Object expected after 'clone'",
+            25
+        ));
+
         $jsPhpize = new JsPhpize();
         $jsPhpize->compile('clone');
     }
 
-    /**
-     * @expectedException     \JsPhpize\Lexer\Exception
-     * @expectedExceptionCode 8
-     */
     public function testPhpCode()
     {
+        self::expectExceptionObject(new \JsPhpize\Lexer\Exception(
+            'Unexpected token :: on line 1 near from ::',
+            8
+        ));
+
         $jsPhpize = new JsPhpize();
         $jsPhpize->render('DateTime::createFromFormat(\'j-M-Y\', \'15-Feb-2009\')');
     }
 
-    /**
-     * @expectedException        \JsPhpize\Lexer\Exception
-     * @expectedExceptionCode    27
-     * @expectedExceptionMessage Unterminated ` string after `foo ${`bar`}
-     */
     public function testUnterminatedString()
     {
+        self::expectExceptionObject(new \JsPhpize\Lexer\Exception(
+            'Unterminated ` string after `foo ${`bar`}',
+            27
+        ));
+
         $jsPhpize = new JsPhpize();
         $jsPhpize->render('`foo ${`bar`}');
     }
