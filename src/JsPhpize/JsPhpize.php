@@ -145,9 +145,9 @@ class JsPhpize extends JsPhpizeOptions
             $variables = $filename;
             $filename = null;
         }
-        if (!in_array($this->stream, $this->streamsRegistered)) {
+        if (!in_array($this->stream, $this->streamsRegistered, true)) {
             $this->streamsRegistered[] = $this->stream;
-            if (in_array($this->stream, stream_get_wrappers())) {
+            if (in_array($this->stream, stream_get_wrappers(), true)) {
                 stream_wrapper_unregister($this->stream);
             }
             $classParts = explode('\\', get_class($this));

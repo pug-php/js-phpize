@@ -151,7 +151,7 @@ class Block extends Node
                     return $node instanceof Variable ? $node->name : null;
                 }, $nodes);
                 $variables = array_filter($variables, function ($variable) use ($nodes) {
-                    return !in_array($variable, $nodes);
+                    return !in_array($variable, $nodes, true);
                 });
             }
         }
