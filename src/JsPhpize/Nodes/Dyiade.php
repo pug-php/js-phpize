@@ -26,7 +26,7 @@ class Dyiade extends Value
      */
     protected $operator;
 
-    public function __construct($operator, Value $leftHand, Value $rightHand, array $before = null, array $after = null)
+    public function __construct($operator, Value $leftHand, Value $rightHand, ?array $before = null, ?array $after = null)
     {
         $this->operator = $operator;
         $this->leftHand = $leftHand;
