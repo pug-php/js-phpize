@@ -13,8 +13,17 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php: ['7.0', '7.1', '7.2', '7.3', '7.4', '8.0', '8.1', '8.2', '8.3']
-        setup: ['lowest', 'stable', 'next']
+        php: ['7.0', '7.1', '7.2', '7.3', '7.4', '8.0', '8.1', '8.2', '8.3', '8.4', '8.5']
+        setup: ['stable']
+        include:
+          - php: '7.0'
+            setup: 'lowest'
+          - php: '7.0'
+            setup: 'next'
+          - php: '8.5'
+            setup: 'lowest'
+          - php: '8.5'
+            setup: 'next'
 
     name: PHP ${{ matrix.php }} - ${{ matrix.setup }}
 
@@ -42,15 +51,6 @@ jobs:
         ${{ matrix.php >= 8.1 && 'composer require --no-update phpunit/phpunit:^8.5.14 --no-interaction' || '' }}
         composer update --prefer-dist ${{ matrix.setup != 'next' && format('--prefer-{0}', matrix.setup) || '' }} --no-progress --no-suggest ${{ matrix.php >= 8.1 && '--ignore-platform-req=php' || '' }}
 
-    - name: Code Climate Test Reporter Preparation
-      if: matrix.php == '7.4' && matrix.setup == 'stable'
-      run: |
-        curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter;
-        chmod +x ./cc-test-reporter;
-        ./cc-test-reporter before-build;
-      env:
-        CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
-
     - name: Run test suite
       run: |
         if [[ ${MATRIX_CONFIG} == "7.4-stable" ]]; then
@@ -62,11 +62,14 @@ jobs:
         MATRIX_CONFIG: ${{ matrix.php }}-${{ matrix.setup }}
 
     - name: Code Climate Test Reporter
-      if: ${{ matrix.php == '7.4' && matrix.setup == 'stable' && env.CC_TEST_REPORTER_ID != '' }}
-      run: ./cc-test-reporter after-build --exit-code 0
-      env:
-        CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
+      if: ${{ matrix.php == '7.4' && matrix.setup == 'stable' }}
+      uses: qltysh/qlty-action/coverage@v2
+      with:
+        token: ${{ secrets.QLTY_COVERAGE_TOKEN }}
+        files: clover.xml
 
     - name: Coverage
       if: matrix.php == '7.4' && matrix.setup == 'stable'
-      run: bash <(curl -s https://codecov.io/bash)
+      uses: codecov/codecov-action@v5
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
