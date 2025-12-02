@@ -26,17 +26,13 @@ class Dyiade extends Value
      */
     protected $operator;
 
-    public function __construct($operator, Value $leftHand, Value $rightHand, array $before = null, array $after = null)
+    public function __construct($operator, Value $leftHand, Value $rightHand, array $before = [], array $after = [])
     {
         $this->operator = $operator;
         $this->leftHand = $leftHand;
         $this->rightHand = $rightHand;
-        if ($before !== null) {
-            $this->before = $before;
-        }
-        if ($after !== null) {
-            $this->after = $after;
-        }
+        $this->before = $before;
+        $this->after = $after;
     }
 
     public function getReadVariables()
